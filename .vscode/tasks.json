@@ -1,0 +1,23 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558 
+  // for the documentation about the tasks.json format
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build with Visual Studio 2019",
+      "type": "shell",
+      "windows": {
+        "command": "${workspaceFolder}/tools/build-vs2019.bat",  
+      },
+      "options": {
+        // "cwd": "${workspaceFolder}/"
+      },
+      "args": [],
+      "group": "build",
+      "problemMatcher": [
+        "$gcc",
+        "$msCompile"
+      ]
+    },
+  ]
+}
