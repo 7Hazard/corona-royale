@@ -9,6 +9,7 @@ add_definitions(
 # Server
 add_executable(CoronaRoyale
   src/main.c
+  src/events.c
 )
 target_compile_definitions(CoronaRoyale PRIVATE
 
