@@ -10,7 +10,7 @@
         "command": "${workspaceFolder}/tools/build-vs2019.bat",  
       },
       "osx": {
-        "command": "${workspaceFolder}/tools/build-macos.sh",
+        "command": "chmod 777 ${workspaceFolder}/tools/build-macos.sh && ${workspaceFolder}/tools/build-macos.sh",
       },
       "options": {
         // "cwd": "${workspaceFolder}/"
