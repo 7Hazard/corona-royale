@@ -5,16 +5,17 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Run Corona Royale (Windows/VS2019)",
+      "name": "Run Program",
       "type": "cppvsdbg",
       "request": "launch",
       "windows": {  
         "program": "${workspaceFolder}/BUILD/VS2019/Debug/CoronaRoyale.exe",
+        "cwd": "${workspaceFolder}/BUILD/VS2019/Debug/",
       },
       "osx": {
         "program": "${workspaceFolder}/BUILD/macos/CoronaRoyale",
+        "cwd": "${workspaceFolder}/BUILD/macos/",
       },
-      "cwd": "${workspaceFolder}/BUILD/VS2019/Debug/",
       "args": [],
       "stopAtEntry": false,
       "environment": [],
