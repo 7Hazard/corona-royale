@@ -10,7 +10,6 @@ void HandleEvents()
         if (event.type == SDL_QUIT) 
         {
             running = 0;
-            SDL_Quit();
             SDL_Log("Program quit after %i ticks", event.quit.timestamp);
             break;
         }

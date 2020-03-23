@@ -5,16 +5,34 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Run Corona Royale (Windows/VS2019)",
-      "type": "cppvsdbg",
+      "name": "(Windows) Run Program",
       "request": "launch",
-      "program": "${workspaceFolder}/BUILD/VS2019/Debug/CoronaRoyale.exe",
-      "cwd": "${workspaceFolder}/BUILD/VS2019/Debug/",
+      "type": "cppvsdbg",
+      "windows": {
+        "program": "${workspaceFolder}/BUILD/VS2019/Debug/CoronaRoyale.exe",
+        "cwd": "${workspaceFolder}/BUILD/VS2019/Debug/",
+      },
       "args": [],
       "stopAtEntry": false,
       "environment": [],
       "externalConsole": false,
-      "preLaunchTask": "Build with Visual Studio 2019"
+      "preLaunchTask": "Build"
+    },
+    {
+      "name": "(macOS) Run Program",
+      "request": "launch",
+      "type": "cppdbg",
+      "osx": {
+        "miDebuggerPath": "/Applications/Xcode.app/Contents/Developer/usr/bin/lldb-mi",
+        "MIMode": "lldb",
+        "program": "${workspaceFolder}/BUILD/macos/CoronaRoyale",
+        "cwd": "${workspaceFolder}/BUILD/macos/",
+      },
+      "args": [],
+      "stopAtEntry": false,
+      "environment": [],
+      "externalConsole": false,
+      "preLaunchTask": "Build"
     }
   ]
 }
