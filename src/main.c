@@ -5,20 +5,54 @@
 #include "events.h"
 
 int running = 1;
+bool pressed_w = false;
+bool pressed_s = false;
+bool pressed_a = false;
+bool pressed_d = false;
+SDL_Window* window = NULL;
+SDL_Renderer* renderer = NULL;
+SDL_Rect rect;
 int main(int argc, const char *argv[])
 {
     printf("Corona Royale\n");
 
     if(!SDL_Init(0))
     {
-      printf("Could not initialize SDL2");
+        printf("Could not initialize SDL2");
     }
-
-    SDL_ShowSimpleMessageBox(0, "Corona Royale", "It's corona time!", NULL);
-    SDL_Window* window = SDL_CreateWindow("Corona Royale",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,1000,1000,0);
+    window = SDL_CreateWindow("Corona Royale",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,500,800,0);
+    SDL_SetWindowBordered(&window,SDL_TRUE);
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    rect.x = 200;
+    rect.y = 200;
+    rect.w = 80;
+    rect.h = 80;
     while (running)
     {
-      HandleEvents();
+        if(pressed_w == true)
+        {
+            rect.y-=1;
+        }
+        if(pressed_s == true)
+        {
+            rect.y+=1;
+        }
+        if(pressed_a == true)
+        {
+            rect.x-=1;
+        }
+        if(pressed_d == true)
+        {
+            rect.x+=1;
+        }
+
+        HandleEvents();
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        SDL_RenderClear(renderer);
+        SDL_SetRenderDrawColor(renderer, 100, 0, 0, 255);
+        SDL_RenderFillRect(renderer,&rect);
+        SDL_RenderPresent(renderer);
+        SDL_Delay(1000/144);
     }
 
     SDL_Quit();
