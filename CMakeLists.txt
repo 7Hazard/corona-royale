@@ -42,8 +42,12 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
   target_include_directories(CoronaRoyale PRIVATE
     deps/SDL2/include
   )
-  target_link_libraries(CoronaRoyale PRIVATE
+  target_link_directories(CoronaRoyale PRIVATE
     deps/SDL2/lib/x64
+  )
+  target_link_libraries(CoronaRoyale PRIVATE
+    SDL2
+    SDL2main
   )
   configure_file("deps/SDL2/lib/x64/SDL2.dll" "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/SDL2.dll" COPYONLY)
 else()
