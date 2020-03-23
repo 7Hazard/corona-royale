@@ -4,10 +4,13 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Build with Visual Studio 2019",
+      "label": "Build",
       "type": "shell",
       "windows": {
         "command": "${workspaceFolder}/tools/build-vs2019.bat",  
+      },
+      "osx": {
+        "command": "${workspaceFolder}/tools/build-macos.bat",
       },
       "options": {
         // "cwd": "${workspaceFolder}/"

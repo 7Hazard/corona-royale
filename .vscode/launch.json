@@ -8,13 +8,18 @@
       "name": "Run Corona Royale (Windows/VS2019)",
       "type": "cppvsdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/BUILD/VS2019/Debug/CoronaRoyale.exe",
+      "windows": {  
+        "program": "${workspaceFolder}/BUILD/VS2019/Debug/CoronaRoyale.exe",
+      },
+      "osx": {
+        "program": "${workspaceFolder}/BUILD/macos/CoronaRoyale",
+      },
       "cwd": "${workspaceFolder}/BUILD/VS2019/Debug/",
       "args": [],
       "stopAtEntry": false,
       "environment": [],
       "externalConsole": false,
-      "preLaunchTask": "Build with Visual Studio 2019"
+      "preLaunchTask": "Build"
     }
   ]
 }
