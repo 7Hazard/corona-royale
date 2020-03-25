@@ -67,9 +67,11 @@ else()
   
   target_include_directories(CoronaRoyale PRIVATE
     ${SDL2_INCLUDE_DIR}
+    ${SDL2_IMAGE_INCLUDE_DIR}
   )
   target_link_libraries(CoronaRoyale PRIVATE
     ${SDL2_LIBRARY}
+    ${SDL2_IMAGE_LIBRARIES}
   )
 endif()
 
