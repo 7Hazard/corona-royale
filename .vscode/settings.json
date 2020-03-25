@@ -6,6 +6,8 @@
     "sdl_main.h": "c",
     "sdl_stdinc.h": "c",
     "sdl_messagebox.h": "c",
-    "collison.h": "c"
+    "collison.h": "c",
+    "sdl_image.h": "c",
+    "stdbool.h": "c"
   }
 }
