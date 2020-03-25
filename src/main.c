@@ -16,7 +16,7 @@ int main(int argc, const char *argv[])
 {
     printf("Corona Royale\n");
 
-    if(!SDL_Init(0))
+    if(SDL_Init(0) != 0)
     {
         printf("Could not initialize SDL2");
     }
