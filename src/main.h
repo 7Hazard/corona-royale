@@ -1,5 +1,7 @@
 #pragma once
+
 #include <stdbool.h>
+
 extern int running;
 extern SDL_Window* window;
 extern SDL_Rect rect;
