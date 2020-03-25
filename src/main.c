@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdbool.h>
-
+#include "collisonborder.h"
 #include <SDL.h>
 #include "events.h"
 
@@ -49,10 +49,12 @@ int main(int argc, const char *argv[])
         HandleEvents();
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
+        HandleBorder();
+
         SDL_SetRenderDrawColor(renderer, 100, 0, 0, 255);
         SDL_RenderFillRect(renderer,&rect);
         SDL_RenderPresent(renderer);
-        SDL_Delay(1000/144);
+        SDL_Delay(1000/600);
     }
 
     SDL_Quit();
