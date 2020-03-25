@@ -17,6 +17,7 @@ add_definitions(
 add_executable(CoronaRoyale
   src/main.c
   src/events.c
+  src/collision.c
 )
 target_compile_definitions(CoronaRoyale PRIVATE
 
