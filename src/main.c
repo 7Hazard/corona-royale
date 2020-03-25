@@ -27,7 +27,7 @@ int main(int argc, const char *argv[])
 
     window = SDL_CreateWindow("Corona Royale",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,500,800,0);
     SDL_SetWindowBordered(&window,SDL_TRUE);
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    renderer = SDL_CreateRenderer(window, -1, 0);
 
     Player player;
     CreatePlayer(&player);
