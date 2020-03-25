@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_net.h>
 
 #include "collison.h"
 #include "events.h"
@@ -23,7 +24,6 @@ int main(int argc, const char *argv[])
     {
         printf("Could not initialize SDL2");
     }
-    SDL_Surface* surf = IMG_Load("kren-vairus.png");
 
     window = SDL_CreateWindow("Corona Royale",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,500,800,0);
     SDL_SetWindowBordered(&window,SDL_TRUE);
