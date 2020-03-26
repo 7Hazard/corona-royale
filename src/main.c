@@ -16,6 +16,7 @@ bool pressed_d = false;
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
 
+
 int main(int argc, const char *argv[])
 {
     printf("Corona Royale\n");
@@ -28,6 +29,8 @@ int main(int argc, const char *argv[])
     window = SDL_CreateWindow("Corona Royale",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,500,800,0);
     SDL_SetWindowBordered(&window,SDL_TRUE);
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+
+    
 
     Player player;
     CreatePlayer(&player);
@@ -43,6 +46,13 @@ int main(int argc, const char *argv[])
     player2.rect.y = 300;
     player2.rect.w = 80;
     player2.rect.h = 80;
+
+    Player player3;
+    CreatePlayer(&player3);
+    player3.rect.x = 400;
+    player3.rect.y = 400;
+    player3.rect.w = 80;
+    player3.rect.h = 80;
 
     while (running)
     {
@@ -67,12 +77,13 @@ int main(int argc, const char *argv[])
         HandleBorders(&player.rect);
         HandleBorders(&player2.rect);
 
+
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
 
         if(player.infected)
         {
-            SDL_SetRenderDrawColor(renderer, 100, 0, 0, 255);
+            SDL_SetRenderDrawColor(renderer, 230, 66, 245, 255);
         }
         else {
             SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
@@ -88,10 +99,24 @@ int main(int argc, const char *argv[])
         }
         SDL_RenderFillRect(renderer,&player2.rect);
 
+         if(player3.infected)
+        {
+            SDL_SetRenderDrawColor(renderer, 230, 66, 245, 255);
+        }
+        else {
+            SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+        }
+        SDL_RenderFillRect(renderer,&player3.rect);
+
         if(DoBoxesIntersect(&player.rect, &player2.rect))
         {
             player2.infected = true;
         }
+        if(DoBoxesIntersect(&player.rect, &player3.rect))
+        {
+            player3.infected = true;
+        }
+
 
         SDL_RenderPresent(renderer);
         SDL_Delay(1000/600);
