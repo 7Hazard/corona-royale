@@ -8,7 +8,10 @@ Requirements on Windows:
 Requirements on macOS:
 * Visual Studio Code (Download here: https://code.visualstudio.com/)
 * CMake (run `brew install cmake` in the terminal)
-* SDL2 (run `brew install SDL2` in the terminal)
+* SDL2 (run `brew install sdl2` in the terminal)
+* SDL2_image (run `brew install sdl2_image` in the terminal)
+* SDL2_mixer (run `brew install sdl2_mixer` in the terminal)
+* SDL2_net (run `brew install sdl2_net` in the terminal)
 
 To build/run the game:
 * Download/clone this repository
