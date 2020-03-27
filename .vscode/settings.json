@@ -10,6 +10,8 @@
     "sdl_image.h": "c",
     "stdbool.h": "c",
     "player.h": "c",
-    "sdl_net.h": "c"
+    "sdl_net.h": "c",
+    "main.h": "c",
+    "sdl_mixer.h": "c"
   }
 }

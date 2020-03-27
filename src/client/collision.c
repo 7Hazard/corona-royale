@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <SDL.h>
 
+
 #include "main.h"
 
 void HandleBorders(SDL_Rect* rect)
