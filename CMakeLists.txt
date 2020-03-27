@@ -21,6 +21,9 @@ add_definitions(
   -DUNICODE
 )
 
+# Copy resources into build output
+file(COPY "res" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
+
 ######
 ###### CLIENT
 ######
