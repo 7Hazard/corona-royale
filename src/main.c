@@ -168,7 +168,7 @@ int main(int argc, const char *argv[])
         SDL_RenderCopy(renderer,currentImage,&player.rect,&player.playerPosition);
 
         SDL_RenderPresent(renderer);
-        SDL_Delay(1000/600);
+        SDL_Delay(1000/400);
     }
     SDL_DestroyTexture(currentImage);
     IMG_Quit();
