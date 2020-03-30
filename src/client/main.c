@@ -17,7 +17,7 @@ SDL_Renderer* renderer = NULL;
 int main(int argc, const char *argv[])
 {
     SDL_Log("Corona Royale\n");
-    const int fps = 144;
+    const int fps = 60;
     const int frameDelay = 1000/fps;
 
     Uint32 frameStart;
@@ -57,65 +57,31 @@ int main(int argc, const char *argv[])
     while (running)
     {
         frameStart = SDL_GetTicks();
-        if(pressed_w == true)
-        {
-            player.rect.y-=1;
-        }
-        if(pressed_s == true)
-        {
-            player.rect.y+=1;
-        }
-        if(pressed_a == true)
-        {
-            player.rect.x-=1;
-        }
-        if(pressed_d == true)
-        {
-            player.rect.x+=1;
-        }
-    
-        if ((pressed_w || pressed_s||pressed_a||pressed_d)&& !Mix_Playing(1))
-        {
-              Mix_PlayChannel(1,steps, 1);
-        }
 
         HandleEvents();
         HandleBorders(&player.rect);
         HandleBorders(&player2.rect);
-        frameTime = SDL_GetTicks() - frameStart;
-        if (frameDelay >frameTime)
-        {
-            SDL_Delay(frameDelay - frameTime);
-        }
+        OnPlayerUpdate(&player);
         
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
-
-        if(player.infected)
-        {
-            SDL_SetRenderDrawColor(renderer, 100, 0, 0, 255);
-        }
-        else {
-            SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
-        }
-        SDL_RenderFillRect(renderer,&player.rect);
-
-        if(player2.infected)
-        {
-            SDL_SetRenderDrawColor(renderer, 100, 0, 0, 255);
-        }
-        else {
-            SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
-        }
-        SDL_RenderFillRect(renderer,&player2.rect);
         
         if(DoBoxesIntersect(&player.rect, &player2.rect) && player2.infected != true)
         {
             Mix_PlayChannel(-1, cough, 0);
             player2.infected = true;
         }
+
+        OnPlayerRender(&player);
+        OnPlayerRender(&player2);
         
         SDL_RenderPresent(renderer);
+
+        frameTime = SDL_GetTicks() - frameStart;
+        if (frameDelay >frameTime)
+        {
+            SDL_Delay(frameDelay - frameTime);
+        }
     }
     
     StopAudio();

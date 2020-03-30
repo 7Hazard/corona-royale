@@ -2,9 +2,9 @@
 
 #include <stdbool.h>
 #include <SDL.h>
+
 #include "main.h";
 #include "events.h";
-
 
 typedef struct
 {
@@ -14,3 +14,5 @@ typedef struct
 
 void CreatePlayer(Player* player);
 void HandlePlayerEvents(SDL_Event *event);
+void OnPlayerUpdate(Player* player);
+void OnPlayerRender(Player* player);

@@ -1,6 +1,7 @@
 #include "player.h"
 #include "events.h"
 #include "main.h"
+#include "audio.h"
 
 bool pressed_w = false;
 bool pressed_s = false;
@@ -15,9 +16,9 @@ void CreatePlayer(Player* player)
     player->rect.w = 0;
     player->rect.h = 0;
 }
+
 void HandlePlayerEvents(SDL_Event *event)
 {
-    
     if(event->type == SDL_KEYDOWN)
         {
             // Mix_PlayChannel(-1, walking, 0);
@@ -47,4 +48,42 @@ void HandlePlayerEvents(SDL_Event *event)
             break;
         }
     }
+}
+
+void OnPlayerUpdate(Player* player)
+{
+    if(pressed_w == true)
+    {
+        player->rect.y-=1;
+    }
+    if(pressed_s == true)
+    {
+        player->rect.y+=1;
+    }
+    if(pressed_a == true)
+    {
+        player->rect.x-=1;
+    }
+    if(pressed_d == true)
+    {
+        player->rect.x+=1;
+    }
+    
+    if ((pressed_w || pressed_s||pressed_a||pressed_d) && !Mix_Playing(1))
+    {
+        Mix_PlayChannel(1, steps, 1);
+    }
+}
+
+void OnPlayerRender(Player* player)
+{
+    if(player->infected)
+    {
+        SDL_SetRenderDrawColor(renderer, 100, 0, 0, 255);
+    }
+    else {
+        SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+    }
+    SDL_RenderFillRect(renderer, &player->rect);
+    
 }
