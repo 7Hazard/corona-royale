@@ -29,7 +29,7 @@
       "args": [],
       "stopAtEntry": false,
       "environment": [],
-      "externalConsole": false,
+      "externalConsole": true,
       "preLaunchTask": "Build"
     },
     {
@@ -61,7 +61,7 @@
       "args": [],
       "stopAtEntry": false,
       "environment": [],
-      "externalConsole": false,
+      "externalConsole": true,
       "preLaunchTask": "Build"
     }
   ]
