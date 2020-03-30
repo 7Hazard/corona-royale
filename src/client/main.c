@@ -3,29 +3,40 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_net.h>
-
+#include <SDL_mixer.h>
 #include "collison.h"
 #include "events.h"
 #include "player.h"
+#include "audio.h"
 
 int running = 1;
-bool pressed_w = false;
-bool pressed_s = false;
-bool pressed_a = false;
-bool pressed_d = false;
+
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
 
 int main(int argc, const char *argv[])
 {
-    printf("Corona Royale\n");
+    SDL_Log("Corona Royale\n");
+    const int fps = 60;
+    const int frameDelay = 1000/fps;
 
-    if(SDL_Init(0) != 0)
+    Uint32 frameStart;
+    int frameTime;
+
+    if(SDL_Init(SDL_INIT_AUDIO)!=0) 
     {
-        printf("Could not initialize SDL2");
+        SDL_Log("SDL_Init: %s\n", SDL_GetError());
+        exit(1);
     }
+    if(Mix_Init(0)!=0) 
+    {
+        SDL_Log("Mix_Init: %s\n", SDL_GetError());
+        exit(1);
+    }
+    InitAudio();
 
     window = SDL_CreateWindow("Corona Royale",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,500,800,0);
+
     renderer = SDL_CreateRenderer(window, -1, 0);
 
     Player player;
@@ -45,57 +56,35 @@ int main(int argc, const char *argv[])
 
     while (running)
     {
-        if(pressed_w == true)
-        {
-            player.rect.y-=1;
-        }
-        if(pressed_s == true)
-        {
-            player.rect.y+=1;
-        }
-        if(pressed_a == true)
-        {
-            player.rect.x-=1;
-        }
-        if(pressed_d == true)
-        {
-            player.rect.x+=1;
-        }
+        frameStart = SDL_GetTicks();
 
         HandleEvents();
         HandleBorders(&player.rect);
         HandleBorders(&player2.rect);
-
+        OnPlayerUpdate(&player);
+        
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
-
-        if(player.infected)
+        
+        if(DoBoxesIntersect(&player.rect, &player2.rect) && player2.infected != true)
         {
-            SDL_SetRenderDrawColor(renderer, 100, 0, 0, 255);
-        }
-        else {
-            SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
-        }
-        SDL_RenderFillRect(renderer,&player.rect);
-
-        if(player2.infected)
-        {
-            SDL_SetRenderDrawColor(renderer, 100, 0, 0, 255);
-        }
-        else {
-            SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
-        }
-        SDL_RenderFillRect(renderer,&player2.rect);
-
-        if(DoBoxesIntersect(&player.rect, &player2.rect))
-        {
+            Mix_PlayChannel(-1, cough, 0);
             player2.infected = true;
         }
 
+        OnPlayerRender(&player);
+        OnPlayerRender(&player2);
+        
         SDL_RenderPresent(renderer);
-        SDL_Delay(1000/600);
-    }
 
+        frameTime = SDL_GetTicks() - frameStart;
+        if (frameDelay >frameTime)
+        {
+            SDL_Delay(frameDelay - frameTime);
+        }
+    }
+    
+    StopAudio();
     SDL_Quit();
     return 0;
 }

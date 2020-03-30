@@ -32,6 +32,7 @@ add_executable(CoronaRoyale
   src/client/events.c
   src/client/collision.c
   src/client/player.c
+  src/client/audio.c
 )
 target_compile_definitions(CoronaRoyale PRIVATE
 
