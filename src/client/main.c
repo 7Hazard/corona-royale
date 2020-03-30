@@ -7,6 +7,7 @@
 #include "collison.h"
 #include "events.h"
 #include "player.h"
+#include "audio.h"
 
 int running = 1;
 bool pressed_w = false;
@@ -15,9 +16,6 @@ bool pressed_a = false;
 bool pressed_d = false;
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
-Mix_Chunk *walking = NULL;
-Mix_Chunk *cough = NULL;
-Mix_Chunk *steps = NULL;
 
 int main(int argc, const char *argv[])
 {
@@ -27,7 +25,6 @@ int main(int argc, const char *argv[])
 
     Uint32 frameStart;
     int frameTime;
-
 
     if(SDL_Init(SDL_INIT_AUDIO)!=0) 
     {
@@ -39,15 +36,9 @@ int main(int argc, const char *argv[])
         SDL_Log("Mix_Init: %s\n", SDL_GetError());
         exit(1);
     }
-    
-    window = SDL_CreateWindow("Corona Royale",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,500,800,0);
+    InitAudio();
 
-    Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048); 	
-    // Mix_Music *backgroundSound = Mix_LoadMUS("res/Heroic Demise (New).mp3");
-    cough = Mix_LoadWAV("res/cough.wav");
-    walking = Mix_LoadWAV("res/Ejimas1.ogg");
-    steps =  Mix_LoadWAV("res/footstep.wav");
-    // Mix_PlayMusic(backgroundSound, -1);
+    window = SDL_CreateWindow("Corona Royale",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,500,800,0);
 
     renderer = SDL_CreateRenderer(window, -1, 0);
 
@@ -128,16 +119,10 @@ int main(int argc, const char *argv[])
             player2.infected = true;
         }
         
-        
         SDL_RenderPresent(renderer);
     }
     
-    // Mix_FreeChunk(walking);
-    // Mix_FreeChunk(cough);
-    // Mix_FreeMusic(backgroundSound);
-    Mix_FreeChunk(steps);
-    Mix_CloseAudio();
-    Mix_Quit();
+    StopAudio();
     SDL_Quit();
     return 0;
 }

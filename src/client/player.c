@@ -3,7 +3,6 @@
 #include "main.h"
 void CreatePlayer(Player* player)
 {
-    player->steps  = Mix_LoadMUS("res/footstep.mp3");
     player->infected = false;
     player->rect.x = 0;
     player->rect.y = 0;

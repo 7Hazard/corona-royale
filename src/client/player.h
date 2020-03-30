@@ -10,8 +10,6 @@ typedef struct
 {
     SDL_Rect rect;
     bool infected;
-    Mix_Chunk *walking;
-    Mix_Music *steps;
 } Player;
 
 void CreatePlayer(Player* player);
