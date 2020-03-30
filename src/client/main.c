@@ -110,13 +110,14 @@ int main(int argc, const char *argv[])
             SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
         }
         SDL_RenderFillRect(renderer,&player2.rect);
-
-        if(DoBoxesIntersect(&player.rect, &player2.rect))
+        
+        if(DoBoxesIntersect(&player.rect, &player2.rect) && player2.infected != true)
         {
             Mix_PlayChannel(-1, cough, 0);
             player2.infected = true;
         }
-
+        
+        
         SDL_RenderPresent(renderer);
         SDL_Delay(1000/600);
     }
