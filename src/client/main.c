@@ -22,6 +22,11 @@ Mix_Chunk *steps = NULL;
 int main(int argc, const char *argv[])
 {
     SDL_Log("Corona Royale\n");
+    const int fps = 144;
+    const int frameDelay = 1000/fps;
+
+    Uint32 frameStart;
+    int frameTime;
 
 
     if(SDL_Init(SDL_INIT_AUDIO)!=0) 
@@ -63,6 +68,7 @@ int main(int argc, const char *argv[])
 
     while (running)
     {
+        frameStart = SDL_GetTicks();
         if(pressed_w == true)
         {
             player.rect.y-=1;
@@ -89,7 +95,12 @@ int main(int argc, const char *argv[])
         HandleEvents();
         HandleBorders(&player.rect);
         HandleBorders(&player2.rect);
-
+        frameTime = SDL_GetTicks() - frameStart;
+        if (frameDelay >frameTime)
+        {
+            SDL_Delay(frameDelay - frameTime);
+        }
+        
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
 
@@ -119,7 +130,6 @@ int main(int argc, const char *argv[])
         
         
         SDL_RenderPresent(renderer);
-        SDL_Delay(1000/600);
     }
     
     // Mix_FreeChunk(walking);
