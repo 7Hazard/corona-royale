@@ -1,6 +1,12 @@
 #include "player.h"
 #include "events.h"
 #include "main.h"
+
+bool pressed_w = false;
+bool pressed_s = false;
+bool pressed_a = false;
+bool pressed_d = false;
+
 void CreatePlayer(Player* player)
 {
     player->infected = false;

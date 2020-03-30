@@ -10,10 +10,7 @@
 #include "audio.h"
 
 int running = 1;
-bool pressed_w = false;
-bool pressed_s = false;
-bool pressed_a = false;
-bool pressed_d = false;
+
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
 
@@ -81,7 +78,6 @@ int main(int argc, const char *argv[])
         {
               Mix_PlayChannel(1,steps, 1);
         }
-                // Mix_PlayChannel(-1, player.walking, 0);
 
         HandleEvents();
         HandleBorders(&player.rect);
