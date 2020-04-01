@@ -3,43 +3,43 @@
 
 #include "main.h"
 
-void HandleBorders(SDL_Rect* rect)
+void HandleBorders(SDL_Rect* rect, int frameHeight, int frameWidth)
 {
     if (rect->x < 0 && rect->y < 0)
     {
         rect->x = 0;
         rect->y = 0;
     }
-    else if (rect->x > 420 && rect->y < 0)
+    else if (rect->x > (WINDOW_W-frameWidth) && rect->y < 0)
     {
-        rect->x = 420;
+        rect->x = (WINDOW_W-frameWidth);
         rect->y = 0;
     }
-    else if (rect->x < 0 && rect->y > 720)
+    else if (rect->x < 0 && rect->y > WINDOW_H-frameHeight)
     {
         rect->x = 0;
-        rect->y = 720;
+        rect->y = WINDOW_H-frameHeight;
     }
-    else if (rect->x > 420 && rect->y > 720)
+    else if (rect->x > WINDOW_W-frameWidth && rect->y > WINDOW_H -frameHeight)
     {
-        rect->x = 420;
-        rect->y = 720;
+        rect->x = WINDOW_W-frameWidth;
+        rect->y = WINDOW_H -frameHeight;
     }
     else if (rect->x < 0)
     {
         rect->x = 0;
     }
-    else if (rect->x > 420)
+    else if (rect->x > WINDOW_W -frameWidth)
     {
-        rect->x = 420;
+        rect->x = WINDOW_W -frameWidth;
     }
     else if (rect->y < 0)
     {
         rect->y = 0;
     }
-    else if (rect->y > 720)
+    else if (rect->y > WINDOW_H-frameHeight)
     {
-        rect->y = 720;
+        rect->y = WINDOW_H-frameHeight;
     }
 }
 

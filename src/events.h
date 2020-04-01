@@ -1,3 +1,4 @@
 #pragma once
+#include "player.h"
 
-void HandleEvents();
+void HandleEvents(Player* player);

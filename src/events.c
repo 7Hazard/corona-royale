@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <SDL.h>
 #include "main.h"
+#include "player.h"
 
-void HandleEvents()
+void HandleEvents(Player *player)
 {
     SDL_Event event;
     while (SDL_PollEvent(&event))
@@ -15,31 +16,36 @@ void HandleEvents()
         }
         if(event.type == SDL_KEYDOWN)
         {
+            
             switch (event.key.keysym.sym)
             {
-                case SDLK_a: pressed_a = true;
+                case SDLK_a: player->left = true;
                 break;
-                case SDLK_d: pressed_d = true;
+                case SDLK_d: player->right = true;
                 break;
-                case SDLK_w: pressed_w = true;
+                case SDLK_w: player->up = true;
                 break;
-                case SDLK_s: pressed_s = true;
+                case SDLK_s: player->down = true;
                 break;
+                
             }
+
         }
         if(event.type == SDL_KEYUP)
         {
             switch (event.key.keysym.sym)
             {
-                case SDLK_a: pressed_a = false;
+                case SDLK_a: player->left = false;
                 break;
-                case SDLK_d: pressed_d = false;
+                case SDLK_d: player->right = false;
                 break;
-                case SDLK_w: pressed_w = false;
+                case SDLK_w: player->up = false;
                 break;
-                case SDLK_s: pressed_s = false;
+                case SDLK_s: player->down = false;
                 break;
             }
+
         }
     }
 }
+

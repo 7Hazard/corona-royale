@@ -6,15 +6,12 @@
 #include "collison.h"
 #include "events.h"
 #include "player.h"
+#include "main.h"
 
 
 
 int running = 1;
-bool pressed_w = false;
-bool pressed_s = false;
-bool pressed_a = false;
-bool pressed_d = false;
-bool noMovement = false;
+
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
 
@@ -40,11 +37,12 @@ int main(int argc, const char *argv[])
     int frameWidth,frameHeight;
     int textureWidth,textureHeight;
     int frameTime = 0;
+    
     //SDL_Surface* surface = IMG_Load("C:/Users/Moham/Documents/hi1038-project/res/User.png");
 
     SDL_Texture* currentImage;
 
-    window = SDL_CreateWindow("Corona Royale",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,500,800,0);
+    window = SDL_CreateWindow("Corona Royale",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,WINDOW_W,WINDOW_H,0);
     SDL_SetWindowBordered(&window,SDL_TRUE);
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     //surface = IMG_Load("res/User.png");
@@ -67,6 +65,7 @@ int main(int argc, const char *argv[])
     player.playerPosition.w = frameWidth;
     player.playerPosition.h = frameHeight;
     player.infected = true;
+    player.noMovement = false;
 
     player.rect.x = player.rect.y = 0;
 
@@ -82,22 +81,22 @@ int main(int argc, const char *argv[])
 
     while (running)
     {
-        if(pressed_w == true)
+        if(player.up == true)
         {
             player.playerPosition.y-=1;
             player.rect.y = frameHeight;
         }
-        else if(pressed_s == true)
+        else if(player.down == true)
         {
             player.playerPosition.y+=1;
             player.rect.y = 0;
         }
-        else if(pressed_a == true)
+        else if(player.left == true)
         {
             player.playerPosition.x-=1;
             player.rect.y = frameHeight*2;
         }
-        else if(pressed_d == true)
+        else if(player.right == true)
         {
             player.playerPosition.x+=1;
             player.rect.y = frameHeight*3;
@@ -113,20 +112,19 @@ int main(int argc, const char *argv[])
                 player.rect.x = 0;
 
             }
-            
-            
         }
         
         
         
+        
+        SDL_RenderClear(renderer);
 
-        HandleEvents();
-        HandleBorders(&player.playerPosition);
-        HandleBorders(&player2.playerPosition);
+        HandleEvents(&player);
+        HandleBorders(&player.playerPosition, frameHeight,frameWidth);
+        HandleBorders(&player2.playerPosition, frameHeight,frameWidth);
 
         //SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-        frameTime++;
-        if (frameTime == 50 )
+        if (frameTime == 50)
         {
             frameTime = 0;
             player.rect.x += frameWidth;
@@ -137,37 +135,23 @@ int main(int argc, const char *argv[])
             
         }
         
-        /*
-        if(player.infected)
-        {
-            SDL_SetRenderDrawColor(renderer, 100, 0, 0, 255);
-        }
-        else {
-            SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
-        }
-        //SDL_RenderFillRect(renderer,&player.rect);
-        if(player2.infected)
-        {
-            SDL_SetRenderDrawColor(renderer, 100, 0, 0, 255);
-        }
-        else {+
+        
+       
 
-            SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
-        }
-        SDL_RenderFillRect(renderer,&player2.playerPosition);
-
-        if(DoBoxesIntersect(&player.playerPosition, &player2.playerPosition))
-        {
-            player2.infected = true;
-        }
-        */
-        SDL_RenderClear(renderer);
 
         //SDL_RenderFillRect(renderer,&player2.playerPosition);
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-        SDL_RenderCopy(renderer,currentImage,&player.rect,&player.playerPosition);
-
-        SDL_RenderPresent(renderer);
+        if (player.noMovement == false)
+        {
+            SDL_RenderCopy(renderer,currentImage,&player.rect,&player.playerPosition);
+            SDL_RenderPresent(renderer);
+            frameTime++;
+        }
+        
+        
+        
+        
+        
         SDL_Delay(1000/400);
     }
     SDL_DestroyTexture(currentImage);

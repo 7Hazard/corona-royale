@@ -1,11 +1,8 @@
 #pragma once
 
 #include <stdbool.h>
-
+#define WINDOW_W 800
+#define WINDOW_H 600
 extern int running;
 extern SDL_Window* window;
-extern SDL_Rect rect;
-extern bool pressed_w;
-extern bool pressed_s;
-extern bool pressed_a;
-extern bool pressed_d;
+//extern SDL_Rect rect;
