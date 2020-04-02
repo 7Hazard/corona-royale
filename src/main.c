@@ -37,10 +37,13 @@ int main(int argc, const char *argv[])
     int frameWidth,frameHeight;
     int textureWidth,textureHeight;
     int frameTime = 0;
-    
+    int nrOfPlayers = 2;
+    int mapWidth, mapHeight;
     //SDL_Surface* surface = IMG_Load("C:/Users/Moham/Documents/hi1038-project/res/User.png");
 
     SDL_Texture* currentImage;
+    SDL_Texture* background;
+    SDL_Rect cameraRect;
 
     window = SDL_CreateWindow("Corona Royale",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,WINDOW_W,WINDOW_H,0);
     SDL_SetWindowBordered(&window,SDL_TRUE);
@@ -48,39 +51,31 @@ int main(int argc, const char *argv[])
     //surface = IMG_Load("res/User.png");
     
     currentImage = IMG_LoadTexture(renderer,"C:/Users/Moham/Documents/hi1038-project/res/User.png");
-    
+    background = IMG_LoadTexture(renderer,"C:/Users/Moham/Documents/hi1038-project/res/background.jpg");
     
     //SDL_FreeSurface(surface);
     SDL_QueryTexture(currentImage,NULL,NULL,&textureWidth,&textureHeight);
+    SDL_QueryTexture(background,NULL,NULL,&mapWidth,&mapHeight);
+
     frameHeight = textureHeight/4;
     frameWidth = textureWidth/4;
 
+    cameraRect.w = WINDOW_W;
+    cameraRect.h = WINDOW_H;
+    cameraRect.x = 0;
+    cameraRect.y = 0;
+
 
     Player player;
-    CreatePlayer(&player);
-    player.playerPosition.x = 10;
-    player.playerPosition.y = 10;
-    player.rect.w = frameWidth;
-    player.rect.h = frameHeight;
-    player.playerPosition.w = frameWidth;
-    player.playerPosition.h = frameHeight;
-    player.infected = true;
-    player.noMovement = false;
-
-    player.rect.x = player.rect.y = 0;
+    CreatePlayer(&player,10,10,frameWidth,frameHeight);
 
     Player player2;
-    CreatePlayer(&player2);
-    player2.playerPosition.x = 300;
-    player2.playerPosition.y = 300;
-    player2.rect.w = 80;
-    player2.rect.h = 80;
-
-    player2.rect.x = player2.rect.y = 50;
+    CreatePlayer(&player2,100,100,frameWidth,frameHeight);
 
 
     while (running)
     {
+        
         if(player.up == true)
         {
             player.playerPosition.y-=1;
@@ -113,48 +108,66 @@ int main(int argc, const char *argv[])
 
             }
         }
+
+
+        if (player.playerPosition.x >= WINDOW_W/2)
+        {
+            cameraRect.x = player.playerPosition.x - WINDOW_W/2;
+        }
+        else if(cameraRect.x + WINDOW_W/2 >= mapWidth)
+        {
+            cameraRect.x = mapWidth-WINDOW_W;
+        }
+        
+        if (player.playerPosition.y >= WINDOW_H/2)
+        {
+            cameraRect.y = player.playerPosition.y - WINDOW_H/2;
+        }
+       
+        
+        
         
         
         
         
         SDL_RenderClear(renderer);
-
-        HandleEvents(&player);
-        HandleBorders(&player.playerPosition, frameHeight,frameWidth);
-        HandleBorders(&player2.playerPosition, frameHeight,frameWidth);
-
-        //SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-        if (frameTime == 50)
-        {
-            frameTime = 0;
-            player.rect.x += frameWidth;
-            if (player.rect.x >= textureWidth)
-            {
-                player.rect.x = 0;
-            }
-            
-        }
-        
-        
-       
-
-
-        //SDL_RenderFillRect(renderer,&player2.playerPosition);
-        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+        SDL_RenderCopy(renderer,background,&cameraRect,NULL);
         if (player.noMovement == false)
         {
+            
+            
+            HandleEvents(&player);
+            HandleBorders(&player.playerPosition, frameHeight,frameWidth);
+            HandleBorders(&player2.playerPosition, frameHeight,frameWidth);
+
+            //SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+            if (frameTime == 60)
+            {
+                frameTime = 0;
+                player.rect.x += frameWidth;
+                if (player.rect.x >= textureWidth)
+                {
+                    player.rect.x = 0;
+                }
+                
+            }
+
+            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+
             SDL_RenderCopy(renderer,currentImage,&player.rect,&player.playerPosition);
+            SDL_RenderCopy(renderer,currentImage,&player2.rect,&player2.playerPosition);
+            
+
             SDL_RenderPresent(renderer);
             frameTime++;
+            SDL_Delay(1000/400);
+
         }
         
-        
-        
-        
-        
-        SDL_Delay(1000/400);
+
     }
     SDL_DestroyTexture(currentImage);
+    SDL_DestroyTexture(background);
     IMG_Quit();
     SDL_Quit();
     return 0;

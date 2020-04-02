@@ -1,12 +1,15 @@
 #include "player.h"
 
-void CreatePlayer(Player* player)
+void CreatePlayer(Player* player, int xPos, int yPos,int frameWidth, int frameHeight)
 {
-    player->infected = false;
+    player->infected = true;
+    player->noMovement = false;
     player->rect.x = 0;
     player->rect.y = 0;
-    player->rect.w = 0;
-    player->rect.h = 0;
-    player->playerPosition.x = 0;
-    player->playerPosition.y = 0;
+    player->rect.w = frameWidth;
+    player->rect.h = frameHeight;
+    player->playerPosition.x = xPos;
+    player->playerPosition.y = yPos;
+    player->playerPosition.w = frameWidth;
+    player->playerPosition.h = frameHeight;
 }

@@ -8,6 +8,7 @@
     "sdl_messagebox.h": "c",
     "collison.h": "c",
     "sdl_image.h": "c",
-    "stdbool.h": "c"
+    "stdbool.h": "c",
+    "player.h": "c"
   }
 }
