@@ -114,7 +114,7 @@ int main(int argc, const char *argv[])
         {
             cameraRect.x = player.playerPosition.x - WINDOW_W/2;
         }
-        else if(cameraRect.x + WINDOW_W/2 >= mapWidth)
+        if (cameraRect.x + cameraRect.w >= mapWidth)
         {
             cameraRect.x = mapWidth-WINDOW_W;
         }
@@ -123,12 +123,10 @@ int main(int argc, const char *argv[])
         {
             cameraRect.y = player.playerPosition.y - WINDOW_H/2;
         }
-       
-        
-        
-        
-        
-        
+        if (cameraRect.y + cameraRect.h >= mapHeight)
+        {
+            cameraRect.y = mapHeight-WINDOW_H;
+        }
         
         SDL_RenderClear(renderer);
         SDL_RenderCopy(renderer,background,&cameraRect,NULL);
