@@ -3,8 +3,7 @@
 #include <stdbool.h>
 #include <SDL.h>
 
-#include "main.h";
-#include "events.h";
+#include "events.h"
 
 typedef struct
 {

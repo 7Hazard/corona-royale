@@ -1,9 +1,19 @@
 #pragma once
+
 #include <SDL.h>
 #include <SDL_mixer.h>
 
-void InitAudio();
-void StopAudio();
+#ifdef __cplusplus
+#define EXTERN extern "C"
+#else
+#define EXTERN extern
+#endif
 
-extern Mix_Chunk* cough;
-extern Mix_Chunk* steps;
+typedef struct Audio
+{
+  Mix_Chunk* cough;
+  Mix_Chunk* steps;
+} Audio;
+
+EXTERN Audio* GetAudio();
+EXTERN void StopAudio();

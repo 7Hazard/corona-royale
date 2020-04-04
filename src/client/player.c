@@ -1,7 +1,7 @@
 #include "player.h"
 #include "events.h"
-#include "main.h"
 #include "audio.h"
+#include "game.h"
 
 bool pressed_w = false;
 bool pressed_s = false;
@@ -52,6 +52,8 @@ void HandlePlayerEvents(SDL_Event *event)
 
 void OnPlayerUpdate(Player* player)
 {
+    Audio* audio = GetAudio();
+
     if(pressed_w == true)
     {
         player->rect.y-=1;
@@ -71,19 +73,21 @@ void OnPlayerUpdate(Player* player)
     
     if ((pressed_w || pressed_s||pressed_a||pressed_d) && !Mix_Playing(1))
     {
-        Mix_PlayChannel(1, steps, 1);
+        Mix_PlayChannel(1, audio->steps, 1);
     }
 }
 
 void OnPlayerRender(Player* player)
 {
+    Game* game = GetGame();
+    
     if(player->infected)
     {
-        SDL_SetRenderDrawColor(renderer, 100, 0, 0, 255);
+        SDL_SetRenderDrawColor(game->renderer, 100, 0, 0, 255);
     }
     else {
-        SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+        SDL_SetRenderDrawColor(game->renderer, 0, 0, 255, 255);
     }
-    SDL_RenderFillRect(renderer, &player->rect);
+    SDL_RenderFillRect(game->renderer, &player->rect);
     
 }

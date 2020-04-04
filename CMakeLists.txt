@@ -29,10 +29,11 @@ file(COPY "res" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
 ######
 add_executable(CoronaRoyale
   src/client/main.c
+  src/client/game.cpp
+  src/client/audio.cpp
   src/client/events.c
   src/client/collision.c
   src/client/player.c
-  src/client/audio.c
 )
 target_compile_definitions(CoronaRoyale PRIVATE
 

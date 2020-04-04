@@ -1,7 +1,6 @@
 #include <stdio.h>
+#include <stdbool.h>
 #include <SDL.h>
-
-#include "main.h"
 
 void HandleBorders(SDL_Rect* rect)
 {
@@ -42,6 +41,7 @@ void HandleBorders(SDL_Rect* rect)
         rect->y = 720;
     }
 }
+
 bool DoBoxesIntersect(SDL_Rect* a, SDL_Rect* b) 
 {
   return (abs(a->x - b->x) * 2 < (a->w + b->w)) &&
