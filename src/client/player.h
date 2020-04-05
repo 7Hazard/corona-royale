@@ -3,6 +3,8 @@
 #include <stdbool.h>
 #include <SDL.h>
 
+#include "events.h"
+
 typedef struct
 {
     SDL_Rect rect;
@@ -18,3 +20,6 @@ typedef struct
 } Player;
 
 void CreatePlayer(Player* player, int xPos, int yPos,int frameWidth, int frameHeight);
+void HandlePlayerEvents(SDL_Event *event);
+void OnPlayerUpdate(Player* player);
+void OnPlayerRender(Player* player);

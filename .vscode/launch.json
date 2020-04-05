@@ -5,7 +5,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "(Windows) Run Program",
+      "name": "(Windows) Run Client",
       "request": "launch",
       "type": "cppvsdbg",
       "windows": {
@@ -19,7 +19,21 @@
       "preLaunchTask": "Build"
     },
     {
-      "name": "(macOS) Run Program",
+      "name": "(Windows) Run Server",
+      "request": "launch",
+      "type": "cppvsdbg",
+      "windows": {
+        "program": "${workspaceFolder}/BUILD/VS2019/Debug/CoronaRoyaleServer.exe",
+        "cwd": "${workspaceFolder}/BUILD/VS2019/Debug/",
+      },
+      "args": [],
+      "stopAtEntry": false,
+      "environment": [],
+      "externalConsole": true,
+      "preLaunchTask": "Build"
+    },
+    {
+      "name": "(macOS) Run Client",
       "request": "launch",
       "type": "cppdbg",
       "osx": {
@@ -32,6 +46,22 @@
       "stopAtEntry": false,
       "environment": [],
       "externalConsole": false,
+      "preLaunchTask": "Build"
+    }
+    {
+      "name": "(macOS) Run Server",
+      "request": "launch",
+      "type": "cppdbg",
+      "osx": {
+        "miDebuggerPath": "/Applications/Xcode.app/Contents/Developer/usr/bin/lldb-mi",
+        "MIMode": "lldb",
+        "program": "${workspaceFolder}/BUILD/macos/CoronaRoyaleServer",
+        "cwd": "${workspaceFolder}/BUILD/macos/",
+      },
+      "args": [],
+      "stopAtEntry": false,
+      "environment": [],
+      "externalConsole": true,
       "preLaunchTask": "Build"
     }
   ]
