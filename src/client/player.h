@@ -5,21 +5,23 @@
 
 #include "events.h"
 
-typedef struct
+typedef struct Player
 {
     SDL_Rect rect;
-    SDL_Rect playerPosition;
+    SDL_Rect position;
     SDL_Rect cameraRect;
     bool infected;
     bool left;
     bool right;
     bool up;
     bool down;
-    bool noMovement;
-
+    SDL_Texture* image;
+    int frameWidth, frameHeight;
+    int textureWidth, textureHeight;
 } Player;
 
-void CreatePlayer(Player* player, int xPos, int yPos,int frameWidth, int frameHeight);
+void CreatePlayer(Player* player, int xPos, int yPos);
 void HandlePlayerEvents(SDL_Event *event);
 void OnPlayerUpdate(Player* player);
 void OnPlayerRender(Player* player);
+bool IsPlayerMoving(Player* player);
