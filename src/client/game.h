@@ -5,8 +5,8 @@
 
 #include "player.h"
 
-#define WINDOW_W 800
-#define WINDOW_H 600
+#define WINDOW_W 720
+#define WINDOW_H 480
 
 typedef struct Game
 {

@@ -69,7 +69,7 @@ void OnPlayerUpdate(Player* player)
 {
     Audio* audio = GetAudio();
     Game *game = GetGame();
-    HandleBorders(&player->rect);
+    HandleBorders(player);
 
     if(player->up == true)
     {
@@ -130,14 +130,6 @@ void OnPlayerRender(Player* player)
 {
     Game* game = GetGame();
     
-    // if(player->infected)
-    // {
-    //     SDL_SetRenderDrawColor(game->renderer, 100, 0, 0, 255);
-    // }
-    // else {
-    //     SDL_SetRenderDrawColor(game->renderer, 0, 0, 255, 255);
-    // }
-    // SDL_RenderFillRect(game->renderer, &player->rect);
     
     SDL_RenderCopy(game->renderer, player->image, &player->rect, &player->position);
 }
