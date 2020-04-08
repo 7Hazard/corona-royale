@@ -1,50 +1,62 @@
 #include <stdio.h>
+#include <stdbool.h>
 #include <SDL.h>
 
-#include "main.h"
+#include "game.h"
 
-void HandleBorders(SDL_Rect* rect)
+void HandleBorders(Player *player)
 {
-    if (rect->x < 0 && rect->y < 0)
+    Game* game = GetGame();
+    
+    //TOP LEFT BORDER COLLISION
+    if (player->position.x < 0 && player->position.y < 0)
     {
-        rect->x = 0;
-        rect->y = 0;
+        player->position.x = 0;
+        player->position.y = 0;
     }
-    else if (rect->x > 420 && rect->y < 0)
+    //TOP RIGHT BORDER COLLISION
+    else if (player->position.x > (WINDOW_W-player->frameWidth) && player->position.y < 0)
     {
-        rect->x = 420;
-        rect->y = 0;
+        player->position.x = (WINDOW_W-player->frameWidth);
+        player->position.y = 0;
     }
-    else if (rect->x < 0 && rect->y > 720)
+    //BOTTOM LEFT BORDER COLLISION
+    else if (player->position.x < 0 && player->position.y > (WINDOW_H-player->frameHeight))
     {
-        rect->x = 0;
-        rect->y = 720;
+        player->position.x = 0;
+        player->position.y = WINDOW_H-player->frameHeight;
     }
-    else if (rect->x > 420 && rect->y > 720)
+    //BOTTOM RIGHT BORDER COLLISION
+    else if (player->position.x > WINDOW_W-player->frameWidth && player->position.y > WINDOW_H -player->frameHeight)
     {
-        rect->x = 420;
-        rect->y = 720;
+        player->position.x = WINDOW_W-player->frameWidth;
+        player->position.y = WINDOW_H -player->frameHeight;
     }
-    else if (rect->x < 0)
+    // X-AXIS COLLISION
+    else if (player->position.x < 0)
     {
-        rect->x = 0;
+        player->position.x = 0;
     }
-    else if (rect->x > 420)
+    else if (player->position.x > WINDOW_W -player->frameWidth)
     {
-        rect->x = 420;
+        player->position.x = WINDOW_W -player->frameWidth;
     }
-    else if (rect->y < 0)
+    //X_AXIS COLLISION
+
+    //Y_AXIS COLLISION
+    else if (player->position.y < 0)
     {
-        rect->y = 0;
+        player->position.y = 0;
     }
-    else if (rect->y > 720)
+    else if (player->position.y > WINDOW_H-player->frameHeight)
     {
-        rect->y = 720;
+        player->position.y = WINDOW_H-player->frameHeight;
     }
+    //Y_AXIS COLLISION
 }
+
 bool DoBoxesIntersect(SDL_Rect* a, SDL_Rect* b) 
 {
   return (abs(a->x - b->x) * 2 < (a->w + b->w)) &&
          (abs(a->y - b->y) * 2 < (a->h + b->h));
 }
-

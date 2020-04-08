@@ -1,9 +1,13 @@
 #pragma once
+
 #include <SDL.h>
 #include <SDL_mixer.h>
 
-void InitAudio();
-void StopAudio();
+typedef struct Audio
+{
+  Mix_Chunk* cough;
+  Mix_Chunk* steps;
+} Audio;
 
-extern Mix_Chunk* cough;
-extern Mix_Chunk* steps;
+Audio* GetAudio();
+void StopAudio();

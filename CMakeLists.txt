@@ -14,6 +14,7 @@ else()
   find_package(SDL2_image REQUIRED)
   find_package(SDL2_mixer REQUIRED)
   find_package(SDL2_net REQUIRED)
+  find_package(SDL2_ttf REQUIRED)
 endif()
 
 add_definitions(
@@ -29,10 +30,13 @@ file(COPY "res" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
 ######
 add_executable(CoronaRoyale
   src/client/main.c
+  src/client/game.c
+  src/client/audio.c
+  src/client/player.c
   src/client/events.c
   src/client/collision.c
-  src/client/player.c
-  src/client/audio.c
+
+  deps/SDL_FontCache/SDL_FontCache.c
 )
 target_compile_definitions(CoronaRoyale PRIVATE
 
@@ -60,12 +64,15 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     deps/SDL2_image/include
     deps/SDL2_mixer/include
     deps/SDL2_net/include
+    deps/SDL2_ttf/include
+    deps/SDL_FontCache
   )
   target_link_directories(CoronaRoyale PRIVATE
     deps/SDL2/lib/x64
     deps/SDL2_image/lib/x64
     deps/SDL2_mixer/lib/x64
     deps/SDL2_net/lib/x64
+    deps/SDL2_ttf/lib/x64
   )
   target_link_libraries(CoronaRoyale PRIVATE
     SDL2
@@ -73,6 +80,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     SDL2_image
     SDL2_mixer
     SDL2_net
+    SDL2_ttf
   )
 else()
   # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++17 -fms-extensions -fdelayed-template-parsing -fexceptions")
@@ -82,12 +90,14 @@ else()
     ${SDL2_IMAGE_INCLUDE_DIR}
     ${SDL2_MIXER_INCLUDE_DIR}
     ${SDL2_NET_INCLUDE_DIR}
+    ${SDL2_TTF_INCLUDE_DIR}
   )
   target_link_libraries(CoronaRoyale PRIVATE
     ${SDL2_LIBRARY}
     ${SDL2_IMAGE_LIBRARIES}
     ${SDL2_MIXER_LIBRARIES}
     ${SDL2_NET_LIBRARIES}
+    ${SDL2_TTF_LIBRARIES}
   )
 endif()
 
