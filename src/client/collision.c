@@ -15,31 +15,31 @@ void HandleBorders(Player *player)
         player->position.y = 0;
     }
     //TOP RIGHT BORDER COLLISION
-    else if (player->position.x > (WINDOW_W-player->frameWidth) && player->position.y < 0)
+    else if (player->position.x > (game->mapWidth-player->frameWidth) && player->position.y < 0)
     {
-        player->position.x = (WINDOW_W-player->frameWidth);
+        player->position.x = (game->mapWidth-player->frameWidth);
         player->position.y = 0;
     }
     //BOTTOM LEFT BORDER COLLISION
-    else if (player->position.x < 0 && player->position.y > (WINDOW_H-player->frameHeight))
+    else if (player->position.x < 0 && player->position.y > (game->mapHeight-player->frameHeight))
     {
         player->position.x = 0;
-        player->position.y = WINDOW_H-player->frameHeight;
+        player->position.y = game->mapHeight-player->frameHeight;
     }
     //BOTTOM RIGHT BORDER COLLISION
-    else if (player->position.x > WINDOW_W-player->frameWidth && player->position.y > WINDOW_H -player->frameHeight)
+    else if (player->position.x > game->mapWidth-player->frameWidth && player->position.y > game->mapHeight -player->frameHeight)
     {
-        player->position.x = WINDOW_W-player->frameWidth;
-        player->position.y = WINDOW_H -player->frameHeight;
+        player->position.x = game->mapWidth-player->frameWidth;
+        player->position.y = game->mapHeight -player->frameHeight;
     }
     // X-AXIS COLLISION
     else if (player->position.x < 0)
     {
         player->position.x = 0;
     }
-    else if (player->position.x > WINDOW_W -player->frameWidth)
+    else if (player->position.x > game->mapWidth -player->frameWidth)
     {
-        player->position.x = WINDOW_W -player->frameWidth;
+        player->position.x = game->mapWidth -player->frameWidth;
     }
     //X_AXIS COLLISION
 
@@ -48,9 +48,9 @@ void HandleBorders(Player *player)
     {
         player->position.y = 0;
     }
-    else if (player->position.y > WINDOW_H-player->frameHeight)
+    else if (player->position.y > game->mapHeight-player->frameHeight)
     {
-        player->position.y = WINDOW_H-player->frameHeight;
+        player->position.y = game->mapHeight-player->frameHeight;
     }
     //Y_AXIS COLLISION
 }

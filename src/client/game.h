@@ -5,8 +5,9 @@
 
 #include "player.h"
 
-#define WINDOW_W 720
-#define WINDOW_H 480
+#define WINDOW_W 800
+#define WINDOW_H 600
+
 
 typedef struct Game
 {
@@ -15,6 +16,7 @@ typedef struct Game
     SDL_Renderer* renderer;
     SDL_Texture *background;
     int mapWidth, mapHeight;
+    
     Player player;
 } Game;
 

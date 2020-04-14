@@ -52,7 +52,8 @@ int main(int argc, const char *argv[])
         SDL_RenderClear(game->renderer);
         
         // Draw background
-        SDL_RenderCopy(game->renderer, game->background, &game->player.cameraRect, NULL);
+        OnPlayerRender(&game->player);
+        SDL_RenderCopy(game->renderer, game->background, &game->player.camera.cameraRect, NULL);
         
         // if(DoBoxesIntersect(&player.rect, &player2.rect) && player2.infected != true)
         // {
