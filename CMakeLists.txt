@@ -43,6 +43,7 @@ target_compile_definitions(CoronaRoyale PRIVATE
 )
 target_include_directories(CoronaRoyale PRIVATE
   src
+  deps/SDL_FontCache
   # ${PROJECT_SOURCE_DIR}
 )
 
@@ -66,7 +67,6 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     deps/SDL2_mixer/include
     deps/SDL2_net/include
     deps/SDL2_ttf/include
-    deps/SDL_FontCache
   )
   target_link_directories(CoronaRoyale PRIVATE
     deps/SDL2/lib/x64
