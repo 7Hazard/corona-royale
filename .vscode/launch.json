@@ -47,7 +47,7 @@
       "environment": [],
       "externalConsole": false,
       "preLaunchTask": "Build"
-    }
+    },
     {
       "name": "(macOS) Run Server",
       "request": "launch",
