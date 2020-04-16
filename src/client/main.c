@@ -2,6 +2,8 @@
 #include <stdbool.h>
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_ttf.h>
+#include <SDL_FontCache.h>
 
 #include "collision.h"
 #include "events.h"
@@ -20,10 +22,16 @@ int main(int argc, const char *argv[])
 
     Game* game = GetGame();
 
+    FC_Font* font = FC_CreateFont();  
+    FC_LoadFont(font, game->renderer, "res/fonts/ComicSansMS3.ttf", 20, FC_MakeColor(255, 255, 255, 255), TTF_STYLE_BOLD|TTF_STYLE_ITALIC);
+
     while (game->running)
     {
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Camera
         frameStart = SDL_GetTicks();
 
         { /////////// STATE UPDATES PHASE BEGIN ///////////
@@ -46,6 +54,14 @@ int main(int argc, const char *argv[])
                 r = ((sin(theta)+1)/2)*255;
                 FC_DrawColor(font, game->renderer, 200, 50, FC_MakeColor(r, 20, 20, 255), "CORONA\n%s", "ROYALE");
             }
+<<<<<<< HEAD
+=======
+
+            SDL_RenderPresent(game->renderer);
+        } /////////// RENDERING PHASE END ///////////
+        
+        
+>>>>>>> Camera
 
             SDL_RenderPresent(game->renderer);
         } /////////// RENDERING PHASE END ///////////
@@ -58,8 +74,8 @@ int main(int argc, const char *argv[])
         }
     }
 
-    // SDL_DestroyTexture(currentImage);
-    // SDL_DestroyTexture(background);
+    FC_FreeFont(font);
+
     IMG_Quit();
     SDL_Quit();
     StopAudio();

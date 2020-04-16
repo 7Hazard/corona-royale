@@ -12,6 +12,7 @@ Requirements on macOS:
 * SDL2_image (run `brew install sdl2_image` in the terminal)
 * SDL2_mixer (run `brew install sdl2_mixer` in the terminal)
 * SDL2_net (run `brew install sdl2_net` in the terminal)
+* SDL2_ttf (run `brew install sdl2_ttf` in the terminal)
 
 To build/run the game:
 * Download/clone this repository
