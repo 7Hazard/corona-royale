@@ -22,27 +22,7 @@ int main(int argc, const char *argv[])
 
     while (game->running)
     {
-        // if (IsPlayerMoving(player) == false)
-        // {
-        //     HandleEvents(&player);
-
-        //     //SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-        //     if (frameTime == 60)
-        //     {
-        //         frameTime = 0;
-        //         player.rect.x += frameWidth;
-        //         if (player.rect.x >= textureWidth)
-        //         {
-        //             player.rect.x = 0;
-        //         }
-                
-        //     }
-
-        //     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-        // }
         
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-
         frameStart = SDL_GetTicks();
 
         HandleEvents();
@@ -55,14 +35,8 @@ int main(int argc, const char *argv[])
         OnPlayerRender(&game->player);
         SDL_RenderCopy(game->renderer, game->background, &game->player.camera.cameraRect, NULL);
         
-        // if(DoBoxesIntersect(&player.rect, &player2.rect) && player2.infected != true)
-        // {
-        //     Mix_PlayChannel(-1, audio->cough, 0);
-        //     player2.infected = true;
-        // }
 
         OnPlayerRender(&game->player);
-        //OnPlayerRender(&player2);
         
         SDL_RenderPresent(game->renderer);
 

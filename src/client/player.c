@@ -113,7 +113,7 @@ void OnPlayerUpdate(Player* player)
         player->camera.cameraRect.y = 0;
     }
 
-    // prevent background from stretching when going beyond boundries
+    // prevent background image from stretching when going beyond boundries
     if (player->camera.cameraRect.x + player->camera.cameraRect.w > game->mapWidth)
     {
         player->camera.cameraRect.x = game->mapWidth - player->camera.cameraRect.w;
@@ -122,7 +122,6 @@ void OnPlayerUpdate(Player* player)
     {
         player->camera.cameraRect.y = game->mapHeight - player->camera.cameraRect.h;
     }
-    
     
     player->camera.drawingRect.x = player->position.x - player->camera.cameraRect.x;
     player->camera.drawingRect.y = player->position.y - player->camera.cameraRect.y;
