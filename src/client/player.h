@@ -2,17 +2,13 @@
 
 #include <stdbool.h>
 #include <SDL.h>
-
+#include "mouseInput.h"
 #include "events.h"
 
 
-typedef struct mouse
-{
-    int x;
-    int y;
-} Mouse;
 
-typedef struct camera
+
+typedef struct Camera
 {
     SDL_Rect cameraRect;
     SDL_Rect drawingRect;

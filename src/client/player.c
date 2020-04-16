@@ -74,8 +74,6 @@ void OnPlayerUpdate(Player* player)
     Game *game = GetGame();
     HandleBorders(player);
 
-    
-
     if(player->up == true)
     {
         player->position.y-=7;
