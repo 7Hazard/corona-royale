@@ -12,4 +12,3 @@ typedef struct Mouse
 } Mouse;
 
 float getAngle(int x1, int x2, int y1, int y2);
-Mouse* getMouse();
