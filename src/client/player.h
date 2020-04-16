@@ -2,7 +2,7 @@
 
 #include <stdbool.h>
 #include <SDL.h>
-#include "mouseInput.h"
+#include "mouse.h"
 #include "events.h"
 
 
