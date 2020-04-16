@@ -27,6 +27,7 @@ int main(int argc, const char *argv[])
 
     while (game->running)
     {
+
         frameStart = SDL_GetTicks();
 
         { /////////// STATE UPDATES PHASE BEGIN ///////////
@@ -39,7 +40,7 @@ int main(int argc, const char *argv[])
             SDL_RenderClear(game->renderer);
             
             // Draw background
-            SDL_RenderCopy(game->renderer, game->background, &game->player.cameraRect, NULL);
+            SDL_RenderCopy(game->renderer, game->background, &game->player.camera.cameraRect, NULL);
 
             OnPlayerRender(&game->player);
 
@@ -52,7 +53,7 @@ int main(int argc, const char *argv[])
 
             SDL_RenderPresent(game->renderer);
         } /////////// RENDERING PHASE END ///////////
-
+        
         frameTime = SDL_GetTicks() - frameStart;
         if (frameDelay > frameTime)
         {
