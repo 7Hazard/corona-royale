@@ -32,8 +32,8 @@ Game* GetGame()
         game.running = true;
         game.window = SDL_CreateWindow("Corona Royale", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_W, WINDOW_H, 0);
         game.renderer = SDL_CreateRenderer(game.window, -1, 0);
-        CreatePlayer(&game.player,10,10);
-        game.background = IMG_LoadTexture(game.renderer, "res/background.jpg");
+        CreatePlayer(&game.player,WINDOW_W/2,WINDOW_H/2);
+        game.background = IMG_LoadTexture(game.renderer, "res/BIG.jpg");
         SDL_QueryTexture(game.background, NULL, NULL, &game.mapWidth, &game.mapHeight);
         // DONT FORGET TO INITIALIZE ALL MEMBERS OF THE STRUCT
     }

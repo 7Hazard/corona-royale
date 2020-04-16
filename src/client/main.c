@@ -52,6 +52,23 @@ int main(int argc, const char *argv[])
 
             SDL_RenderPresent(game->renderer);
         } /////////// RENDERING PHASE END ///////////
+        
+        frameStart = SDL_GetTicks();
+
+        HandleEvents();
+        OnPlayerUpdate(&game->player);
+        
+        SDL_SetRenderDrawColor(game->renderer, 0, 0, 0, 255);
+        SDL_RenderClear(game->renderer);
+        
+        // Draw background
+        OnPlayerRender(&game->player);
+        SDL_RenderCopy(game->renderer, game->background, &game->player.camera.cameraRect, NULL);
+        
+
+        OnPlayerRender(&game->player);
+        
+        SDL_RenderPresent(game->renderer);
 
         frameTime = SDL_GetTicks() - frameStart;
         if (frameDelay > frameTime)

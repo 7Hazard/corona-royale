@@ -5,16 +5,31 @@
 
 #include "events.h"
 
+
+typedef struct mouse
+{
+    int x;
+    int y;
+} Mouse;
+
+typedef struct camera
+{
+    SDL_Rect cameraRect;
+    SDL_Rect drawingRect;
+}Camera;
+
+
 typedef struct Player
 {
     SDL_Rect rect;
     SDL_Rect position;
-    SDL_Rect cameraRect;
+    Camera camera;
     bool infected;
     bool left;
     bool right;
     bool up;
     bool down;
+    Mouse mouse;
     SDL_Texture* image;
     int frameWidth, frameHeight;
     int textureWidth, textureHeight;
