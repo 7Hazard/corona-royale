@@ -10,6 +10,7 @@
 #include "player.h"
 #include "game.h"
 #include "audio.h"
+#include "network.h"
 
 int main(int argc, const char *argv[])
 {
@@ -21,15 +22,17 @@ int main(int argc, const char *argv[])
     int frameTime;
 
     Game* game = GetGame();
-
     FC_Font* font = FC_CreateFont();  
     FC_LoadFont(font, game->renderer, "res/fonts/ComicSansMS3.ttf", 20, FC_MakeColor(255, 255, 255, 255), TTF_STYLE_BOLD|TTF_STYLE_ITALIC);
+    Network* network = GetNetwork();
+    
+    const char *text = "hello server";
+    SDLNet_TCP_Send(network->tcpsock,text,strlen(text)+1);
 
     while (game->running)
     {
-
         frameStart = SDL_GetTicks();
-
+        
         { /////////// STATE UPDATES PHASE BEGIN ///////////
             HandleEvents();
             OnPlayerUpdate(&game->player);
