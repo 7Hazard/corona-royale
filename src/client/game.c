@@ -1,7 +1,8 @@
 #pragma once
 
 #include "game.h"
-#include"timer.h"
+#include "timer.h"
+#include "texture.h"
 #include <SDL_image.h>
 #include <stdio.h>
 #include <string.h>
@@ -35,21 +36,7 @@ Game* GetGame()
         game.window = SDL_CreateWindow("Corona Royale", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_W, WINDOW_H, 0);
         game.renderer = SDL_CreateRenderer(game.window, -1, 0);
         CreatePlayer(&game.player,10,10);
-        SDL_Surface* surf =  IMG_Load("res/background.jpg");
-        game.background = SDL_CreateTextureFromSurface(game.renderer, surf);
-        SDL_FreeSurface(surf);
-        if(game.background == NULL)
-        {
-            char msg[256];
-            sprintf(msg, "Could not load texture res/background.jpg\nError: %s", IMG_GetError());
-            SDL_ShowSimpleMessageBox(
-                SDL_MESSAGEBOX_ERROR,
-                "Could not load texture",
-                msg,
-                NULL
-            );
-            abort();
-        }
+        game.background = LoadTexture("res/background.jpg");
         SDL_QueryTexture(game.background, NULL, NULL, &game.mapWidth, &game.mapHeight);
         // DONT FORGET TO INITIALIZE ALL MEMBERS OF THE STRUCT
         CreateTimer(&game.timer);

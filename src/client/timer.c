@@ -39,8 +39,8 @@ void CreateTimer(Timer* timer){
 
     timer->rect.x = 0;
     timer->rect.y = 0;
-    timer->rect.w = 70;
-    timer->rect.h = 50;
+    timer->rect.w = 100;
+    timer->rect.h = 100;
 
     timer->position.x = 10;
     timer->position.y = 10;
