@@ -16,7 +16,13 @@ void CreateTimer(Timer* timer){
     timer->mPrevTime = 0;
     timer->mStarted = true;
 
-    timer->Sans = TTF_OpenFont("/Users/milanlanguric/Desktop/SDL portfolio/SDL_timer/Assets/OpenSans-Semibold.ttf",24);
+    timer->Sans = TTF_OpenFont("res/fonts/OpenSans-Semibold.ttf",24);
+    if(!timer->Sans) {
+        printf("TTF_OpenFont: %s\n", TTF_GetError());
+        // handle error
+        abort();
+    }
+
     if(!timer->Sans){
         printf("Error %s", TTF_GetError());
     }

@@ -11,7 +11,21 @@ void CreatePlayer(Player* player, int xPos, int yPos)
 {
     Game *game = GetGame();
 
-    player->image = IMG_LoadTexture(game->renderer, "res/User.png");
+    SDL_Surface* surf =  IMG_Load("res/User.png");
+    player->image = SDL_CreateTextureFromSurface(game->renderer, surf);
+    SDL_FreeSurface(surf);
+    if(player->image == NULL)
+    {
+        char msg[256];
+        sprintf(msg, "Could not load texture res/User.png\nError: %s", IMG_GetError());
+        SDL_ShowSimpleMessageBox(
+            SDL_MESSAGEBOX_ERROR,
+            "Could not load texture",
+            msg,
+            NULL
+        );
+        abort();
+    }
     SDL_QueryTexture(player->image, NULL, NULL, &player->textureWidth, &player->textureHeight);
     player->frameWidth = (player->textureWidth)/4;
     player->frameHeight = (player->textureHeight)/4;

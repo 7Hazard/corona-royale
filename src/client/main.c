@@ -15,7 +15,7 @@
 
 int main(int argc, const char *argv[])
 {
-    printf("Corona Royale\n");
+    SDL_Log("Corona Royale\n");
 
     const int fps = 60;
     const int frameDelay = 1000/fps;
@@ -24,12 +24,9 @@ int main(int argc, const char *argv[])
 
     Game* game = GetGame();
 
-
-   if (TTF_Init() < 0) { // ej probelm
+    if (TTF_Init() < 0) { // ej probelm
         printf("Kuksugare");
     }
-
-
 
     while (game->running)
     {
