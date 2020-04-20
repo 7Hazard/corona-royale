@@ -1,7 +1,7 @@
 {
     "configurations": [
         {
-            "name": "Win32",
+            "name": "Win32 Client",
             "includePath": [
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/deps/SDL2/include",
@@ -13,7 +13,30 @@
             "defines": [
                 "_DEBUG",
                 "UNICODE",
-                "_UNICODE"
+                "_UNICODE",
+                "CR_CLIENT"
+            ],
+            "windowsSdkVersion": "10.0.18362.0",
+            "compilerPath": "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.21.27702/bin/Hostx64/x64/cl.exe",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "msvc-x64"
+        },
+        {
+            "name": "Win32 Server",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/deps/SDL2/include",
+                "${workspaceFolder}/deps/SDL2_image/include",
+                "${workspaceFolder}/deps/SDL2_net/include",
+                "${workspaceFolder}/deps/SDL2_ttf/include",
+                "${workspaceFolder}/deps/SDL_FontCache"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE",
+                "CR_SERVER"
             ],
             "windowsSdkVersion": "10.0.18362.0",
             "compilerPath": "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.21.27702/bin/Hostx64/x64/cl.exe",

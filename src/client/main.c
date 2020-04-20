@@ -5,6 +5,11 @@
 #include <SDL_ttf.h>
 #include <SDL_FontCache.h>
 
+#ifdef _WIN32
+#include "Windows.h"
+#endif
+
+#include "memory.h"
 #include "collision.h"
 #include "events.h"
 #include "player.h"
@@ -24,10 +29,16 @@ int main(int argc, const char *argv[])
     Game* game = GetGame();
     FC_Font* font = FC_CreateFont();  
     FC_LoadFont(font, game->renderer, "res/fonts/ComicSansMS3.ttf", 20, FC_MakeColor(255, 255, 255, 255), TTF_STYLE_BOLD|TTF_STYLE_ITALIC);
+    
     Network* network = GetNetwork();
     
-    const char *text = "hello server";
-    SDLNet_TCP_Send(network->tcpsock,text,strlen(text)+1);
+    // Alloc text
+    const char* text = "hello server";
+    if(!SendTCPMessage(text, strlen(text)+1))
+    {
+        SDL_Log("Could not send message to server");
+        abort();
+    }
 
     while (game->running)
     {
