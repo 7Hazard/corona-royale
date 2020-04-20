@@ -16,6 +16,7 @@ typedef struct Game
     SDL_Texture *background;
     int mapWidth, mapHeight;
     Player player;
+    int state;
 } Game;
 
 Game* GetGame();

@@ -11,6 +11,7 @@
 #include "game.h"
 #include "audio.h"
 
+
 int main(int argc, const char *argv[])
 {
     printf("Corona Royale\n");
@@ -62,7 +63,6 @@ int main(int argc, const char *argv[])
     }
 
     FC_FreeFont(font);
-
     IMG_Quit();
     SDL_Quit();
     StopAudio();
