@@ -35,6 +35,7 @@ add_executable(CoronaRoyale
   src/client/player.c
   src/client/events.c
   src/client/collision.c
+  src/client/timer.c
 
   deps/SDL_FontCache/SDL_FontCache.c
 )

@@ -1,15 +1,17 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include <string.h>
+#include <stdlib.h>
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
-#include <SDL_FontCache.h>
 
 #include "collision.h"
 #include "events.h"
 #include "player.h"
 #include "game.h"
 #include "audio.h"
+#include "timer.h"
 
 int main(int argc, const char *argv[])
 {
@@ -22,12 +24,18 @@ int main(int argc, const char *argv[])
 
     Game* game = GetGame();
 
-    FC_Font* font = FC_CreateFont();  
-    FC_LoadFont(font, game->renderer, "res/fonts/ComicSansMS3.ttf", 20, FC_MakeColor(255, 255, 255, 255), TTF_STYLE_BOLD|TTF_STYLE_ITALIC);
+
+   if (TTF_Init() < 0) { // ej probelm
+        printf("Kuksugare");
+    }
+
+
 
     while (game->running)
     {
         frameStart = SDL_GetTicks();
+        UpdateTimer(&game->timer);
+        CheckTime(&game->timer);
 
         { /////////// STATE UPDATES PHASE BEGIN ///////////
             HandleEvents();
@@ -42,13 +50,21 @@ int main(int argc, const char *argv[])
             SDL_RenderCopy(game->renderer, game->background, &game->player.cameraRect, NULL);
 
             OnPlayerRender(&game->player);
+            
+            UpdateTimer(&game->timer);
+            sprintf(game->timer.timerBuffer,"%d:%d", game->timer.mMinuteTime,game->timer.mDeltaTime); // copy string (timer.mStartTicks)to buffer
 
-            { // Draw CORONA ROYALE text
-                static Uint8 r = 0;
-                static float theta = 0.f; theta+=0.03f;
-                r = ((sin(theta)+1)/2)*255;
-                FC_DrawColor(font, game->renderer, 200, 50, FC_MakeColor(r, 20, 20, 255), "CORONA\n%s", "ROYALE");
+            if(!game->timer.mLast10Sek){
+                game->timer.surfaceTime = TTF_RenderText_Solid(game->timer.Sans,game->timer.timerBuffer ,game->timer.White);
+            }else if(game->timer.mLast10Sek){
+                game->timer.surfaceTime = TTF_RenderText_Solid(game->timer.Sans,game->timer.timerBuffer ,game->timer.Red);
             }
+
+            game->timer.textureTime = SDL_CreateTextureFromSurface(game->renderer, game->timer.surfaceTime); //now you can convert it into a texture
+            SDL_RenderCopy(game->renderer, game->timer.textureTime, NULL, &game->timer.rect);   
+    
+
+            //lägg in en till sdl renderer
 
             SDL_RenderPresent(game->renderer);
         } /////////// RENDERING PHASE END ///////////
@@ -60,7 +76,6 @@ int main(int argc, const char *argv[])
         }
     }
 
-    FC_FreeFont(font);
 
     IMG_Quit();
     SDL_Quit();

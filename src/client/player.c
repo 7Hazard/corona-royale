@@ -4,6 +4,7 @@
 #include "events.h"
 #include "audio.h"
 #include "game.h"
+#include "timer.h"
 #include "collision.h"
 
 void CreatePlayer(Player* player, int xPos, int yPos)
@@ -46,7 +47,8 @@ void HandlePlayerEvents(SDL_Event *event)
             break;
             case SDLK_s: player->down = true;
             break;
-            
+            case SDLK_m: game->timer.mStarted = true;
+            break;
         }
     }
     if(event->type == SDL_KEYUP)

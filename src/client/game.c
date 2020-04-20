@@ -1,8 +1,10 @@
 #pragma once
 
 #include "game.h"
+#include"timer.h"
 #include <SDL_image.h>
 #include <stdio.h>
+
 
 Game* GetGame()
 {
@@ -36,6 +38,8 @@ Game* GetGame()
         game.background = IMG_LoadTexture(game.renderer, "res/background.jpg");
         SDL_QueryTexture(game.background, NULL, NULL, &game.mapWidth, &game.mapHeight);
         // DONT FORGET TO INITIALIZE ALL MEMBERS OF THE STRUCT
+        CreateTimer(&game.timer);
+        
     }
 
     return &game;
