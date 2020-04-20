@@ -23,6 +23,8 @@ int main(int argc, const char *argv[])
 
     Game* game = GetGame();
 
+    game->state = CR_STATE_STARTING;
+
     FC_Font* font = FC_CreateFont();  
     FC_LoadFont(font, game->renderer, "res/fonts/ComicSansMS3.ttf", 20, FC_MakeColor(255, 255, 255, 255), TTF_STYLE_BOLD|TTF_STYLE_ITALIC);
 

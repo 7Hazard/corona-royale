@@ -35,6 +35,7 @@ Game* GetGame()
         CreatePlayer(&game.player,WINDOW_W/2,WINDOW_H/2);
         game.background = IMG_LoadTexture(game.renderer, "res/BIG.jpg");
         SDL_QueryTexture(game.background, NULL, NULL, &game.mapWidth, &game.mapHeight);
+        game.state = CR_STATE_WAITING;
         // DONT FORGET TO INITIALIZE ALL MEMBERS OF THE STRUCT
     }
 

@@ -8,6 +8,9 @@
 #define WINDOW_W 375
 #define WINDOW_H 667
 
+enum GameState {CR_STATE_WAITING, CR_STATE_STARTING, CR_STATE_STARTED};
+
+
 typedef struct Game
 {
     bool running;
@@ -16,7 +19,7 @@ typedef struct Game
     SDL_Texture *background;
     int mapWidth, mapHeight;
     Player player;
-    int state;
+    enum GameState state;
 } Game;
 
 Game* GetGame();
