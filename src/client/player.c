@@ -10,6 +10,12 @@ void CreatePlayer(Player* player, int xPos, int yPos)
 {
     Game *game = GetGame();
 
+    player->positionMutex = SDL_CreateMutex();
+    player->position.x = xPos;
+    player->position.y = yPos;
+    player->position.w = player->frameWidth;
+    player->position.h = player->frameHeight;
+
     player->image = IMG_LoadTexture(game->renderer, "res/User2.png");
     SDL_QueryTexture(player->image, NULL, NULL, &player->textureWidth, &player->textureHeight);
     player->frameWidth = (player->textureWidth);
@@ -19,10 +25,6 @@ void CreatePlayer(Player* player, int xPos, int yPos)
     player->rect.y = 0;
     player->rect.w = player->frameWidth;
     player->rect.h = player->frameHeight;
-    player->position.x = xPos;
-    player->position.y = yPos;
-    player->position.w = player->frameWidth;
-    player->position.h = player->frameHeight;
     player->camera.drawingRect.w = player->frameWidth;
     player->camera.drawingRect.h = player->frameHeight;
     player->camera.cameraRect.w = WINDOW_W;
@@ -65,7 +67,6 @@ void HandlePlayerEvents(SDL_Event *event)
             break;
         }
     }
-    
 }
 
 void OnPlayerUpdate(Player* player)
@@ -74,6 +75,7 @@ void OnPlayerUpdate(Player* player)
     Game *game = GetGame();
     HandleBorders(player);
 
+    SDL_LockMutex(player->positionMutex);
     if(player->up == true)
     {
         player->position.y-=7;
@@ -90,6 +92,9 @@ void OnPlayerUpdate(Player* player)
     {
         player->position.x+=7;
     }
+
+    int posx = player->position.x, posy = player->position.y;
+    SDL_UnlockMutex(player->positionMutex);
    
     if (IsPlayerMoving(player) && !Mix_Playing(1))
     {
@@ -97,8 +102,8 @@ void OnPlayerUpdate(Player* player)
     }
 
     //make player centered on the screen
-    player->camera.cameraRect.x = (player->position.x + player->textureWidth/2) - WINDOW_W/2;
-    player->camera.cameraRect.y = (player->position.y + player->textureHeight/2) - WINDOW_H/2;
+    player->camera.cameraRect.x = (posx + player->textureWidth/2) - WINDOW_W/2;
+    player->camera.cameraRect.y = (posy + player->textureHeight/2) - WINDOW_H/2;
 
 
     //background rendering boundries
@@ -121,8 +126,8 @@ void OnPlayerUpdate(Player* player)
         player->camera.cameraRect.y = game->mapHeight - player->camera.cameraRect.h;
     }
     
-    player->camera.drawingRect.x = player->position.x - player->camera.cameraRect.x;
-    player->camera.drawingRect.y = player->position.y - player->camera.cameraRect.y;
+    player->camera.drawingRect.x = posx - player->camera.cameraRect.x;
+    player->camera.drawingRect.y = posy - player->camera.cameraRect.y;
 }
 
 void OnPlayerRender(Player* player)
@@ -135,4 +140,12 @@ void OnPlayerRender(Player* player)
 bool IsPlayerMoving(Player* player)
 {
     return player->up || player->down || player->left || player->right;
+}
+
+void SetPlayerPosition(Player* player, int x, int y)
+{
+    SDL_LockMutex(player->positionMutex);
+    player->position.x = x;
+    player->position.y = y;
+    SDL_UnlockMutex(player->positionMutex);
 }

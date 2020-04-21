@@ -18,23 +18,20 @@
 #include "shared/network.h"
 #include "shared/data.h"
 
-int main(int argc, const char *argv[])
+int NetworkThread(void *ptr)
 {
-    printf("Corona Royale\n");
-
-    const int fps = 60;
-    const int frameDelay = 1000/fps;
-    Uint32 frameStart;
-    int frameTime;
-
     Game* game = GetGame();
-    FC_Font* font = FC_CreateFont();  
-    FC_LoadFont(font, game->renderer, "res/fonts/ComicSansMS3.ttf", 20, FC_MakeColor(255, 255, 255, 255), TTF_STYLE_BOLD|TTF_STYLE_ITALIC);
-    
     Network* network = GetNetwork();
+
     if(!ConnectTCP("localhost"))
     {
         SDL_Log("COULD NOT CONNECT TO GAME SERVER");
+        SDL_ShowSimpleMessageBox(
+            SDL_MESSAGEBOX_ERROR,
+            "Connection error",
+            "Could not connect to server",
+            NULL
+        );
     }
     
     // Alloc text
@@ -45,7 +42,7 @@ int main(int argc, const char *argv[])
         abort();
     }
     
-    {
+    { // Get player data
         uint16_t len = GetTCPMessageLength();
         if(len == 0)
         {
@@ -65,9 +62,33 @@ int main(int argc, const char *argv[])
             abort();
         }
 
-        game->player.position.x = data.x;
-        game->player.position.y = data.y;
+        SetPlayerPosition(&game->player, data.x, data.y);
     }
+
+    // Network loop
+    while (1)
+    {
+        
+    }
+
+    return 0;
+}
+
+int main(int argc, const char *argv[])
+{
+    SDL_Log("Corona Royale\n");
+
+    const int fps = 60;
+    const int frameDelay = 1000/fps;
+    Uint32 frameStart;
+    int frameTime;
+
+    Game* game = GetGame();
+    FC_Font* font = FC_CreateFont();  
+    FC_LoadFont(font, game->renderer, "res/fonts/ComicSansMS3.ttf", 20, FC_MakeColor(255, 255, 255, 255), TTF_STYLE_BOLD|TTF_STYLE_ITALIC);
+    
+    // Start network thread
+    SDL_Thread* networkThread = SDL_CreateThread(NetworkThread, "NetworkThread", (void *)NULL);
 
     while (game->running)
     {

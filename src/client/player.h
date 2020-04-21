@@ -5,19 +5,16 @@
 #include "mouse.h"
 #include "events.h"
 
-
-
-
 typedef struct Camera
 {
     SDL_Rect cameraRect;
     SDL_Rect drawingRect;
-}Camera;
-
+} Camera;
 
 typedef struct Player
 {
     SDL_Rect rect;
+    SDL_mutex* positionMutex;
     SDL_Rect position;
     Camera camera;
     bool infected;
@@ -36,3 +33,4 @@ void HandlePlayerEvents(SDL_Event *event);
 void OnPlayerUpdate(Player* player);
 void OnPlayerRender(Player* player);
 bool IsPlayerMoving(Player* player);
+void SetPlayerPosition(Player* player, int x, int y);
