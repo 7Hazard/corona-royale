@@ -25,6 +25,10 @@ add_definitions(
 # Copy resources into build output
 file(COPY "res" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
 
+set(SHARED_SOURCES
+  src/shared/network.c
+)
+
 ######
 ###### CLIENT
 ######
@@ -35,10 +39,10 @@ add_executable(CoronaRoyale
   src/client/player.c
   src/client/events.c
   src/client/collision.c
-  
-  src/network.c
 
   deps/SDL_FontCache/SDL_FontCache.c
+
+  ${SHARED_SOURCES}
 )
 target_compile_definitions(CoronaRoyale PRIVATE
   CR_CLIENT
@@ -118,7 +122,7 @@ endif()
 add_executable(CoronaRoyaleServer
   src/server/main.c
 
-  src/network.c
+  ${SHARED_SOURCES}
 )
 target_compile_definitions(CoronaRoyaleServer PRIVATE
   CR_SERVER

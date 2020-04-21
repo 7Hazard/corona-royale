@@ -3,9 +3,9 @@
 #include <string.h>
 #include <stdbool.h>
 
-#include "memory.h"
-#include "network.h"
-#include "data.h"
+#include "shared/memory.h"
+#include "shared/network.h"
+#include "shared/data.h"
 
 #define MAXLEN 1024
 

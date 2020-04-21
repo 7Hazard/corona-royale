@@ -15,8 +15,8 @@
 #include "player.h"
 #include "game.h"
 #include "audio.h"
-#include "network.h"
-#include "data.h"
+#include "shared/network.h"
+#include "shared/data.h"
 
 int main(int argc, const char *argv[])
 {

@@ -3,7 +3,7 @@
 #include <SDL_net.h>
 #include <stdbool.h>
 
-#include "network.h"
+#include "shared/network.h"
 
 #define PORT 6969
 
@@ -135,3 +135,4 @@ bool ReadTCPMessage(TCPsocket* socket, uint8_t* buffer,uint16_t len)
 
     return true;
 }
+
