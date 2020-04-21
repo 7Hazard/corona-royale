@@ -5,15 +5,15 @@
 #include "audio.h"
 #include "game.h"
 #include "timer.h"
+#include "texture.h"
 #include "collision.h"
 
 void CreatePlayer(Player* player, int xPos, int yPos)
 {
     Game *game = GetGame();
 
-    player->textureHeight("res/User2.png"); 
-    player->textureWidth("res/User2.png");
-    SDL_QueryTexture(player->image, NULL, NULL, &player->textureWidth, &player->textureHeight);
+    player->texture = LoadTexture("res/User2.png");
+    SDL_QueryTexture(player->texture, NULL, NULL, &player->textureWidth, &player->textureHeight);
     player->frameWidth = (player->textureWidth);
     player->frameHeight = (player->textureHeight);
     player->infected = true;
@@ -132,7 +132,7 @@ void OnPlayerRender(Player* player)
 {
     Game* game = GetGame();
     
-    SDL_RenderCopy(game->renderer, player->image, &player->rect, &player->camera.drawingRect);
+    SDL_RenderCopy(game->renderer, player->texture, &player->rect, &player->camera.drawingRect);
 }
 
 bool IsPlayerMoving(Player* player)

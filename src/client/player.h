@@ -26,7 +26,7 @@ typedef struct Player
     bool up;
     bool down;
     Mouse mouse;
-    SDL_Texture* image;
+    SDL_Texture* texture;
     int frameWidth, frameHeight;
     int textureWidth, textureHeight;
 } Player;
