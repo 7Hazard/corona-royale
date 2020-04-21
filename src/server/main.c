@@ -5,6 +5,7 @@
 
 #include "memory.h"
 #include "network.h"
+#include "data.h"
 
 #define MAXLEN 1024
 
@@ -25,6 +26,11 @@ int main(int argc, char const *argv[])
 			printf("Connection incoming\n");
 
             uint16_t len = GetTCPMessageLength(clientSock);
+            if(len == 0)
+            {
+                printf("Could not get length of TCP message, connection invalid!");
+                continue;
+            }
             printf("TCP Message length: %d\n", len);
 
             // Stack allocate enough memory for content
@@ -38,6 +44,14 @@ int main(int argc, char const *argv[])
             printf("Recieved: %s\n", content);
 
             // SEND START INFO TO PLAYER
+            {
+                srand(time(NULL));
+                PlayerData data;
+                data.x = rand() % 500 + 1;
+                data.y = rand() % 500 + 1;
+            
+                SendTCPMessage(clientSock, &data, sizeof(data));
+            }
             
 		}
 	}

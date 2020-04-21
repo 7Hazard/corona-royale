@@ -16,6 +16,7 @@
 #include "game.h"
 #include "audio.h"
 #include "network.h"
+#include "data.h"
 
 int main(int argc, const char *argv[])
 {
@@ -42,6 +43,30 @@ int main(int argc, const char *argv[])
     {
         SDL_Log("Could not send message to server");
         abort();
+    }
+    
+    {
+        uint16_t len = GetTCPMessageLength();
+        if(len == 0)
+        {
+            SDL_ShowSimpleMessageBox(
+                SDL_MESSAGEBOX_ERROR,
+                "TCP read failed",
+                "Could not get length of player data",
+                NULL
+            );
+            abort();
+        }
+        
+        PlayerData data;
+        if(!ReadTCPMessage(&data, len))
+        {
+            SDL_Log("COULD NOT READ PLAYER DATA");
+            abort();
+        }
+
+        game->player.position.x = data.x;
+        game->player.position.y = data.y;
     }
 
     while (game->running)
