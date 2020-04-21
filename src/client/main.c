@@ -31,6 +31,10 @@ int main(int argc, const char *argv[])
     FC_LoadFont(font, game->renderer, "res/fonts/ComicSansMS3.ttf", 20, FC_MakeColor(255, 255, 255, 255), TTF_STYLE_BOLD|TTF_STYLE_ITALIC);
     
     Network* network = GetNetwork();
+    if(!ConnectTCP("localhost"))
+    {
+        SDL_Log("COULD NOT CONNECT TO GAME SERVER");
+    }
     
     // Alloc text
     const char* text = "hello server";

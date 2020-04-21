@@ -5,7 +5,6 @@
 
 #include "network.h"
 
-#define MAX_CONNECTIONS 2
 #define PORT 6969
 
 Network* GetNetwork()
@@ -24,9 +23,8 @@ Network* GetNetwork()
             exit(1);
         }
 
-        IPaddress ip;
-
 #ifdef CR_SERVER
+        IPaddress ip;
         // create a listening TCP socket on port 6969 (server)
 
         if(SDLNet_ResolveHost(&ip, NULL, PORT) == -1) {
@@ -37,25 +35,35 @@ Network* GetNetwork()
 
         network.tcpsock = SDLNet_TCP_Open(&ip);
 #else
-        if(SDLNet_ResolveHost(&ip, "localhost", PORT) == -1) {
-            printf("SDLNet_ResolveHost: %s\n", SDLNet_GetError());
-            abort();
-            exit(2);
-        }
-
-        network.tcpsock = SDLNet_TCP_Open(&ip);
+        network.tcpsock = NULL;
 #endif
-
-        if(!network.tcpsock) {
-            printf("SDLNet_TCP_Open: %s\n", SDLNet_GetError());
-            abort();
-            exit(3);
-        }
-        // accept a connection coming in on server_tcpsock
     }
     
     return &network;
 }
+
+#ifdef CR_CLIENT
+bool ConnectTCP(const char* host)
+{
+    Network* network = GetNetwork();
+
+    IPaddress ip;
+
+    if(SDLNet_ResolveHost(&ip, host, PORT) == -1) {
+        printf("SDLNet_ResolveHost: %s\n", SDLNet_GetError());
+        return false;
+    }
+    
+    network->tcpsock = SDLNet_TCP_Open(&ip);
+
+    if(network->tcpsock == 0) {
+        printf("SDLNet_TCP_Open: %s\n", SDLNet_GetError());
+        return false;
+    }
+
+    return true;
+}
+#endif
 
 #ifdef CR_CLIENT
 bool SendTCPMessage(uint8_t* content, uint16_t contentLength)
