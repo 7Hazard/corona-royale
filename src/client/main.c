@@ -25,8 +25,7 @@ int main(int argc, const char *argv[])
 
     Game* game = GetGame();
 
-    if (TTF_Init() < 0) { // ej probelm
-        printf("Error\n");
+    if (TTF_Init() < 0) { 
         abort();
     }
 
@@ -50,8 +49,6 @@ int main(int argc, const char *argv[])
             OnPlayerRender(&game->player);
             
             RendererTimer(&game->timer);
-
-            //lägg in en till sdl renderer
 
             SDL_RenderPresent(game->renderer);
         } /////////// RENDERING PHASE END ///////////

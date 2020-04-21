@@ -19,14 +19,7 @@ void CreateTimer(Timer *timer)
     timer->Sans = TTF_OpenFont("res/fonts/OpenSans-Semibold.ttf", 24);
     if (!timer->Sans)
     {
-        printf("TTF_OpenFont: %s\n", TTF_GetError());
-        // handle error
         abort();
-    }
-
-    if (!timer->Sans)
-    {
-        printf("Error %s", TTF_GetError());
     }
 
     timer->White.a = 255;
@@ -50,6 +43,7 @@ void CreateTimer(Timer *timer)
     timer->position.h = 50;
 
     timer->surfaceTime = NULL;
+   
 }
 
 void ResetSeconds(Timer *timer)
@@ -79,21 +73,6 @@ void UpdateTimer(Timer *timer)
             ResetSeconds;
         }
     }
-}
-
-void InitFontTexture(Timer *timer)
-{
-    timer->Sans = TTF_OpenFont("res/fonts/OpenSans-Semibold.ttf", 24);
-
-    timer->White.a = 255;
-    timer->White.b = 255;
-    timer->White.g = 255;
-    timer->White.r = 255;
-
-    timer->Red.a = 255;
-    timer->Red.b = 0;
-    timer->Red.g = 0;
-    timer->Red.r = 0;
 }
 
 void RendererTimer(Timer *timer)

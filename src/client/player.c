@@ -50,8 +50,6 @@ void HandlePlayerEvents(SDL_Event *event)
             break;
             case SDLK_s: player->down = true;
             break;
-            case SDLK_m: game->timer.mStarted = true;
-            break;
         }
     }
     if(event->type == SDL_KEYUP)

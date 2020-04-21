@@ -28,5 +28,4 @@ typedef struct{
 void CreateTimer(Timer* timer);
 void ResetSeconds(Timer* timer);
 void UpdateTimer(Timer* timer);
-void InitFontTexture(Timer* timer);
 void RendererTimer(Timer* timer);
