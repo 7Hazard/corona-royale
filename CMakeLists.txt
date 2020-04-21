@@ -51,14 +51,10 @@ target_compile_definitions(CoronaRoyale PRIVATE
 )
 target_include_directories(CoronaRoyale PRIVATE
   src
+  deps/SDL_FontCache
   # ${PROJECT_SOURCE_DIR}
 )
 
-set_target_properties(CoronaRoyale PROPERTIES
-  ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-  LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-)
 
 # Platform specific stuff
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
@@ -66,6 +62,12 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc")
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd")
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
+  
+  set_target_properties(CoronaRoyale PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+  )
 
   target_include_directories(CoronaRoyale PRIVATE
     deps/SDL2/include
@@ -73,7 +75,6 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     deps/SDL2_mixer/include
     deps/SDL2_net/include
     deps/SDL2_ttf/include
-    deps/SDL_FontCache
   )
   target_link_directories(CoronaRoyale PRIVATE
     deps/SDL2/lib/x64
@@ -92,7 +93,13 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
   )
 else()
   # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++17 -fms-extensions -fdelayed-template-parsing -fexceptions")
-  
+
+  set_target_properties(CoronaRoyale PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}"
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}"
+  )
+
   target_include_directories(CoronaRoyale PRIVATE
     ${SDL2_INCLUDE_DIR}
     ${SDL2_IMAGE_INCLUDE_DIR}

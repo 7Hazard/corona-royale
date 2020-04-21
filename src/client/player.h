@@ -2,19 +2,30 @@
 
 #include <stdbool.h>
 #include <SDL.h>
-
+#include "mouse.h"
 #include "events.h"
+
+
+
+
+typedef struct Camera
+{
+    SDL_Rect cameraRect;
+    SDL_Rect drawingRect;
+}Camera;
+
 
 typedef struct Player
 {
     SDL_Rect rect;
     SDL_Rect position;
-    SDL_Rect cameraRect;
+    Camera camera;
     bool infected;
     bool left;
     bool right;
     bool up;
     bool down;
+    Mouse mouse;
     SDL_Texture* image;
     int frameWidth, frameHeight;
     int textureWidth, textureHeight;

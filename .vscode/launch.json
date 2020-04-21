@@ -55,8 +55,8 @@
       "osx": {
         "miDebuggerPath": "/Applications/Xcode.app/Contents/Developer/usr/bin/lldb-mi",
         "MIMode": "lldb",
-        "program": "${workspaceFolder}/BUILD/macos/CoronaRoyaleServer",
-        "cwd": "${workspaceFolder}/BUILD/macos/",
+        "program": "${workspaceFolder}/BUILD/macos/Debug/CoronaRoyaleServer",
+        "cwd": "${workspaceFolder}/BUILD/macos/Debug",
       },
       "args": [],
       "stopAtEntry": false,

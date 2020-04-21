@@ -11,24 +11,11 @@ void CreatePlayer(Player* player, int xPos, int yPos)
 {
     Game *game = GetGame();
 
-    SDL_Surface* surf =  IMG_Load("res/User.png");
-    player->image = SDL_CreateTextureFromSurface(game->renderer, surf);
-    SDL_FreeSurface(surf);
-    if(player->image == NULL)
-    {
-        char msg[256];
-        sprintf(msg, "Could not load texture res/User.png\nError: %s", IMG_GetError());
-        SDL_ShowSimpleMessageBox(
-            SDL_MESSAGEBOX_ERROR,
-            "Could not load texture",
-            msg,
-            NULL
-        );
-        abort();
-    }
+    player->textureHeight("res/User2.png"); 
+    player->textureWidth("res/User2.png");
     SDL_QueryTexture(player->image, NULL, NULL, &player->textureWidth, &player->textureHeight);
-    player->frameWidth = (player->textureWidth)/4;
-    player->frameHeight = (player->textureHeight)/4;
+    player->frameWidth = (player->textureWidth);
+    player->frameHeight = (player->textureHeight);
     player->infected = true;
     player->rect.x = 0;
     player->rect.y = 0;
@@ -38,10 +25,12 @@ void CreatePlayer(Player* player, int xPos, int yPos)
     player->position.y = yPos;
     player->position.w = player->frameWidth;
     player->position.h = player->frameHeight;
-    player->cameraRect.x = 0;
-    player->cameraRect.y = 0;
-    player->cameraRect.w = WINDOW_W;
-    player->cameraRect.h = WINDOW_H;
+    player->camera.drawingRect.w = player->frameWidth;
+    player->camera.drawingRect.h = player->frameHeight;
+    player->camera.cameraRect.w = WINDOW_W;
+    player->camera.cameraRect.h = WINDOW_H;
+    player->mouse.x = 0;
+    player->mouse.y = 0;
 }
 
 void HandlePlayerEvents(SDL_Event *event)
@@ -79,6 +68,7 @@ void HandlePlayerEvents(SDL_Event *event)
             break;
         }
     }
+    
 }
 
 void OnPlayerUpdate(Player* player)
@@ -89,65 +79,60 @@ void OnPlayerUpdate(Player* player)
 
     if(player->up == true)
     {
-        player->position.y-=1;
-        player->rect.y = player->frameHeight;
+        player->position.y-=7;
     }
     if(player->down == true)
     {
-        player->position.y+=1;
-        player->rect.y = 0;
+        player->position.y+=7;
     }
     if(player->left == true)
     {
-        player->position.x-=1;
-        player->rect.y = player->frameHeight*2;
+        player->position.x-=7;
     }
     if(player->right == true)
     {
-        player->position.x+=1;
-        player->rect.y = player->frameHeight*3;
+        player->position.x+=7;
     }
-    if (!(player->up && player->down && player->left && player->right))
-    {
-        if (player->rect.y == player->frameHeight*3)
-        {
-            player->rect.x = player->frameWidth*3;
-        }
-        else
-        {
-            player->rect.x = 0;
-        }
-    }
-    
+   
     if (IsPlayerMoving(player) && !Mix_Playing(1))
     {
         Mix_PlayChannel(1, audio->steps, 0);
     }
+
+    //make player centered on the screen
+    player->camera.cameraRect.x = (player->position.x + player->textureWidth/2) - WINDOW_W/2;
+    player->camera.cameraRect.y = (player->position.y + player->textureHeight/2) - WINDOW_H/2;
+
+
+    //background rendering boundries
+    if (player->camera.cameraRect.x < 0)
+    {
+        player->camera.cameraRect.x = 0;
+    }
+    if (player->camera.cameraRect.y < 0)
+    {
+        player->camera.cameraRect.y = 0;
+    }
+
+    // prevent background image from stretching when going beyond boundries
+    if (player->camera.cameraRect.x + player->camera.cameraRect.w > game->mapWidth)
+    {
+        player->camera.cameraRect.x = game->mapWidth - player->camera.cameraRect.w;
+    }
+    if (player->camera.cameraRect.y + player->camera.cameraRect.h> game->mapHeight)
+    {
+        player->camera.cameraRect.y = game->mapHeight - player->camera.cameraRect.h;
+    }
     
-    if (player->position.x >= WINDOW_W/2)
-    {
-        player->cameraRect.x = player->position.x - WINDOW_W/2;
-    }
-    if (player->cameraRect.x + player->cameraRect.w >= game->mapWidth)
-    {
-        player->cameraRect.x = game->mapWidth-WINDOW_W;
-    }
-    if (player->position.y >= WINDOW_H/2)
-    {
-        player->cameraRect.y = player->position.y - WINDOW_H/2;
-    }
-    if (player->cameraRect.y + player->cameraRect.h >= game->mapHeight)
-    {
-        player->cameraRect.y = game->mapHeight-WINDOW_H;
-    }
+    player->camera.drawingRect.x = player->position.x - player->camera.cameraRect.x;
+    player->camera.drawingRect.y = player->position.y - player->camera.cameraRect.y;
 }
 
 void OnPlayerRender(Player* player)
 {
     Game* game = GetGame();
     
-    
-    SDL_RenderCopy(game->renderer, player->image, &player->rect, &player->position);
+    SDL_RenderCopy(game->renderer, player->image, &player->rect, &player->camera.drawingRect);
 }
 
 bool IsPlayerMoving(Player* player)
