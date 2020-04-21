@@ -19,7 +19,7 @@ else()
   find_package(SDL2_ttf REQUIRED)
 
   # Copy resources into build output
-  file(COPY "res" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
+  file(COPY "res" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
 endif()
 
 add_definitions(
