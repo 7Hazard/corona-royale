@@ -26,15 +26,14 @@ int main(int argc, const char *argv[])
     Game* game = GetGame();
 
     if (TTF_Init() < 0) { // ej probelm
-        printf("Kuksugare");
+        printf("Error\n");
+        abort();
     }
 
     while (game->running)
     {
 
         frameStart = SDL_GetTicks();
-        UpdateTimer(&game->timer);
-        CheckTime(&game->timer);
 
         { /////////// STATE UPDATES PHASE BEGIN ///////////
             HandleEvents();
@@ -50,18 +49,7 @@ int main(int argc, const char *argv[])
 
             OnPlayerRender(&game->player);
             
-            UpdateTimer(&game->timer);
-            sprintf(game->timer.timerBuffer,"%d:%d", game->timer.mMinuteTime,game->timer.mDeltaTime); // copy string (timer.mStartTicks)to buffer
-
-            if(!game->timer.mLast10Sek){
-                game->timer.surfaceTime = TTF_RenderText_Solid(game->timer.Sans,game->timer.timerBuffer ,game->timer.White);
-            }else if(game->timer.mLast10Sek){
-                game->timer.surfaceTime = TTF_RenderText_Solid(game->timer.Sans,game->timer.timerBuffer ,game->timer.Red);
-            }
-
-            game->timer.textureTime = SDL_CreateTextureFromSurface(game->renderer, game->timer.surfaceTime); //now you can convert it into a texture
-            SDL_RenderCopy(game->renderer, game->timer.textureTime, NULL, &game->timer.rect);   
-    
+            RendererTimer(&game->timer);
 
             //lägg in en till sdl renderer
 
