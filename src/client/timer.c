@@ -6,8 +6,6 @@
 
 void CreateTimer(Timer *timer)
 {
-    TTF_Init(); // va tvungen att lägga den här för att initiera Sans
-
     timer->mCurrentTime = 0;
     timer->mDeltaConvert = 0;
     timer->mDeltaTime = 0;

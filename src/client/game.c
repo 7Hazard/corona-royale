@@ -12,6 +12,7 @@ Game* GetGame()
     // Will initialize after first call
     static bool inited = false;
     static Game game;
+
     if(inited == false)
     {
         inited = true;
@@ -41,6 +42,10 @@ Game* GetGame()
         // DONT FORGET TO INITIALIZE ALL MEMBERS OF THE STRUCT
         CreateTimer(&game.timer);
         
+    }
+
+    if (TTF_Init() < 0) { 
+        abort();
     }
 
     return &game;

@@ -25,10 +25,6 @@ int main(int argc, const char *argv[])
 
     Game* game = GetGame();
 
-    if (TTF_Init() < 0) { 
-        abort();
-    }
-
     while (game->running)
     {
 
