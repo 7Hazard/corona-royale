@@ -25,8 +25,8 @@ typedef struct Player
     bool right;
     bool up;
     bool down;
-    Mouse mouse;
     SDL_Texture* image;
+    float angle;
     int frameWidth, frameHeight;
     int textureWidth, textureHeight;
 } Player;
@@ -34,5 +34,6 @@ typedef struct Player
 void CreatePlayer(Player* player, int xPos, int yPos);
 void HandlePlayerEvents(SDL_Event *event);
 void OnPlayerUpdate(Player* player);
+void RotatePlayer();
 void OnPlayerRender(Player* player);
 bool IsPlayerMoving(Player* player);

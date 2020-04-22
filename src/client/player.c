@@ -5,12 +5,13 @@
 #include "audio.h"
 #include "game.h"
 #include "collision.h"
+#include "mouse.h"
 
 void CreatePlayer(Player* player, int xPos, int yPos)
 {
     Game *game = GetGame();
 
-    player->image = IMG_LoadTexture(game->renderer, "res/User2.png");
+    player->image = IMG_LoadTexture(game->renderer, "res/circle.png");
     SDL_QueryTexture(player->image, NULL, NULL, &player->textureWidth, &player->textureHeight);
     player->frameWidth = (player->textureWidth);
     player->frameHeight = (player->textureHeight);
@@ -27,8 +28,6 @@ void CreatePlayer(Player* player, int xPos, int yPos)
     player->camera.drawingRect.h = player->frameHeight;
     player->camera.cameraRect.w = WINDOW_W;
     player->camera.cameraRect.h = WINDOW_H;
-    player->mouse.x = 0;
-    player->mouse.y = 0;
 }
 
 void HandlePlayerEvents(SDL_Event *event)
@@ -66,6 +65,15 @@ void HandlePlayerEvents(SDL_Event *event)
         }
     }
     
+}
+
+void RotatePlayer(Player *player)
+{
+    Game* game = GetGame();
+    game->mouse = GetMouse();
+    game->mouse.x += player->camera.cameraRect.x;
+    game->mouse.y += player->camera.cameraRect.y;
+    player->angle = GetAngle(player->position.x + player->rect.w/2,game->mouse.x,player->position.y + player->rect.h/2,game->mouse.y);
 }
 
 void OnPlayerUpdate(Player* player)
@@ -128,8 +136,8 @@ void OnPlayerUpdate(Player* player)
 void OnPlayerRender(Player* player)
 {
     Game* game = GetGame();
-    
-    SDL_RenderCopy(game->renderer, player->image, &player->rect, &player->camera.drawingRect);
+    RotatePlayer(player);
+    SDL_RenderCopyEx(game->renderer, player->image, &player->rect, &player->camera.drawingRect,player->angle,NULL,SDL_FLIP_NONE);
 }
 
 bool IsPlayerMoving(Player* player)

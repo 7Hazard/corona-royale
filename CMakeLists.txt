@@ -35,7 +35,7 @@ add_executable(CoronaRoyale
   src/client/player.c
   src/client/events.c
   src/client/collision.c
-
+  src/client/mouse.c
   deps/SDL_FontCache/SDL_FontCache.c
 )
 target_compile_definitions(CoronaRoyale PRIVATE
