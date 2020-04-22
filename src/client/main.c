@@ -32,6 +32,7 @@ int NetworkThread(void *ptr)
             "Could not connect to server",
             NULL
         );
+        abort();
     }
     
     // Alloc text
@@ -68,7 +69,7 @@ int NetworkThread(void *ptr)
     // Network loop
     while (1)
     {
-        
+        //udp send och read
     }
 
     return 0;
