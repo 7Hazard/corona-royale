@@ -9,12 +9,17 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     "deps/SDL2*/lib/x64/*.dll"
   )
   file(COPY ${SDL2_SHARED_BINARIES} DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
+  # Copy resources into build output
+  file(COPY "res" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
 else()
   find_package(SDL2 REQUIRED)
   find_package(SDL2_image REQUIRED)
   find_package(SDL2_mixer REQUIRED)
   find_package(SDL2_net REQUIRED)
   find_package(SDL2_ttf REQUIRED)
+
+  # Copy resources into build output
+  file(COPY "res" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
 endif()
 
 add_definitions(
@@ -22,22 +27,25 @@ add_definitions(
   -DUNICODE
 )
 
-# Copy resources into build output
-file(COPY "res" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
-
 ######
 ###### CLIENT
 ######
-add_executable(CoronaRoyale
+# Get a list of all of the files in the data-folder
+file(GLOB_RECURSE CR_CLIENT_RESOURCES "${CMAKE_SOURCE_DIR}/res/*")
+set(CR_CLIENT_SOURCES
   src/client/main.c
   src/client/game.c
   src/client/audio.c
   src/client/player.c
   src/client/events.c
   src/client/collision.c
+  src/client/timer.c
+  src/client/texture.c
 
   deps/SDL_FontCache/SDL_FontCache.c
 )
+add_executable(CoronaRoyale ${CR_CLIENT_SOURCES})
+
 target_compile_definitions(CoronaRoyale PRIVATE
 
 )
