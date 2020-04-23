@@ -2,6 +2,9 @@
 #include <SDL_net.h>
 #include <string.h>
 #include <stdbool.h>
+#include <time.h>
+#include <windows.h>
+
 
 #include "shared/memory.h"
 #include "shared/network.h"
@@ -9,7 +12,8 @@
 
 void HandlePacket(UDPpacket* packet)
 {
-    printf("UDP PACKET RECIEVED\n");
+   static int count = 0;
+    printf("UDP PACKET RECIEVED %d\n",count++);
 }
 
 int main(int argc, char const *argv[])
@@ -24,7 +28,9 @@ int main(int argc, char const *argv[])
 
 	while (1)
 	{
-		clientSock = SDLNet_TCP_Accept(network->tcpSocket);
+		time_t start = clock();
+        
+        clientSock = SDLNet_TCP_Accept(network->tcpSocket);
 		if(clientSock)
         {
 			printf("Connection incoming\n");
@@ -59,6 +65,13 @@ int main(int argc, char const *argv[])
 		}
 
         CheckUDPUpdates();
+
+        time_t end = clock();
+        int result = end-start;
+        if (result < CR_NET_TICK_TIME)
+        {
+            Sleep(CR_NET_TICK_TIME-result);
+        }
 	}
 
 	return 0;

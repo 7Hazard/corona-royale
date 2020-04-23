@@ -3,6 +3,8 @@
 
 #define CR_NET_PORT 6969
 #define MAX_UDP_PACKET_SIZE 256
+#define CR_NET_TICK 20
+#define CR_NET_TICK_TIME (1000/CR_NET_TICK)
 
 typedef struct Network
 {

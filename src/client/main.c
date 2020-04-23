@@ -4,6 +4,7 @@
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 #include <SDL_FontCache.h>
+#include <time.h> 
 
 #ifdef _WIN32
 #include "Windows.h"
@@ -73,7 +74,16 @@ int NetworkThread(void *ptr)
     // Network loop
     while (1)
     {
+        time_t start = clock();
+        
         SendUDPPacket(&udppacket);
+        
+        time_t end = clock();
+        int result = end-start;
+        if (result < CR_NET_TICK_TIME)
+        {
+            SDL_Delay (CR_NET_TICK_TIME-result);
+        }   
     }
 
     return 0;
