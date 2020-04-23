@@ -35,6 +35,12 @@ add_executable(CoronaRoyale
   src/client/player.c
   src/client/events.c
   src/client/collision.c
+<<<<<<< Updated upstream
+=======
+  src/client/timer.c
+  src/client/texture.c
+  src/client/menu.c
+>>>>>>> Stashed changes
 
   deps/SDL_FontCache/SDL_FontCache.c
 )

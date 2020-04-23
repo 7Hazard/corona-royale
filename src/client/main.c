@@ -10,10 +10,19 @@
 #include "player.h"
 #include "game.h"
 #include "audio.h"
+<<<<<<< Updated upstream
+=======
+#include "timer.h"
+#include "menu.h"
+
+>>>>>>> Stashed changes
 
 int main(int argc, const char *argv[])
 {
     printf("Corona Royale\n");
+
+    enum States gameStates; // lagt till
+    gameStates = CR_STATE_PRELOAD;
 
     const int fps = 60;
     const int frameDelay = 1000/fps;
@@ -29,6 +38,7 @@ int main(int argc, const char *argv[])
     {
 
         frameStart = SDL_GetTicks();
+        //Get gamestate
 
         { /////////// STATE UPDATES PHASE BEGIN ///////////
             HandleEvents();
@@ -50,6 +60,8 @@ int main(int argc, const char *argv[])
                 r = ((sin(theta)+1)/2)*255;
                 FC_DrawColor(font, game->renderer, 200, 50, FC_MakeColor(r, 20, 20, 255), "CORONA\n%s", "ROYALE");
             }
+
+            //skriv ut menyn här
 
             SDL_RenderPresent(game->renderer);
         } /////////// RENDERING PHASE END ///////////

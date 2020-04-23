@@ -1,6 +1,13 @@
 #pragma once
 
 #include "game.h"
+<<<<<<< Updated upstream
+=======
+#include "timer.h"
+#include "texture.h"
+#include "menu.h"
+
+>>>>>>> Stashed changes
 #include <SDL_image.h>
 #include <stdio.h>
 
@@ -36,6 +43,15 @@ Game* GetGame()
         game.background = IMG_LoadTexture(game.renderer, "res/BIG.jpg");
         SDL_QueryTexture(game.background, NULL, NULL, &game.mapWidth, &game.mapHeight);
         // DONT FORGET TO INITIALIZE ALL MEMBERS OF THE STRUCT
+<<<<<<< Updated upstream
+=======
+        CreateTimer(&game.timer);
+        LoadMenu(&game.menu);
+    }
+
+    if (TTF_Init() < 0) { 
+        abort();
+>>>>>>> Stashed changes
     }
 
     return &game;
