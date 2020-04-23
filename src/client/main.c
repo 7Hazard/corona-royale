@@ -10,12 +10,6 @@
 #include "player.h"
 #include "game.h"
 #include "audio.h"
-<<<<<<< Updated upstream
-=======
-#include "timer.h"
-#include "menu.h"
-
->>>>>>> Stashed changes
 
 int main(int argc, const char *argv[])
 {
