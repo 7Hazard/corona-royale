@@ -32,6 +32,7 @@ int NetworkThread(void *ptr)
             "Could not connect to server",
             NULL
         );
+        abort();
     }
     
     // Alloc text
