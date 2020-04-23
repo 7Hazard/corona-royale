@@ -1,5 +1,6 @@
 #include <SDL_image.h>
-
+#include <SDL.h>
+#include <stdio.h>
 #include "player.h"
 #include "events.h"
 #include "audio.h"
@@ -28,6 +29,7 @@ void CreatePlayer(Player* player, int xPos, int yPos)
     player->camera.drawingRect.h = player->frameHeight;
     player->camera.cameraRect.w = WINDOW_W;
     player->camera.cameraRect.h = WINDOW_H;
+    player->mouseClick = false;
 }
 
 void HandlePlayerEvents(SDL_Event *event)
@@ -64,23 +66,51 @@ void HandlePlayerEvents(SDL_Event *event)
             break;
         }
     }
+
+    if (event->type == SDL_MOUSEBUTTONDOWN)
+    {
+        player->mouseClick = true;
+        
+    }
+    if (event->type == SDL_MOUSEBUTTONUP)
+    {
+        player->mouseClick = false;
+    }
+    
+    
     
 }
 
 void RotatePlayer(Player *player)
 {
     Game* game = GetGame();
-    game->mouse = GetMouse();
-    game->mouse.x += player->camera.cameraRect.x;
-    game->mouse.y += player->camera.cameraRect.y;
-    player->angle = GetAngle(player->position.x + player->rect.w/2,game->mouse.x,player->position.y + player->rect.h/2,game->mouse.y);
+    Mouse mouse;
+    SDL_GetMouseState(&mouse.x,&mouse.y);
+    //Get "world" coordinates instead of windowpos
+    mouse.x += player->camera.cameraRect.x;
+    mouse.y += player->camera.cameraRect.y;
+    player->angle = GetAngle(player->position.x + player->rect.w/2,mouse.x,player->position.y + player->rect.h/2,mouse.y);
+}
+
+void MoveTowardsMouse(Player *player)
+{
+    Mouse mouse;
+    int newPosX, newPosY;
+    SDL_GetMouseState(&mouse.x,&mouse.y);
+    
+    newPosX = (mouse.x + player->camera.cameraRect.x)- player->position.x + player->rect.w/2;
+    newPosY = (mouse.y+ player->camera.cameraRect.y) - player->position.y + player->rect.h/2;
+    player->position.x += newPosX/20;
+    player->position.y +=newPosY/20;
 }
 
 void OnPlayerUpdate(Player* player)
 {
     Audio* audio = GetAudio();
     Game *game = GetGame();
+    
     HandleBorders(player);
+    RotatePlayer(player);
 
     if(player->up == true)
     {
@@ -98,7 +128,11 @@ void OnPlayerUpdate(Player* player)
     {
         player->position.x+=7;
     }
-   
+    if (player->mouseClick == true)
+    {
+        MoveTowardsMouse(player);
+    }
+    
     if (IsPlayerMoving(player) && !Mix_Playing(1))
     {
         Mix_PlayChannel(1, audio->steps, 0);
@@ -129,6 +163,7 @@ void OnPlayerUpdate(Player* player)
         player->camera.cameraRect.y = game->mapHeight - player->camera.cameraRect.h;
     }
     
+    // make player centered in camera
     player->camera.drawingRect.x = player->position.x - player->camera.cameraRect.x;
     player->camera.drawingRect.y = player->position.y - player->camera.cameraRect.y;
 }
@@ -136,7 +171,6 @@ void OnPlayerUpdate(Player* player)
 void OnPlayerRender(Player* player)
 {
     Game* game = GetGame();
-    RotatePlayer(player);
     SDL_RenderCopyEx(game->renderer, player->image, &player->rect, &player->camera.drawingRect,player->angle,NULL,SDL_FLIP_NONE);
 }
 

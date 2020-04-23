@@ -15,7 +15,6 @@ typedef struct Game
     SDL_Renderer* renderer;
     SDL_Texture *background;
     int mapWidth, mapHeight;
-    Mouse mouse;
     Player player;
 } Game;
 
