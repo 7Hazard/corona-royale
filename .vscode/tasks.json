@@ -22,5 +22,40 @@
         "$msCompile"
       ]
     },
+    {
+      "label": "Run Server",
+      "type": "shell",
+      "windows": {
+        "command": "cmd /c start ${workspaceFolder}/BUILD/VS2019/Debug/CoronaRoyaleServer.exe",
+        "options": {
+          "cwd": "${workspaceFolder}/BUILD/VS2019/Debug"
+        }
+      },
+      "osx": {
+        "command": "open -a ${workspaceFolder}/BUILD/macos/Debug/CoronaRoyaleServer",
+        "options": {
+          "cwd": "${workspaceFolder}/BUILD/macos/Debug"
+        }
+      },
+      "dependsOn": ["Build"],
+      "group": "test"
+    },
+    {
+      "label": "Shutdown Server",
+      "type": "shell",
+      "windows": {
+        "command": "taskkill /IM CoronaRoyaleServer.exe",
+        "options": {
+          "cwd": "${workspaceFolder}/BUILD/VS2019/Debug"
+        }
+      },
+      "osx": {
+        "command": "killall CoronaRoyaleServer",
+        "options": {
+          "cwd": "${workspaceFolder}/BUILD/macos/Debug"
+        }
+      },
+      "group": "test"
+    }
   ]
 }

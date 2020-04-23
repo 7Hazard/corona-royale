@@ -5,7 +5,22 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "(Windows) Run Client",
+      "name": "(Windows) Debug Client (Run Server)",
+      "request": "launch",
+      "type": "cppvsdbg",
+      "windows": {
+        "program": "${workspaceFolder}/BUILD/VS2019/Debug/CoronaRoyale.exe",
+        "cwd": "${workspaceFolder}/BUILD/VS2019/Debug/",
+        "postDebugTask": "Shutdown Server"
+      },
+      "args": [],
+      "stopAtEntry": false,
+      "environment": [],
+      "externalConsole": true,
+      "preLaunchTask": "Run Server"
+    },
+    {
+      "name": "(Windows) Client",
       "request": "launch",
       "type": "cppvsdbg",
       "windows": {
@@ -19,7 +34,7 @@
       "preLaunchTask": "Build"
     },
     {
-      "name": "(Windows) Run Server",
+      "name": "(Windows) Server",
       "request": "launch",
       "type": "cppvsdbg",
       "windows": {

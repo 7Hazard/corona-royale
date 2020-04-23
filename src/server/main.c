@@ -7,20 +7,24 @@
 #include "shared/network.h"
 #include "shared/data.h"
 
-#define MAXLEN 1024
+void HandlePacket(UDPpacket* packet)
+{
+    printf("UDP PACKET RECIEVED\n");
+}
 
 int main(int argc, char const *argv[])
 {
 	printf("Corona Royale Server\n");
 	
 	Network* network = GetNetwork();
+    network->udpPacketRecieveCallback = HandlePacket;
 
 	TCPsocket clientSock;
 	const char* text = "hello client";
 
 	while (1)
 	{
-		clientSock = SDLNet_TCP_Accept(network->tcpsock);
+		clientSock = SDLNet_TCP_Accept(network->tcpSocket);
 		if(clientSock)
         {
 			printf("Connection incoming\n");
@@ -52,8 +56,9 @@ int main(int argc, char const *argv[])
             
                 SendTCPMessage(clientSock, &data, sizeof(data));
             }
-            
 		}
+
+        CheckUDPUpdates();
 	}
 
 	return 0;

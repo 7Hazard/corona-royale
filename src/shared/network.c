@@ -5,8 +5,6 @@
 
 #include "shared/network.h"
 
-#define PORT 6969
-
 Network* GetNetwork()
 {
     static bool inited = false;
@@ -24,18 +22,46 @@ Network* GetNetwork()
         }
 
 #ifdef CR_SERVER
-        IPaddress ip;
         // create a listening TCP socket on port 6969 (server)
 
-        if(SDLNet_ResolveHost(&ip, NULL, PORT) == -1) {
+        if(SDLNet_ResolveHost(&network.ip, NULL, CR_NET_PORT) == -1) {
             printf("SDLNet_ResolveHost: %s\n", SDLNet_GetError());
             abort();
-            exit(2);
         }
 
-        network.tcpsock = SDLNet_TCP_Open(&ip);
+        network.tcpSocket = SDLNet_TCP_Open(&network.ip);
+
+        network.udpSocket = SDLNet_UDP_Open(CR_NET_PORT);
+        if(network.udpSocket == NULL)
+        {
+            printf("Could not bind open socket");
+            abort();
+        }
+
+        network.udpChannel = SDLNet_UDP_Bind(network.udpSocket, -1, &network.ip);
+        if(network.udpChannel == -1)
+        {
+            printf("Could not bind UDP socket");
+            abort();
+        }
+
+        network.udpSocketSet = SDLNet_AllocSocketSet(1);
+        if(network.udpSocketSet == NULL)
+        {
+            printf("Couldn't create socket set: %s\n", SDLNet_GetError());
+            abort();
+        }
+
+        int numused = SDLNet_UDP_AddSocket(network.udpSocketSet, network.udpSocket);
+        if(numused == -1) {
+            printf("SDLNet_AddSocket: %s\n", SDLNet_GetError());
+            abort();
+        }
+
+        network.udpRecvPacket = SDLNet_AllocPacket(1024);
+        network.udpPacketRecieveCallback = NULL;
 #else
-        network.tcpsock = NULL;
+        network.tcpSocket = NULL;
 #endif
     }
     
@@ -43,21 +69,35 @@ Network* GetNetwork()
 }
 
 #ifdef CR_CLIENT
-bool ConnectTCP(const char* host)
+bool Connect(const char* host)
 {
     Network* network = GetNetwork();
 
-    IPaddress ip;
-
-    if(SDLNet_ResolveHost(&ip, host, PORT) == -1) {
+    // TCP
+    if(SDLNet_ResolveHost(&network->ip, host, CR_NET_PORT) == -1) {
         printf("SDLNet_ResolveHost: %s\n", SDLNet_GetError());
         return false;
     }
     
-    network->tcpsock = SDLNet_TCP_Open(&ip);
+    network->tcpSocket = SDLNet_TCP_Open(&network->ip);
 
-    if(network->tcpsock == 0) {
+    if(network->tcpSocket == 0) {
         printf("SDLNet_TCP_Open: %s\n", SDLNet_GetError());
+        return false;
+    }
+
+    // UDP
+    network->udpSocket = SDLNet_UDP_Open(0);
+    if(network->udpSocket == NULL)
+    {
+        printf("Could not open UDP socket");
+        return false;
+    }
+
+    network->udpChannel = SDLNet_UDP_Bind(network->udpSocket, -1, &network->ip);
+    if(network->udpChannel == -1)
+    {
+        printf("Could not bind UDP socket");
         return false;
     }
 
@@ -69,7 +109,7 @@ bool ConnectTCP(const char* host)
 bool SendTCPMessage(uint8_t* content, uint16_t contentLength)
 {
     Network* network = GetNetwork();
-    TCPsocket* socket = network->tcpsock;
+    TCPsocket* socket = network->tcpSocket;
 #else
 bool SendTCPMessage(TCPsocket* socket, uint8_t* content, uint16_t contentLength)
 {
@@ -99,7 +139,7 @@ bool SendTCPMessage(TCPsocket* socket, uint8_t* content, uint16_t contentLength)
 uint16_t GetTCPMessageLength()
 {
     Network* network = GetNetwork();
-    TCPsocket* socket = network->tcpsock;
+    TCPsocket* socket = network->tcpSocket;
 #else
 uint16_t GetTCPMessageLength(TCPsocket* socket)
 {
@@ -121,7 +161,7 @@ uint16_t GetTCPMessageLength(TCPsocket* socket)
 bool ReadTCPMessage(uint8_t* buffer, uint16_t len)
 {
     Network* network = GetNetwork();
-    TCPsocket* socket = network->tcpsock;
+    TCPsocket* socket = network->tcpSocket;
 #else
 bool ReadTCPMessage(TCPsocket* socket, uint8_t* buffer,uint16_t len)
 {
@@ -136,3 +176,19 @@ bool ReadTCPMessage(TCPsocket* socket, uint8_t* buffer,uint16_t len)
     return true;
 }
 
+void SendUDPPacket(UDPpacket* packet)
+{
+    Network* net = GetNetwork();
+
+    SDLNet_UDP_Send(net->udpSocket, net->udpChannel, packet);
+}
+
+void CheckUDPUpdates()
+{
+    Network* net = GetNetwork();
+
+    if(SDLNet_CheckSockets(net->udpSocketSet, 0) && SDLNet_UDP_Recv(net->udpSocket, net->udpRecvPacket))
+    {
+        net->udpPacketRecieveCallback(net->udpRecvPacket);
+    }
+}

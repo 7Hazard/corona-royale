@@ -23,7 +23,7 @@ int NetworkThread(void *ptr)
     Game* game = GetGame();
     Network* network = GetNetwork();
 
-    if(!ConnectTCP("localhost"))
+    if(!Connect("localhost"))
     {
         SDL_Log("COULD NOT CONNECT TO GAME SERVER");
         SDL_ShowSimpleMessageBox(
@@ -65,10 +65,14 @@ int NetworkThread(void *ptr)
         SetPlayerPosition(&game->player, data.x, data.y);
     }
 
+    UDPpacket udppacket;
+    udppacket.data = "HELLO FROM CLIENT UDP";
+    udppacket.len = sizeof("HELLO FROM CLIENT UDP");
+
     // Network loop
     while (1)
     {
-        
+        SendUDPPacket(&udppacket);
     }
 
     return 0;
