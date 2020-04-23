@@ -11,23 +11,23 @@
 #include "game.h"
 #include "audio.h"
 
+void GetGameState(enum States *currentState);
+
 int main(int argc, const char *argv[])
 {
     printf("Corona Royale\n");
 
-    enum States gameStates; // lagt till
-    gameStates = CR_STATE_PRELOAD;
+    enum States currentState; // lagt till
+    currentState = CR_STATE_PRELOAD;
 
     const int fps = 60;
-    const int frameDelay = 1000/fps;
+    const int frameDelay = 1000 / fps;
     Uint32 frameStart;
     int frameTime;
 
-    Game* game = GetGame();
+    Game *game = GetGame();
 
-    FC_Font* font = FC_CreateFont();  
-    FC_LoadFont(font, game->renderer, "res/fonts/ComicSansMS3.ttf", 20, FC_MakeColor(255, 255, 255, 255), TTF_STYLE_BOLD|TTF_STYLE_ITALIC);
-
+    currentState = CR_STATE_MENU;
     while (game->running)
     {
 
@@ -38,40 +38,51 @@ int main(int argc, const char *argv[])
             HandleEvents();
             OnPlayerUpdate(&game->player);
         } /////////// STATE UPDATES PHASE END /////////////
-        
+
         { /////////// RENDERING PHASE BEGIN /////////
             SDL_SetRenderDrawColor(game->renderer, 0, 0, 0, 255);
             SDL_RenderClear(game->renderer);
-            
-            // Draw background
-            SDL_RenderCopy(game->renderer, game->background, &game->player.camera.cameraRect, NULL);
 
-            OnPlayerRender(&game->player);
+            if(currentState == CR_STATE_RUNNING)
+            {
+                // Draw background
+                SDL_RenderCopy(game->renderer, game->background, &game->player.camera.cameraRect, NULL);
 
-            { // Draw CORONA ROYALE text
-                static Uint8 r = 0;
-                static float theta = 0.f; theta+=0.03f;
-                r = ((sin(theta)+1)/2)*255;
-                FC_DrawColor(font, game->renderer, 200, 50, FC_MakeColor(r, 20, 20, 255), "CORONA\n%s", "ROYALE");
+                OnPlayerRender(&game->player);
+                RendererTimer(&game->timer);
+
+                SDL_RenderCopy(game->renderer, game->menu.textureMenu, NULL, NULL);
+            } else if(currentState == CR_STATE_MENU)
+            {
+                RenderMenu();
             }
 
-            //skriv ut menyn här
-
             SDL_RenderPresent(game->renderer);
+            
         } /////////// RENDERING PHASE END ///////////
-        
+
         frameTime = SDL_GetTicks() - frameStart;
         if (frameDelay > frameTime)
         {
             SDL_Delay(frameDelay - frameTime);
         }
     }
-
-    FC_FreeFont(font);
-
+    SDL_DestroyTexture(game->background);
     IMG_Quit();
     SDL_Quit();
     StopAudio();
     return 0;
 }
 
+void GetGameState(enum States *currentState)
+{
+    switch (*currentState)
+    {
+    case CR_STATE_MENU:
+
+        break;
+
+    default:
+        break;
+    }
+}
