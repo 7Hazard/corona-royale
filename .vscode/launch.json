@@ -40,12 +40,12 @@
         "miDebuggerPath": "/Applications/Xcode.app/Contents/Developer/usr/bin/lldb-mi",
         "MIMode": "lldb",
         "program": "${workspaceFolder}/BUILD/macos/Debug/CoronaRoyale",
-        "cwd": "${workspaceFolder}/BUILD/macos/Debug",
+        "cwd": "${workspaceFolder}",
       },
       "args": [],
       "stopAtEntry": false,
       "environment": [],
-      "externalConsole": false,
+      "externalConsole": true,
       "preLaunchTask": "Build"
     },
     {
