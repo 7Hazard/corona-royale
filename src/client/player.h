@@ -9,7 +9,6 @@
 typedef struct Camera
 {
     SDL_Rect cameraRect;
-    SDL_Rect drawingRect;
 } Camera;
 
 typedef struct Player
@@ -24,8 +23,9 @@ typedef struct Player
     bool right;
     bool up;
     bool down;
-    Mouse mouse;
-    SDL_Texture* image;
+    bool mouseClick;
+    float angle;
+    SDL_Texture* texture;
     int frameWidth, frameHeight;
     int textureWidth, textureHeight;
 } Player;
@@ -33,7 +33,9 @@ typedef struct Player
 void CreatePlayer(Player* player, int xPos, int yPos);
 void HandlePlayerEvents(SDL_Event *event);
 void OnPlayerUpdate(Player* player);
+void RotatePlayer();
 void OnPlayerRender(Player* player);
+void MoveTowardsMouse(Player *player);
 bool IsPlayerMoving(Player* player);
 void SetPlayerPosition(Player* player, int x, int y);
 void SetPlayerAngle(Player* player, float angle);

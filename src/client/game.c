@@ -1,14 +1,18 @@
 #pragma once
 
 #include "game.h"
+#include "timer.h"
+#include "texture.h"
 #include <SDL_image.h>
 #include <stdio.h>
+#include <string.h>
 
 Game* GetGame()
 {
     // Will initialize after first call
     static bool inited = false;
     static Game game;
+
     if(inited == false)
     {
         inited = true;
@@ -32,10 +36,16 @@ Game* GetGame()
         game.running = true;
         game.window = SDL_CreateWindow("Corona Royale", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_W, WINDOW_H, 0);
         game.renderer = SDL_CreateRenderer(game.window, -1, 0);
-        CreatePlayer(&game.player,WINDOW_W/2,WINDOW_H/2);
-        game.background = IMG_LoadTexture(game.renderer, "res/BIG.jpg");
+        CreatePlayer(&game.player,10,10);
+        game.background = LoadTexture("res/BIG.jpg");
         SDL_QueryTexture(game.background, NULL, NULL, &game.mapWidth, &game.mapHeight);
         // DONT FORGET TO INITIALIZE ALL MEMBERS OF THE STRUCT
+        CreateTimer(&game.timer);
+        
+    }
+
+    if (TTF_Init() < 0) { 
+        abort();
     }
 
     return &game;

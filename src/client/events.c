@@ -6,6 +6,7 @@
 void HandleEvents()
 {
     SDL_Event event;
+
     while (SDL_PollEvent(&event))
     {
         if (event.type == SDL_QUIT) 
@@ -17,6 +18,9 @@ void HandleEvents()
             break;
         }
         HandlePlayerEvents(&event); 
+
     }
+    
+    
 }
 

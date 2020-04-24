@@ -1,15 +1,33 @@
 #include <SDL_image.h>
+#include <SDL.h>
+#include <stdio.h>
 
 #include "player.h"
 #include "events.h"
 #include "audio.h"
 #include "game.h"
+#include "timer.h"
+#include "texture.h"
 #include "collision.h"
+#include "mouse.h"
 #include "shared/data.h"
 
 void CreatePlayer(Player* player, int xPos, int yPos)
 {
     Game *game = GetGame();
+
+    player->texture = LoadTexture("res/circle.png");
+    SDL_QueryTexture(player->texture, NULL, NULL, &player->textureWidth, &player->textureHeight);
+    player->frameWidth = (player->textureWidth);
+    player->frameHeight = (player->textureHeight);
+
+    player->infectedMutex = SDL_CreateMutex();
+    player->infected = true;
+
+    player->rect.x = 0;
+    player->rect.y = 0;
+    player->rect.w = player->frameWidth;
+    player->rect.h = player->frameHeight;
 
     player->positionMutex = SDL_CreateMutex();
     player->position.x = xPos;
@@ -17,22 +35,14 @@ void CreatePlayer(Player* player, int xPos, int yPos)
     player->position.w = player->frameWidth;
     player->position.h = player->frameHeight;
 
-    player->image = IMG_LoadTexture(game->renderer, "res/User2.png");
-    SDL_QueryTexture(player->image, NULL, NULL, &player->textureWidth, &player->textureHeight);
-    player->frameWidth = (player->textureWidth);
-    player->frameHeight = (player->textureHeight);
-    player->infectedMutex = SDL_CreateMutex();
-    player->infected = true;
-    player->rect.x = 0;
-    player->rect.y = 0;
-    player->rect.w = player->frameWidth;
-    player->rect.h = player->frameHeight;
-    player->camera.drawingRect.w = player->frameWidth;
-    player->camera.drawingRect.h = player->frameHeight;
     player->camera.cameraRect.w = WINDOW_W;
     player->camera.cameraRect.h = WINDOW_H;
-    player->mouse.x = 0;
-    player->mouse.y = 0;
+
+    player->mouseClick = false;
+    player->left = false;
+    player->right = false;
+    player->up = false;
+    player->down = false;
 }
 
 void HandlePlayerEvents(SDL_Event *event)
@@ -52,7 +62,6 @@ void HandlePlayerEvents(SDL_Event *event)
             break;
             case SDLK_s: player->down = true;
             break;
-            
         }
     }
     if(event->type == SDL_KEYUP)
@@ -69,13 +78,47 @@ void HandlePlayerEvents(SDL_Event *event)
             break;
         }
     }
+
+    if (event->type == SDL_MOUSEBUTTONDOWN)
+    {
+        player->mouseClick = true;
+    }
+    if (event->type == SDL_MOUSEBUTTONUP)
+    {
+        player->mouseClick = false;
+    }
+}
+
+void RotatePlayer(Player *player)
+{
+    Game* game = GetGame();
+    int mousex, mousey;
+    SDL_GetMouseState(&mousex, &mousey);
+    //Get "world" coordinates instead of windowpos
+    mousex += player->camera.cameraRect.x;
+    mousey += player->camera.cameraRect.y;
+    player->angle = GetAngle(player->position.x + player->rect.w/2, mousex, player->position.y + player->rect.h/2, mousey);
+}
+
+void MoveTowardsMouse(Player *player)
+{
+    int mousex, mousey;
+    int newPosX, newPosY;
+    SDL_GetMouseState(&mousex, &mousey);
+    
+    newPosX = (mousex + player->camera.cameraRect.x)- player->position.x + player->rect.w/2;
+    newPosY = (mousey + player->camera.cameraRect.y) - player->position.y + player->rect.h/2;
+    player->position.x += newPosX/20;
+    player->position.y +=newPosY/20;
 }
 
 void OnPlayerUpdate(Player* player)
 {
     Audio* audio = GetAudio();
     Game *game = GetGame();
+    
     HandleBorders(player);
+    RotatePlayer(player);
 
     SDL_LockMutex(player->positionMutex);
     if(player->up == true)
@@ -98,12 +141,18 @@ void OnPlayerUpdate(Player* player)
     int posx = player->position.x, posy = player->position.y;
     SDL_UnlockMutex(player->positionMutex);
    
-    if (IsPlayerMoving(player) && !Mix_Playing(1))
+    if (player->mouseClick == true)
+    {
+        MoveTowardsMouse(player);
+    }
+    
+    if ((IsPlayerMoving(player) || player->mouseClick == true) && !Mix_Playing(1))
     {
         Mix_PlayChannel(1, audio->steps, 0);
     }
 
     //make player centered on the screen
+    //make the camera scroll depending on the player position
     player->camera.cameraRect.x = (posx + player->textureWidth/2) - WINDOW_W/2;
     player->camera.cameraRect.y = (posy + player->textureHeight/2) - WINDOW_H/2;
 
@@ -128,15 +177,15 @@ void OnPlayerUpdate(Player* player)
         player->camera.cameraRect.y = game->mapHeight - player->camera.cameraRect.h;
     }
     
-    player->camera.drawingRect.x = posx - player->camera.cameraRect.x;
-    player->camera.drawingRect.y = posy - player->camera.cameraRect.y;
+    // render the player centered in camera
+    player->rect.x = posx - player->camera.cameraRect.x;
+    player->rect.y = posy - player->camera.cameraRect.y;
 }
 
 void OnPlayerRender(Player* player)
 {
     Game* game = GetGame();
-    
-    SDL_RenderCopy(game->renderer, player->image, &player->rect, &player->camera.drawingRect);
+    SDL_RenderCopyEx(game->renderer, player->texture, NULL, &player->rect, player->angle, NULL, SDL_FLIP_NONE);
 }
 
 bool IsPlayerMoving(Player* player)
