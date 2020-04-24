@@ -1,19 +1,22 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include <string.h>
+#include <stdlib.h>
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
-#include <SDL_FontCache.h>
 
 #include "collision.h"
 #include "events.h"
 #include "player.h"
 #include "game.h"
 #include "audio.h"
+#include "timer.h"
+
 
 int main(int argc, const char *argv[])
 {
-    printf("Corona Royale\n");
+    SDL_Log("Corona Royale\n");
 
     const int fps = 60;
     const int frameDelay = 1000/fps;
@@ -21,9 +24,6 @@ int main(int argc, const char *argv[])
     int frameTime;
 
     Game* game = GetGame();
-
-    FC_Font* font = FC_CreateFont();  
-    FC_LoadFont(font, game->renderer, "res/fonts/ComicSansMS3.ttf", 20, FC_MakeColor(255, 255, 255, 255), TTF_STYLE_BOLD|TTF_STYLE_ITALIC);
 
     while (game->running)
     {
@@ -43,13 +43,8 @@ int main(int argc, const char *argv[])
             SDL_RenderCopy(game->renderer, game->background, &game->player.camera.cameraRect, NULL);
 
             OnPlayerRender(&game->player);
-
-            { // Draw CORONA ROYALE text
-                static Uint8 r = 0;
-                static float theta = 0.f; theta+=0.03f;
-                r = ((sin(theta)+1)/2)*255;
-                FC_DrawColor(font, game->renderer, 200, 50, FC_MakeColor(r, 20, 20, 255), "CORONA\n%s", "ROYALE");
-            }
+            
+            RendererTimer(&game->timer);
 
             SDL_RenderPresent(game->renderer);
         } /////////// RENDERING PHASE END ///////////
@@ -61,7 +56,6 @@ int main(int argc, const char *argv[])
         }
     }
 
-    FC_FreeFont(font);
 
     IMG_Quit();
     SDL_Quit();

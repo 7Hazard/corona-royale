@@ -9,12 +9,17 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     "deps/SDL2*/lib/x64/*.dll"
   )
   file(COPY ${SDL2_SHARED_BINARIES} DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
+  # Copy resources into build output
+  file(COPY "res" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
 else()
   find_package(SDL2 REQUIRED)
   find_package(SDL2_image REQUIRED)
   find_package(SDL2_mixer REQUIRED)
   find_package(SDL2_net REQUIRED)
   find_package(SDL2_ttf REQUIRED)
+
+  # Copy resources into build output
+  file(COPY "res" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
 endif()
 
 add_definitions(
@@ -22,13 +27,12 @@ add_definitions(
   -DUNICODE
 )
 
-# Copy resources into build output
-file(COPY "res" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
-
 ######
 ###### CLIENT
 ######
-add_executable(CoronaRoyale
+# Get a list of all of the files in the data-folder
+file(GLOB_RECURSE CR_CLIENT_RESOURCES "${CMAKE_SOURCE_DIR}/res/*")
+set(CR_CLIENT_SOURCES
   src/client/main.c
   src/client/game.c
   src/client/audio.c
@@ -36,21 +40,22 @@ add_executable(CoronaRoyale
   src/client/events.c
   src/client/collision.c
   src/client/mouse.c
+  src/client/timer.c
+  src/client/texture.c
+
   deps/SDL_FontCache/SDL_FontCache.c
 )
+add_executable(CoronaRoyale ${CR_CLIENT_SOURCES})
+
 target_compile_definitions(CoronaRoyale PRIVATE
 
 )
 target_include_directories(CoronaRoyale PRIVATE
   src
+  deps/SDL_FontCache
   # ${PROJECT_SOURCE_DIR}
 )
 
-set_target_properties(CoronaRoyale PROPERTIES
-  ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-  LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-)
 
 # Platform specific stuff
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
@@ -58,6 +63,12 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc")
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd")
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
+  
+  set_target_properties(CoronaRoyale PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+  )
 
   target_include_directories(CoronaRoyale PRIVATE
     deps/SDL2/include
@@ -65,7 +76,6 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     deps/SDL2_mixer/include
     deps/SDL2_net/include
     deps/SDL2_ttf/include
-    deps/SDL_FontCache
   )
   target_link_directories(CoronaRoyale PRIVATE
     deps/SDL2/lib/x64
@@ -84,7 +94,13 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
   )
 else()
   # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++17 -fms-extensions -fdelayed-template-parsing -fexceptions")
-  
+
+  set_target_properties(CoronaRoyale PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}"
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}"
+  )
+
   target_include_directories(CoronaRoyale PRIVATE
     ${SDL2_INCLUDE_DIR}
     ${SDL2_IMAGE_INCLUDE_DIR}

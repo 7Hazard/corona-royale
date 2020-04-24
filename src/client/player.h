@@ -25,8 +25,8 @@ typedef struct Player
     bool up;
     bool down;
     bool mouseClick;
-    SDL_Texture* image;
     float angle;
+    SDL_Texture* texture;
     int frameWidth, frameHeight;
     int textureWidth, textureHeight;
 } Player;

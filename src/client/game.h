@@ -4,6 +4,7 @@
 #include <SDL.h>
 
 #include "player.h"
+#include "timer.h"
 
 #define WINDOW_W 375
 #define WINDOW_H 667
@@ -16,6 +17,8 @@ typedef struct Game
     SDL_Texture *background;
     int mapWidth, mapHeight;
     Player player;
+    Timer timer;
+    
 } Game;
 
 Game* GetGame();

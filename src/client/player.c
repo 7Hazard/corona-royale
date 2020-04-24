@@ -5,6 +5,8 @@
 #include "events.h"
 #include "audio.h"
 #include "game.h"
+#include "timer.h"
+#include "texture.h"
 #include "collision.h"
 #include "mouse.h"
 
@@ -12,8 +14,8 @@ void CreatePlayer(Player* player, int xPos, int yPos)
 {
     Game *game = GetGame();
 
-    player->image = IMG_LoadTexture(game->renderer, "res/circle.png");
-    SDL_QueryTexture(player->image, NULL, NULL, &player->textureWidth, &player->textureHeight);
+    player->texture = LoadTexture("res/circle.png");
+    SDL_QueryTexture(player->texture, NULL, NULL, &player->textureWidth, &player->textureHeight);
     player->frameWidth = (player->textureWidth);
     player->frameHeight = (player->textureHeight);
     player->infected = true;
@@ -47,7 +49,6 @@ void HandlePlayerEvents(SDL_Event *event)
             break;
             case SDLK_s: player->down = true;
             break;
-            
         }
     }
     if(event->type == SDL_KEYUP)
@@ -68,15 +69,11 @@ void HandlePlayerEvents(SDL_Event *event)
     if (event->type == SDL_MOUSEBUTTONDOWN)
     {
         player->mouseClick = true;
-        
     }
     if (event->type == SDL_MOUSEBUTTONUP)
     {
         player->mouseClick = false;
     }
-    
-    
-    
 }
 
 void RotatePlayer(Player *player)
@@ -169,7 +166,7 @@ void OnPlayerUpdate(Player* player)
 void OnPlayerRender(Player* player)
 {
     Game* game = GetGame();
-    SDL_RenderCopyEx(game->renderer, player->image, NULL, &player->rect,player->angle,NULL,SDL_FLIP_NONE);
+    SDL_RenderCopyEx(game->renderer, player->texture, NULL, &player->rect, player->angle, NULL, SDL_FLIP_NONE);
 }
 
 bool IsPlayerMoving(Player* player)
