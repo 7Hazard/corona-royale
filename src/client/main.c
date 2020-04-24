@@ -13,7 +13,6 @@
 #include "game.h"
 #include "audio.h"
 
-void GetGameState(enum States *currentState);
 #include "timer.h"
 #include "shared/network.h"
 #include "shared/data.h"
@@ -93,22 +92,20 @@ int main(int argc, const char *argv[])
 {
     printf("Corona Royale\n");
 
-    enum States currentState; // lagt till
-    currentState = CR_STATE_PRELOAD;
-
     const int fps = 60;
     const int frameDelay = 1000 / fps;
     Uint32 frameStart;
     int frameTime;
 
     Game* game = GetGame();
+    game->currentState = CR_STATE_MENU;
     // FC_Font* font = FC_CreateFont();
     // FC_LoadFont(font, game->renderer, "res/fonts/ComicSansMS3.ttf", 20, FC_MakeColor(255, 255, 255, 255), TTF_STYLE_BOLD|TTF_STYLE_ITALIC);
     
     // Start network thread
     SDL_Thread* networkThread = SDL_CreateThread(NetworkThread, "NetworkThread", (void *)NULL);
 
-    currentState = CR_STATE_MENU;
+ 
     while (game->running)
     {
         frameStart = SDL_GetTicks();
@@ -123,7 +120,7 @@ int main(int argc, const char *argv[])
             SDL_SetRenderDrawColor(game->renderer, 0, 0, 0, 255);
             SDL_RenderClear(game->renderer);
 
-            if(currentState == CR_STATE_RUNNING)
+            if(game->currentState == CR_STATE_RUNNING)
             {
                 // Draw background
                 SDL_RenderCopy(game->renderer, game->background, &game->player.camera.cameraRect, NULL);
@@ -132,7 +129,7 @@ int main(int argc, const char *argv[])
                 RendererTimer(&game->timer);
 
                 SDL_RenderCopy(game->renderer, game->menu.textureMenu, NULL, NULL);
-            } else if(currentState == CR_STATE_MENU)
+            } else if(game->currentState == CR_STATE_MENU)
             {
                 RenderMenu();
             }
@@ -154,15 +151,3 @@ int main(int argc, const char *argv[])
     return 0;
 }
 
-void GetGameState(enum States *currentState)
-{
-    switch (*currentState)
-    {
-    case CR_STATE_MENU:
-
-        break;
-
-    default:
-        break;
-    }
-}

@@ -10,6 +10,14 @@
 #define WINDOW_W 375
 #define WINDOW_H 667
 
+typedef enum GameState {
+    CR_STATE_PRELOAD,
+    CR_STATE_MENU,
+    CR_STATE_LOADGAME,
+    CR_STATE_RUNNING,
+    CR_STATE_WINSCREEN
+}GameState; 
+
 typedef struct Game
 {
     bool running;
@@ -20,8 +28,9 @@ typedef struct Game
     Player player;
     Timer timer;
     Menu menu;
+    GameState currentState;
 } Game;
 
-enum States {CR_STATE_PRELOAD,CR_STATE_MENU,CR_STATE_LOADGAME,CR_STATE_RUNNING,CR_STATE_WINSCREEN}; 
+
 
 Game* GetGame();
