@@ -16,6 +16,7 @@ void CreateTimer(Timer *timer)
     timer->mStarted = true;
 
     Game* game = GetGame();
+    
     timer->Sans = FC_CreateFont();
     FC_LoadFont(timer->Sans,game->renderer,"res/fonts/OpenSans-Semibold.ttf", 
     24,FC_MakeColor(255, 255, 255, 255),TTF_STYLE_NORMAL);
@@ -23,7 +24,6 @@ void CreateTimer(Timer *timer)
     {
         abort();
     }
-   
 }
 
 void ResetSeconds(Timer *timer)
@@ -58,21 +58,16 @@ void UpdateTimer(Timer *timer)
 void RendererTimer(Timer *timer)
 {
     Game* game = GetGame();
+    UpdateTimer(timer);
+    sprintf(timer->timerBuffer, "%d:%d", timer->mMinuteTime, timer->mDeltaTime); // copy string (timer.mStartTicks)to buffer
 
-    UpdateTimer(&game->timer);
-    sprintf(game->timer.timerBuffer, "%d:%d", game->timer.mMinuteTime, game->timer.mDeltaTime); // copy string (timer.mStartTicks)to buffer
-
-    if (!game->timer.mLast10Sek)
+    if (!timer->mLast10Sek)
     {
-        // game->timer.surfaceTime = TTF_RenderText_Solid(game->timer.Sans, game->timer.timerBuffer, game->timer.White);
-        FC_DrawColor(timer->Sans, game->renderer, 0, 50, FC_MakeColor(255, 255, 255, 255), game->timer.timerBuffer);
+        FC_DrawColor(timer->Sans, game->renderer, 0, 50, FC_MakeColor(255, 255, 255, 255), timer->timerBuffer);
     }
-    else if (game->timer.mLast10Sek)
+    else if (timer->mLast10Sek)
     {
-         game->timer.surfaceTime = TTF_RenderText_Solid(game->timer.Sans, game->timer.timerBuffer, game->timer.Red);
-        FC_DrawColor(game->timer.Sans, game->renderer, 0, 50, FC_MakeColor(255, 0, 0, 255),game->timer.timerBuffer);
+         timer->surfaceTime = TTF_RenderText_Solid(timer->Sans, timer->timerBuffer, timer->Red);
+        FC_DrawColor(timer->Sans, game->renderer, 0, 50, FC_MakeColor(255, 0, 0, 255),timer->timerBuffer);
     }
-
-    // game->timer.textureTime = SDL_CreateTextureFromSurface(game->renderer, game->timer.surfaceTime); //now you can convert it into a texture
-    // SDL_RenderCopy(game->renderer, game->timer.textureTime, NULL, &game->timer.rect);
 }
