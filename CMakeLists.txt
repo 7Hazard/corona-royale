@@ -22,8 +22,10 @@ add_definitions(
   -DUNICODE
 )
 
-# Copy resources into build output
-file(COPY "res" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
+set(SHARED_SOURCES
+  src/shared/network.c
+  src/shared/data.c
+)
 
 ######
 ###### CLIENT
@@ -36,18 +38,20 @@ add_executable(CoronaRoyale
   src/client/events.c
   src/client/collision.c
   src/client/menu.c
+  src/client/mouse.c
   src/client/timer.c
     src/client/texture.c
 
   deps/SDL_FontCache/SDL_FontCache.c
+
+  ${SHARED_SOURCES}
 )
 target_compile_definitions(CoronaRoyale PRIVATE
-
+  CR_CLIENT
 )
 target_include_directories(CoronaRoyale PRIVATE
   src
   deps/SDL_FontCache
-  # ${PROJECT_SOURCE_DIR}
 )
 
 
@@ -118,13 +122,16 @@ endif()
 ######
 add_executable(CoronaRoyaleServer
   src/server/main.c
+  src/server/netplayer.c
+
+  ${SHARED_SOURCES}
 )
 target_compile_definitions(CoronaRoyaleServer PRIVATE
-
+  CR_SERVER
+  WITHOUT_SDL
 )
 target_include_directories(CoronaRoyaleServer PRIVATE
   src
-  # ${PROJECT_SOURCE_DIR}
 )
 
 set_target_properties(CoronaRoyaleServer PROPERTIES
@@ -144,19 +151,15 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     deps/SDL2_net/lib/x64
   )
   target_link_libraries(CoronaRoyaleServer PRIVATE
-    SDL2
-    SDL2main
     SDL2_net
   )
 else()
   # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++17 -fms-extensions -fdelayed-template-parsing -fexceptions")
   
   target_include_directories(CoronaRoyaleServer PRIVATE
-    ${SDL2_INCLUDE_DIR}
     ${SDL2_NET_INCLUDE_DIR}
   )
   target_link_libraries(CoronaRoyaleServer PRIVATE
-    ${SDL2_LIBRARY}
     ${SDL2_NET_LIBRARIES}
   )
 endif()
