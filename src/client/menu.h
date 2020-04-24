@@ -21,4 +21,3 @@ typedef struct
 void LoadMenu(Menu* menu);
 void RenderMenu();
 void HandleMenuEvents(SDL_Event* event);
-void CheckMousePosition();

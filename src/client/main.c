@@ -124,11 +124,9 @@ int main(int argc, const char *argv[])
             {
                 // Draw background
                 SDL_RenderCopy(game->renderer, game->background, &game->player.camera.cameraRect, NULL);
-
                 OnPlayerRender(&game->player);
                 RendererTimer(&game->timer);
-
-                SDL_RenderCopy(game->renderer, game->menu.textureMenu, NULL, NULL);
+                
             } else if(game->currentState == CR_STATE_MENU)
             {
                 RenderMenu();
