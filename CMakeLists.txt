@@ -39,6 +39,7 @@ set(CR_CLIENT_SOURCES
   src/client/player.c
   src/client/events.c
   src/client/collision.c
+  src/client/mouse.c
   src/client/timer.c
   src/client/texture.c
 
