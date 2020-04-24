@@ -1,6 +1,7 @@
 #include <SDL_image.h>
 #include <SDL.h>
 #include <stdio.h>
+#include <assert.h>
 
 #include "player.h"
 #include "events.h"
@@ -39,45 +40,12 @@ void CreatePlayer(Player* player, int xPos, int yPos)
     player->camera.cameraRect.h = WINDOW_H;
 
     player->mouseClick = false;
-    player->left = false;
-    player->right = false;
-    player->up = false;
-    player->down = false;
 }
 
 void HandlePlayerEvents(SDL_Event *event)
 {
     Game* game = GetGame();
     Player* player = &game->player;
-
-    if(event->type == SDL_KEYDOWN)
-    {
-        switch (event->key.keysym.sym)
-        {
-            case SDLK_a: player->left = true;
-            break;
-            case SDLK_d: player->right = true;
-            break;
-            case SDLK_w: player->up = true;
-            break;
-            case SDLK_s: player->down = true;
-            break;
-        }
-    }
-    if(event->type == SDL_KEYUP)
-    {
-        switch (event->key.keysym.sym)
-        {
-            case SDLK_a: player->left = false;
-            break;
-            case SDLK_d: player->right = false;
-            break;
-            case SDLK_w: player->up = false;
-            break;
-            case SDLK_s: player->down = false;
-            break;
-        }
-    }
 
     if (event->type == SDL_MOUSEBUTTONDOWN)
     {
@@ -120,33 +88,15 @@ void OnPlayerUpdate(Player* player)
     HandleBorders(player);
     RotatePlayer(player);
 
-    SDL_LockMutex(player->positionMutex);
-    if(player->up == true)
-    {
-        player->position.y-=7;
-    }
-    if(player->down == true)
-    {
-        player->position.y+=7;
-    }
-    if(player->left == true)
-    {
-        player->position.x-=7;
-    }
-    if(player->right == true)
-    {
-        player->position.x+=7;
-    }
-
-    int posx = player->position.x, posy = player->position.y;
-    SDL_UnlockMutex(player->positionMutex);
+    int posx = player->position.x;
+    int posy = player->position.y;
    
     if (player->mouseClick == true)
     {
         MoveTowardsMouse(player);
     }
     
-    if ((IsPlayerMoving(player) || player->mouseClick == true) && !Mix_Playing(1))
+    if (player->mouseClick == true && !Mix_Playing(1))
     {
         Mix_PlayChannel(1, audio->steps, 0);
     }
@@ -155,7 +105,6 @@ void OnPlayerUpdate(Player* player)
     //make the camera scroll depending on the player position
     player->camera.cameraRect.x = (posx + player->textureWidth/2) - WINDOW_W/2;
     player->camera.cameraRect.y = (posy + player->textureHeight/2) - WINDOW_H/2;
-
 
     //background rendering boundries
     if (player->camera.cameraRect.x < 0)
@@ -190,7 +139,8 @@ void OnPlayerRender(Player* player)
 
 bool IsPlayerMoving(Player* player)
 {
-    return player->up || player->down || player->left || player->right;
+    assert(false, "UNIMPLEMENTED");
+    return false;
 }
 
 void SetPlayerPosition(Player* player, int x, int y)

@@ -19,10 +19,6 @@ typedef struct Player
     Camera camera;
     SDL_mutex* infectedMutex;
     bool infected;
-    bool left;
-    bool right;
-    bool up;
-    bool down;
     bool mouseClick;
     float angle;
     SDL_Texture* texture;
