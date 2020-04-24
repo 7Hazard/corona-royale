@@ -130,6 +130,15 @@ int main(int argc, const char *argv[])
             } else if(game->currentState == CR_STATE_MENU)
             {
                 RenderMenu();
+                
+               if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT))
+                {
+                        
+                    SDL_RenderCopy(game->renderer, game->background, &game->player.camera.cameraRect, NULL);
+                    OnPlayerRender(&game->player);
+                    RendererTimer(&game->timer);
+                     
+                }
             }
 
             SDL_RenderPresent(game->renderer);

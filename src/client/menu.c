@@ -7,6 +7,7 @@
 void LoadMenu(Menu* menu){
     Game* game = GetGame();
 
+    menu->textureMenu = IMG_LoadTexture(game->renderer,"res/background_menu.jpg");
     menu->textureMenu = IMG_LoadTexture(game->renderer,"C:/Users/Dell/Desktop/hi1038-project/res/menu/background_menu.jpg");
 
     menu->texturePlayButton = IMG_LoadTexture(game->renderer,"C:/Users/Dell/Desktop/hi1038-project/res/GreenPlayButton.png");
