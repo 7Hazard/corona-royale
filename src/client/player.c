@@ -79,22 +79,22 @@ void HandlePlayerEvents(SDL_Event *event)
 void RotatePlayer(Player *player)
 {
     Game* game = GetGame();
-    Mouse mouse;
-    SDL_GetMouseState(&mouse.x,&mouse.y);
+    int mousex, mousey;
+    SDL_GetMouseState(&mousex, &mousey);
     //Get "world" coordinates instead of windowpos
-    mouse.x += player->camera.cameraRect.x;
-    mouse.y += player->camera.cameraRect.y;
-    player->angle = GetAngle(player->position.x + player->rect.w/2,mouse.x,player->position.y + player->rect.h/2,mouse.y);
+    mousex += player->camera.cameraRect.x;
+    mousey += player->camera.cameraRect.y;
+    player->angle = GetAngle(player->position.x + player->rect.w/2, mousex, player->position.y + player->rect.h/2, mousey);
 }
 
 void MoveTowardsMouse(Player *player)
 {
-    Mouse mouse;
+    int mousex, mousey;
     int newPosX, newPosY;
-    SDL_GetMouseState(&mouse.x,&mouse.y);
+    SDL_GetMouseState(&mousex, &mousey);
     
-    newPosX = (mouse.x + player->camera.cameraRect.x)- player->position.x + player->rect.w/2;
-    newPosY = (mouse.y+ player->camera.cameraRect.y) - player->position.y + player->rect.h/2;
+    newPosX = (mousex + player->camera.cameraRect.x)- player->position.x + player->rect.w/2;
+    newPosY = (mousey + player->camera.cameraRect.y) - player->position.y + player->rect.h/2;
     player->position.x += newPosX/20;
     player->position.y +=newPosY/20;
 }
