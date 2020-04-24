@@ -16,6 +16,7 @@
     "events.h": "c",
     "sdl_fontcache.h": "c",
     "unistd.h": "c",
-    "stdlib.h": "c"
+    "stdlib.h": "c",
+    "*.rh": "c"
   }
 }

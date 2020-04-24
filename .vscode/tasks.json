@@ -4,11 +4,40 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Build",
+      "label": "Build VS2019",
       "type": "shell",
       "windows": {
         "command": "${workspaceFolder}/tools/build-vs2019.bat",  
       },
+      "options": {
+        // "cwd": "${workspaceFolder}/"
+      },
+      "args": [],
+      "group": "build",
+      "problemMatcher": [
+        "$gcc",
+        "$msCompile"
+      ]
+    },
+    {
+      "label": "Build VS2017",
+      "type": "shell",
+      "windows": {
+        "command": "${workspaceFolder}/tools/build-vs2017.bat",  
+      },
+      "options": {
+        // "cwd": "${workspaceFolder}/"
+      },
+      "args": [],
+      "group": "build",
+      "problemMatcher": [
+        "$gcc",
+        "$msCompile"
+      ]
+    },
+    {
+      "label": "Build MacOS",
+      "type": "shell",
       "osx": {
         "command": "chmod 777 ${workspaceFolder}/tools/build-macos.sh && ${workspaceFolder}/tools/build-macos.sh",
       },
@@ -22,5 +51,52 @@
         "$msCompile"
       ]
     },
+    {
+      "label": "Run Server VS2019",
+      "type": "shell",
+      "windows": {
+        "command": "cmd /c start ${workspaceFolder}/BUILD/VS2019/Debug/CoronaRoyaleServer.exe",
+        "options": {
+          "cwd": "${workspaceFolder}/BUILD/VS2019/Debug"
+        }
+      },
+      "dependsOn": ["Build VS2019"],
+      "group": "test"
+    },
+    {
+      "label": "Run Server VS2017",
+      "type": "shell",
+      "windows": {
+        "command": "cmd /c start ${workspaceFolder}/BUILD/VS2017/Debug/CoronaRoyaleServer.exe",
+        "options": {
+          "cwd": "${workspaceFolder}/BUILD/VS2017/Debug"
+        }
+      },
+      "dependsOn": ["Build VS2017"],
+      "group": "test"
+    },
+    {
+      "label": "Run Server MacOS",
+      "type": "shell",
+      "osx": {
+        "command": "open -a ${workspaceFolder}/BUILD/macos/Debug/CoronaRoyaleServer",
+        "options": {
+          "cwd": "${workspaceFolder}/BUILD/macos/Debug"
+        }
+      },
+      "dependsOn": ["Build MacOS"],
+      "group": "test"
+    },
+    {
+      "label": "Shutdown Server",
+      "type": "shell",
+      "windows": {
+        "command": "taskkill /IM CoronaRoyaleServer.exe",
+      },
+      "osx": {
+        "command": "killall CoronaRoyaleServer",
+      },
+      "group": "test"
+    }
   ]
 }
