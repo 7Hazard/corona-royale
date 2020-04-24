@@ -6,10 +6,6 @@
 #include <SDL_FontCache.h>
 #include <time.h> 
 
-#ifdef _WIN32
-#include "Windows.h"
-#endif
-
 #include "memory.h"
 #include "collision.h"
 #include "events.h"
@@ -64,20 +60,21 @@ int NetworkThread(void *ptr)
             abort();
         }
 
-        SetPlayerPosition(&game->player, data.x, data.y);
+        ApplyPlayerData(&game->player, &data);
     }
-
-    UDPpacket udppacket;
-    udppacket.data = "HELLO FROM CLIENT UDP";
-    udppacket.len = sizeof("HELLO FROM CLIENT UDP");
 
     // Network loop
     while (1)
     {
         time_t start = clock();
+        ///////// START OF NET TICK
+
+        // Send 
+        PositionData data;
+        GetPlayerPositionData(&game->player, &data);
+        SendPositionData_UDP(&data);
         
-        SendUDPPacket(&udppacket);
-        
+        ///////// END OF NET TICK
         time_t end = clock();
         int result = end-start;
         if (result < CR_NET_TICK_TIME)

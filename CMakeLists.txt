@@ -27,6 +27,7 @@ file(COPY "res" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
 
 set(SHARED_SOURCES
   src/shared/network.c
+  src/shared/data.c
 )
 
 ######
@@ -50,7 +51,6 @@ target_compile_definitions(CoronaRoyale PRIVATE
 target_include_directories(CoronaRoyale PRIVATE
   src
   deps/SDL_FontCache
-  # ${PROJECT_SOURCE_DIR}
 )
 
 
@@ -121,6 +121,7 @@ endif()
 ######
 add_executable(CoronaRoyaleServer
   src/server/main.c
+  src/server/netplayer.c
 
   ${SHARED_SOURCES}
 )
@@ -130,7 +131,6 @@ target_compile_definitions(CoronaRoyaleServer PRIVATE
 )
 target_include_directories(CoronaRoyaleServer PRIVATE
   src
-  # ${PROJECT_SOURCE_DIR}
 )
 
 set_target_properties(CoronaRoyaleServer PROPERTIES

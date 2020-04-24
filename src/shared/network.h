@@ -1,8 +1,9 @@
 #pragma once
+#include <stdbool.h>
 #include <SDL_net.h>
 
 #define CR_NET_PORT 6969
-#define MAX_UDP_PACKET_SIZE 256
+#define CR_MAX_UDP_PACKET_SIZE 256
 #define CR_NET_TICK 20
 #define CR_NET_TICK_TIME (1000/CR_NET_TICK)
 
@@ -15,12 +16,10 @@ typedef struct Network
 
     // UDP
     UDPsocket udpSocket;
+#ifdef CR_SERVER
     SDLNet_SocketSet udpSocketSet;
+#endif
     int udpChannel;
-    UDPpacket* udpRecvPacket;
-
-    // Callback for handling UDP packets
-    void(*udpPacketRecieveCallback)(UDPpacket* packet);
 } Network;
 
 Network* GetNetwork();
@@ -28,7 +27,7 @@ Network* GetNetwork();
 #ifdef CR_CLIENT
 // CLIENT FUNCTIONS
 
-bool ConnectTCP(const char* host);
+bool Connect(const char* host);
 
 // Returns false if could not read message, SOCKET IS INVALIDATED NOW!!
 bool SendTCPMessage(uint8_t* content, uint16_t contentLength);
@@ -60,4 +59,4 @@ bool ReadTCPMessage(TCPsocket socket, uint8_t* buffer, uint16_t len);
 #endif
 // Universal functions
 
-void CheckUDPUpdates();
+// void PollUDPUpdates();

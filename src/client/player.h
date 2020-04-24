@@ -4,6 +4,7 @@
 #include <SDL.h>
 #include "mouse.h"
 #include "events.h"
+#include "shared/data.h"
 
 typedef struct Camera
 {
@@ -17,6 +18,7 @@ typedef struct Player
     SDL_mutex* positionMutex;
     SDL_Rect position;
     Camera camera;
+    SDL_mutex* infectedMutex;
     bool infected;
     bool left;
     bool right;
@@ -34,3 +36,7 @@ void OnPlayerUpdate(Player* player);
 void OnPlayerRender(Player* player);
 bool IsPlayerMoving(Player* player);
 void SetPlayerPosition(Player* player, int x, int y);
+void SetPlayerAngle(Player* player, float angle);
+void SetPlayerInfected(Player* player, bool infected);
+void ApplyPlayerData(Player* player, PlayerData* data);
+void GetPlayerPositionData(Player* player, PositionData* data);

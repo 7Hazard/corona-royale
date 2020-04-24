@@ -3,7 +3,8 @@
 #include <SDL_net.h>
 #include <stdbool.h>
 
-#include "shared/network.h"
+#include "log.h"
+#include "network.h"
 
 Network* GetNetwork()
 {
@@ -57,9 +58,6 @@ Network* GetNetwork()
             printf("SDLNet_AddSocket: %s\n", SDLNet_GetError());
             abort();
         }
-
-        network.udpRecvPacket = SDLNet_AllocPacket(1024);
-        network.udpPacketRecieveCallback = NULL;
 #else
         network.tcpSocket = NULL;
 #endif
@@ -109,9 +107,9 @@ bool Connect(const char* host)
 bool SendTCPMessage(uint8_t* content, uint16_t contentLength)
 {
     Network* network = GetNetwork();
-    TCPsocket* socket = network->tcpSocket;
+    TCPsocket socket = network->tcpSocket;
 #else
-bool SendTCPMessage(TCPsocket* socket, uint8_t* content, uint16_t contentLength)
+bool SendTCPMessage(TCPsocket socket, uint8_t* content, uint16_t contentLength)
 {
 #endif
 
@@ -139,9 +137,9 @@ bool SendTCPMessage(TCPsocket* socket, uint8_t* content, uint16_t contentLength)
 uint16_t GetTCPMessageLength()
 {
     Network* network = GetNetwork();
-    TCPsocket* socket = network->tcpSocket;
+    TCPsocket socket = network->tcpSocket;
 #else
-uint16_t GetTCPMessageLength(TCPsocket* socket)
+uint16_t GetTCPMessageLength(TCPsocket socket)
 {
 #endif
 
@@ -161,14 +159,14 @@ uint16_t GetTCPMessageLength(TCPsocket* socket)
 bool ReadTCPMessage(uint8_t* buffer, uint16_t len)
 {
     Network* network = GetNetwork();
-    TCPsocket* socket = network->tcpSocket;
+    TCPsocket socket = network->tcpSocket;
 #else
-bool ReadTCPMessage(TCPsocket* socket, uint8_t* buffer,uint16_t len)
+bool ReadTCPMessage(TCPsocket socket, uint8_t* buffer,uint16_t len)
 {
 #endif
 
     // Read content
-    if(SDLNet_TCP_Recv(socket,buffer,len) <= 0)
+    if(SDLNet_TCP_Recv(socket, buffer, len) <= 0)
     {
         return false;
     }
@@ -176,19 +174,36 @@ bool ReadTCPMessage(TCPsocket* socket, uint8_t* buffer,uint16_t len)
     return true;
 }
 
-void SendUDPPacket(UDPpacket* packet)
+bool SendUDPPacket(UDPpacket* packet)
 {
     Network* net = GetNetwork();
+
+    if(packet->len > CR_MAX_UDP_PACKET_SIZE)
+    {
+        LogInfo("SIZE OF PACKET WAS LARGER THAN %d\n", CR_MAX_UDP_PACKET_SIZE);
+        abort();
+        return false;
+    }
 
     SDLNet_UDP_Send(net->udpSocket, net->udpChannel, packet);
+
+    return true;
 }
 
-void CheckUDPUpdates()
-{
-    Network* net = GetNetwork();
+// void PollUDPUpdates()
+// {
+//     Network* net = GetNetwork();
 
-    if(SDLNet_CheckSockets(net->udpSocketSet, 0) && SDLNet_UDP_Recv(net->udpSocket, net->udpRecvPacket))
-    {
-        net->udpPacketRecieveCallback(net->udpRecvPacket);
-    }
-}
+// #ifdef CR_SERVER
+//     if(SDLNet_CheckSockets(net->udpSocketSet, 0) < 1)
+//         return; // No incoming packets
+// #endif
+
+//     UDPpacket* packet = SDLNet_AllocPacket(1024);
+//     while(SDLNet_UDP_Recv(net->udpSocket, packet))
+//     {
+//         printf("RECIEVED PACKET, LEN: %d\n", packet->len);
+
+//         HandleData();
+//     }
+// }

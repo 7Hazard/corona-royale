@@ -5,6 +5,7 @@
 #include "audio.h"
 #include "game.h"
 #include "collision.h"
+#include "shared/data.h"
 
 void CreatePlayer(Player* player, int xPos, int yPos)
 {
@@ -20,6 +21,7 @@ void CreatePlayer(Player* player, int xPos, int yPos)
     SDL_QueryTexture(player->image, NULL, NULL, &player->textureWidth, &player->textureHeight);
     player->frameWidth = (player->textureWidth);
     player->frameHeight = (player->textureHeight);
+    player->infectedMutex = SDL_CreateMutex();
     player->infected = true;
     player->rect.x = 0;
     player->rect.y = 0;
@@ -148,4 +150,31 @@ void SetPlayerPosition(Player* player, int x, int y)
     player->position.x = x;
     player->position.y = y;
     SDL_UnlockMutex(player->positionMutex);
+}
+
+void SetPlayerAngle(Player* player, float angle)
+{
+    // SDL_LockMutex(player->positionMutex);
+    // player->angle = angle;
+    // SDL_UnlockMutex(player->positionMutex);
+}
+
+void SetPlayerInfected(Player* player, bool infected)
+{
+    SDL_LockMutex(player->infectedMutex);
+    player->infected = infected;
+    SDL_UnlockMutex(player->infectedMutex);
+}
+
+void ApplyPlayerData(Player* player, PlayerData* data)
+{
+    SetPlayerPosition(player, data->x, data->y);
+    SetPlayerAngle(player, data->angle);
+    SetPlayerInfected(player, data->infected);
+}
+
+void GetPlayerPositionData(Player* player, PositionData* data)
+{
+    data->x = player->position.x;
+    data->y = player->position.y;
 }

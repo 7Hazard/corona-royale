@@ -4,48 +4,56 @@
 #include <stdbool.h>
 #include <time.h>
 #include <windows.h>
-
+#include <assert.h>
 
 #include "shared/memory.h"
 #include "shared/network.h"
 #include "shared/data.h"
+#include "netplayer.h"
+#include "shared/log.h"
 
-void HandlePacket(UDPpacket* packet)
-{
-   static int count = 0;
-    printf("UDP PACKET RECIEVED %d\n",count++);
-}
+#define CR_MAX_PLAYERS 10
 
 int main(int argc, char const *argv[])
 {
 	printf("Corona Royale Server\n");
-	
-	Network* network = GetNetwork();
-    network->udpPacketRecieveCallback = HandlePacket;
 
-	TCPsocket clientSock;
-	const char* text = "hello client";
+    assert(CR_MAX_PLAYERS <= 100, "MAXIMUM AMOUNT OF PLAYERS IS 100");
+
+    // Seed rand
+    srand(time(NULL));
+	
+	Network* net = GetNetwork();
+
+    // Allocate array of net players
+    NetPlayer* players = alloca(CR_MAX_PLAYERS*sizeof(NetPlayer));
+    int playerCount = 0;
+
+	TCPsocket incomingSocket;
+
+    UDPpacket* packet = SDLNet_AllocPacket(1024);
 
 	while (1)
 	{
 		time_t start = clock();
+        ///////// START OF NET TICK
         
-        clientSock = SDLNet_TCP_Accept(network->tcpSocket);
-		if(clientSock)
+		incomingSocket = SDLNet_TCP_Accept(net->tcpSocket);
+		if(incomingSocket)
         {
 			printf("Connection incoming\n");
 
-            uint16_t len = GetTCPMessageLength(clientSock);
+            uint16_t len = GetTCPMessageLength(incomingSocket);
             if(len == 0)
             {
-                printf("Could not get length of TCP message, connection invalid!");
+                printf("Could not get length of TCP message, connection invalid!\n");
                 continue;
             }
             printf("TCP Message length: %d\n", len);
 
             // Stack allocate enough memory for content
             char* content = alloca(len);
-            if(!ReadTCPMessage(clientSock, content, len))
+            if(!ReadTCPMessage(incomingSocket, content, len))
             {
                 printf("COULD NOT READ MESSAGE");
                 continue;
@@ -53,26 +61,46 @@ int main(int argc, char const *argv[])
             
             printf("Recieved: %s\n", content);
 
-            // SEND START INFO TO PLAYER
+            if(playerCount == CR_MAX_PLAYERS)
             {
-                srand(time(NULL));
+                LogInfo("MAXIMUM PLAYERS REACHED, REFUSING CONNECTION\n");
+                // TODO: SEND ACTUAL REASON FOR REFUSED CONNECTION
+                SDLNet_TCP_Close(incomingSocket);
+            }
+            else {
+                // Register player
+                NetPlayer* ply = &players[playerCount];
+                InitNetPlayer(ply, incomingSocket);
+
+                // Send player data
                 PlayerData data;
-                data.x = rand() % 500 + 1;
-                data.y = rand() % 500 + 1;
-            
-                SendTCPMessage(clientSock, &data, sizeof(data));
+                GetNetPlayerData(ply, &data);
+                SendTCPMessage(incomingSocket, &data, sizeof(data));
+
+                LogInfo("Registered new player\n");
             }
 		}
 
-        CheckUDPUpdates();
+        if(SDLNet_CheckSockets(net->udpSocketSet, 0))
+        {
+            while(SDLNet_UDP_Recv(net->udpSocket, packet))
+            {
+                if(GetDataID_UDP(packet) == CR_DATA_POSITION)
+                {
+                    PositionData* data = GetPositionData_UDP(packet);
+                    printf("RECIEVED POSITION {x: %d, y: %d}\n", data->x, data->y);
+                }
+            }
+        }
 
+        ///////// END OF NET TICK
         time_t end = clock();
         int result = end-start;
         if (result < CR_NET_TICK_TIME)
         {
             Sleep(CR_NET_TICK_TIME-result);
-        }
-	}
+	    }
+    }
 
 	return 0;
 }
