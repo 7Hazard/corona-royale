@@ -4,6 +4,7 @@
 #include <SDL_image.h>
 #include "game.h"
 
+
 void CreateTimer(Timer *timer)
 {
     timer->mCurrentTime = 0;
@@ -14,33 +15,14 @@ void CreateTimer(Timer *timer)
     timer->mPrevTime = 0;
     timer->mStarted = true;
 
-    timer->Sans = TTF_OpenFont("res/fonts/OpenSans-Semibold.ttf", 24);
+    Game* game = GetGame();
+    timer->Sans = FC_CreateFont();
+    FC_LoadFont(timer->Sans,game->renderer,"res/fonts/OpenSans-Semibold.ttf", 
+    24,FC_MakeColor(255, 255, 255, 255),TTF_STYLE_NORMAL);
     if (!timer->Sans)
     {
         abort();
     }
-
-    timer->White.a = 255;
-    timer->White.b = 255;
-    timer->White.g = 255;
-    timer->White.r = 255;
-
-    timer->Red.a = 0;
-    timer->Red.b = 0;
-    timer->Red.g = 0;
-    timer->Red.r = 255;
-
-    timer->rect.x = 0;
-    timer->rect.y = 0;
-    timer->rect.w = 100;
-    timer->rect.h = 100;
-
-    timer->position.x = 10;
-    timer->position.y = 10;
-    timer->position.w = 50;
-    timer->position.h = 50;
-
-    timer->surfaceTime = NULL;
    
 }
 
@@ -82,13 +64,15 @@ void RendererTimer(Timer *timer)
 
     if (!game->timer.mLast10Sek)
     {
-        game->timer.surfaceTime = TTF_RenderText_Solid(game->timer.Sans, game->timer.timerBuffer, game->timer.White);
+        // game->timer.surfaceTime = TTF_RenderText_Solid(game->timer.Sans, game->timer.timerBuffer, game->timer.White);
+        FC_DrawColor(timer->Sans, game->renderer, 0, 50, FC_MakeColor(255, 255, 255, 255), game->timer.timerBuffer);
     }
     else if (game->timer.mLast10Sek)
     {
-        game->timer.surfaceTime = TTF_RenderText_Solid(game->timer.Sans, game->timer.timerBuffer, game->timer.Red);
+         game->timer.surfaceTime = TTF_RenderText_Solid(game->timer.Sans, game->timer.timerBuffer, game->timer.Red);
+        FC_DrawColor(game->timer.Sans, game->renderer, 0, 50, FC_MakeColor(255, 0, 0, 255),game->timer.timerBuffer);
     }
 
-    game->timer.textureTime = SDL_CreateTextureFromSurface(game->renderer, game->timer.surfaceTime); //now you can convert it into a texture
-    SDL_RenderCopy(game->renderer, game->timer.textureTime, NULL, &game->timer.rect);
+    // game->timer.textureTime = SDL_CreateTextureFromSurface(game->renderer, game->timer.surfaceTime); //now you can convert it into a texture
+    // SDL_RenderCopy(game->renderer, game->timer.textureTime, NULL, &game->timer.rect);
 }
