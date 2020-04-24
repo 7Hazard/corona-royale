@@ -11,7 +11,6 @@
 typedef struct Camera
 {
     SDL_Rect cameraRect;
-    SDL_Rect drawingRect;
 }Camera;
 
 

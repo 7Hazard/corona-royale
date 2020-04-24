@@ -25,8 +25,6 @@ void CreatePlayer(Player* player, int xPos, int yPos)
     player->position.y = yPos;
     player->position.w = player->frameWidth;
     player->position.h = player->frameHeight;
-    player->camera.drawingRect.w = player->frameWidth;
-    player->camera.drawingRect.h = player->frameHeight;
     player->camera.cameraRect.w = WINDOW_W;
     player->camera.cameraRect.h = WINDOW_H;
     player->mouseClick = false;
@@ -133,12 +131,12 @@ void OnPlayerUpdate(Player* player)
         MoveTowardsMouse(player);
     }
     
-    if (IsPlayerMoving(player) && !Mix_Playing(1))
+    if ((IsPlayerMoving(player) || player->mouseClick == true)&& !Mix_Playing(1))
     {
         Mix_PlayChannel(1, audio->steps, 0);
     }
 
-    //make player centered on the screen
+    //make the camera scroll depending on the player position
     player->camera.cameraRect.x = (player->position.x + player->textureWidth/2) - WINDOW_W/2;
     player->camera.cameraRect.y = (player->position.y + player->textureHeight/2) - WINDOW_H/2;
 
@@ -163,15 +161,15 @@ void OnPlayerUpdate(Player* player)
         player->camera.cameraRect.y = game->mapHeight - player->camera.cameraRect.h;
     }
     
-    // make player centered in camera
-    player->camera.drawingRect.x = player->position.x - player->camera.cameraRect.x;
-    player->camera.drawingRect.y = player->position.y - player->camera.cameraRect.y;
+    // render the player centered in camera
+    player->rect.x = player->position.x - player->camera.cameraRect.x;
+    player->rect.y = player->position.y - player->camera.cameraRect.y;
 }
 
 void OnPlayerRender(Player* player)
 {
     Game* game = GetGame();
-    SDL_RenderCopyEx(game->renderer, player->image, &player->rect, &player->camera.drawingRect,player->angle,NULL,SDL_FLIP_NONE);
+    SDL_RenderCopyEx(game->renderer, player->image, NULL, &player->rect,player->angle,NULL,SDL_FLIP_NONE);
 }
 
 bool IsPlayerMoving(Player* player)
