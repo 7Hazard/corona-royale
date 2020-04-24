@@ -5,7 +5,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "(Windows) Debug Client (Run Server)",
+      "name": "(Windows VS2019) Debug Client (Run Server)",
       "request": "launch",
       "type": "cppvsdbg",
       "windows": {
@@ -17,10 +17,10 @@
       "stopAtEntry": false,
       "environment": [],
       "externalConsole": true,
-      "preLaunchTask": "Run Server"
+      "preLaunchTask": "Run Server VS2019"
     },
     {
-      "name": "(Windows) Client",
+      "name": "(Windows VS2019) Client",
       "request": "launch",
       "type": "cppvsdbg",
       "windows": {
@@ -31,10 +31,10 @@
       "stopAtEntry": false,
       "environment": [],
       "externalConsole": true,
-      "preLaunchTask": "Build"
+      "preLaunchTask": "Build VS2019"
     },
     {
-      "name": "(Windows) Server",
+      "name": "(Windows VS2019) Server",
       "request": "launch",
       "type": "cppvsdbg",
       "windows": {
@@ -45,10 +45,53 @@
       "stopAtEntry": false,
       "environment": [],
       "externalConsole": true,
-      "preLaunchTask": "Build"
+      "preLaunchTask": "Build VS2019"
     },
     {
-      "name": "(macOS) Run Client",
+      "name": "(Windows VS2017) Debug Client (Run Server)",
+      "request": "launch",
+      "type": "cppvsdbg",
+      "windows": {
+        "program": "${workspaceFolder}/BUILD/VS2017/Debug/CoronaRoyale.exe",
+        "cwd": "${workspaceFolder}/BUILD/VS2017/Debug/",
+        "postDebugTask": "Shutdown Server"
+      },
+      "args": [],
+      "stopAtEntry": false,
+      "environment": [],
+      "externalConsole": true,
+      "preLaunchTask": "Run Server VS2017"
+    },
+    {
+      "name": "(Windows VS2017) Client",
+      "request": "launch",
+      "type": "cppvsdbg",
+      "windows": {
+        "program": "${workspaceFolder}/BUILD/VS2017/Debug/CoronaRoyale.exe",
+        "cwd": "${workspaceFolder}/BUILD/VS2017/Debug/",
+      },
+      "args": [],
+      "stopAtEntry": false,
+      "environment": [],
+      "externalConsole": true,
+      "preLaunchTask": "Build VS2017"
+    },
+    {
+      "name": "(Windows VS2017) Server",
+      "request": "launch",
+      "type": "cppvsdbg",
+      "windows": {
+        "program": "${workspaceFolder}/BUILD/VS2017/Debug/CoronaRoyaleServer.exe",
+        "cwd": "${workspaceFolder}/BUILD/VS2017/Debug/",
+      },
+      "args": [],
+      "stopAtEntry": false,
+      "environment": [],
+      "externalConsole": true,
+      "preLaunchTask": "Build VS2017"
+    },
+    {
+      "name": "(macOS) Client",
       "request": "launch",
       "type": "cppdbg",
       "osx": {
@@ -64,7 +107,7 @@
       "preLaunchTask": "Build"
     },
     {
-      "name": "(macOS) Run Server",
+      "name": "(macOS) Server",
       "request": "launch",
       "type": "cppdbg",
       "osx": {
