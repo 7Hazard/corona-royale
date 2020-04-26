@@ -6,13 +6,17 @@
 #include <windows.h>
 #include <assert.h>
 
+#define HASHTABLE_IMPLEMENTATION
+#include "shared/hashtable.h"
+#undef HASHTABLE_IMPLEMENTATION
+
 #include "shared/memory.h"
 #include "shared/network.h"
 #include "shared/data.h"
-#include "netplayer.h"
 #include "shared/log.h"
 
-#define CR_MAX_PLAYERS 10
+#include "netplayer.h"
+#include "server.h"
 
 int main(int argc, char const *argv[])
 {
@@ -24,13 +28,9 @@ int main(int argc, char const *argv[])
     srand(time(NULL));
 	
 	Network* net = GetNetwork();
-
-    // Allocate array of net players
-    NetPlayer* players = alloca(CR_MAX_PLAYERS*sizeof(NetPlayer));
-    int playerCount = 0;
+    Server* server = GetServer();
 
 	TCPsocket incomingSocket;
-
     UDPpacket* packet = SDLNet_AllocPacket(1024);
 
 	while (1)
@@ -41,15 +41,12 @@ int main(int argc, char const *argv[])
 		incomingSocket = SDLNet_TCP_Accept(net->tcpSocket);
 		if(incomingSocket)
         {
-			printf("Connection incoming\n");
-
             uint16_t len = GetTCPMessageLength(incomingSocket);
             if(len == 0)
             {
                 printf("Could not get length of TCP message, connection invalid!\n");
                 continue;
             }
-            printf("TCP Message length: %d\n", len);
 
             // Stack allocate enough memory for content
             char* content = alloca(len);
@@ -59,25 +56,38 @@ int main(int argc, char const *argv[])
                 continue;
             }
             
-            printf("Recieved: %s\n", content);
-
-            if(playerCount == CR_MAX_PLAYERS)
+            // Player count before connecting
+            uint16_t playercount = GetPlayerCount();
+            if(playercount == CR_MAX_PLAYERS)
             {
                 LogInfo("MAXIMUM PLAYERS REACHED, REFUSING CONNECTION\n");
-                // TODO: SEND ACTUAL REASON FOR REFUSED CONNECTION
+                char* reason = "SERVER IS FULL";
+                SendTCPMessage(incomingSocket, reason, strlen(reason)+1);
                 SDLNet_TCP_Close(incomingSocket);
             }
             else {
-                // Register player
-                NetPlayer* ply = &players[playerCount];
-                InitNetPlayer(ply, incomingSocket);
+                // Send ok confirmation
+                char* reason = "OK";
+                SendTCPMessage(incomingSocket, reason, strlen(reason)+1);
 
-                // Send player data
-                PlayerData data;
-                GetNetPlayerData(ply, &data);
-                SendTCPMessage(incomingSocket, &data, sizeof(data));
+                // Send all player data to player
+                PlayerData* data = alloca(sizeof(PlayerData)+playercount);
+                int playercount = GetAllPlayerData(data);
+                if(!SendTCPMessageArray(incomingSocket, data, sizeof(PlayerData), playercount))
+                {
+                    LogInfo("COULD NOT SEND ALL PLAYER DATA");
+                    abort();
+                }
 
-                LogInfo("Registered new player\n");
+                // Register and send player
+                NetPlayer* connectingplayer = InitPlayer(incomingSocket);
+                if(!SendTCPMessage(incomingSocket, &connectingplayer->data, sizeof(PlayerData)))
+                {
+                    LogInfo("COULD NOT SEND PLAYER DATA");
+                    abort();
+                }
+
+                LogInfo("Player connected, ID: %d", connectingplayer->data.id);
             }
 		}
 
@@ -87,11 +97,14 @@ int main(int argc, char const *argv[])
             {
                 if(GetDataID_UDP(packet) == CR_DATA_POSITION)
                 {
-                    PositionData* data = GetPositionData_UDP(packet);
-                    printf("RECIEVED POSITION {x: %d, y: %d}\n", data->x, data->y);
+                    PlayerPositionData* data = GetPositionData_UDP(packet);
+                    // printf("RECIEVED POSITION {x: %d, y: %d}\n", data->x, data->y);
                 }
             }
         }
+
+        // Send position data to all players
+        
 
         ///////// END OF NET TICK
         time_t end = clock();

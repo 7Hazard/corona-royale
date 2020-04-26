@@ -18,7 +18,6 @@ typedef struct Game
     int mapWidth, mapHeight;
     Player player;
     Timer timer;
-    
 } Game;
 
 Game* GetGame();

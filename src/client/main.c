@@ -17,6 +17,7 @@
 #include "timer.h"
 #include "shared/network.h"
 #include "shared/data.h"
+#include "shared/log.h"
 
 int NetworkThread(void *ptr)
 {
@@ -41,6 +42,60 @@ int NetworkThread(void *ptr)
     {
         SDL_Log("Could not send message to server");
         abort();
+    }
+
+    { // Get confirmation
+        uint16_t len = GetTCPMessageLength();
+        if(len == 0)
+        {
+            SDL_ShowSimpleMessageBox(
+                SDL_MESSAGEBOX_ERROR,
+                "TCP read failed",
+                "Could not get confirmation from server",
+                NULL
+            );
+            abort();
+        }
+        
+        char* confirmation = alloca(len);
+        if(!ReadTCPMessage(confirmation, len))
+        {
+            SDL_Log("COULD NOT READ CONFIRMATION");
+            abort();
+        }
+
+        if(strcmp(confirmation, "OK") != 0)
+        {
+            SDL_ShowSimpleMessageBox(
+                SDL_MESSAGEBOX_ERROR,
+                "Connection failed",
+                confirmation,
+                NULL
+            );
+            LogInfo("CONNECTION FAILED: %s", confirmation);
+
+            return 1;
+        }
+        else
+        {
+            LogInfo("CONNECTED TO SERVER: %s", confirmation);
+        }
+    }
+
+    { // Get other players
+        uint16_t datasize = GetTCPMessageLength();
+        uint16_t count = GetTCPMessageLength();
+
+        PlayerData* data = alloca(datasize*count);
+        if(!ReadTCPMessageArray(data, datasize, count))
+        {
+            abort();
+        }
+
+        for (size_t i = 0; i < count; i++)
+        {
+            LogInfo("ID: %d | x: %d | y: %d | angle: %f | inf: %d", data[i].id, data[i].x, data[i].y, data[i].angle, data[i].infected);
+        }
     }
     
     { // Get player data
@@ -73,7 +128,7 @@ int NetworkThread(void *ptr)
         ///////// START OF NET TICK
 
         // Send 
-        PositionData data;
+        PlayerPositionData data;
         GetPlayerPositionData(&game->player, &data);
         SendPositionData_UDP(&data);
         

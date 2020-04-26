@@ -5,6 +5,7 @@
 
 #include "log.h"
 #include "network.h"
+#include "server/netplayer.h"
 
 Network* GetNetwork()
 {
@@ -123,8 +124,63 @@ bool SendTCPMessage(TCPsocket socket, uint8_t* content, uint16_t contentLength)
     memcpy(&msg[2], content, contentLength);
 
     // Send msg through socket
-    size_t sentBytes = SDLNet_TCP_Send(socket,msg,msglen);
+    size_t sentBytes = SDLNet_TCP_Send(socket, msg, msglen);
     if(sentBytes < msglen)
+    {
+        // SDL_Log("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
+        return false;
+    }
+
+    return true;
+}
+
+#ifdef CR_CLIENT
+bool SendTCPMessageArray(void* items, uint16_t itemSize, uint16_t itemCount)
+{
+    Network* network = GetNetwork();
+    TCPsocket socket = network->tcpSocket;
+#else
+bool SendTCPMessageArray(TCPsocket socket, void* items, uint16_t itemSize, uint16_t itemCount)
+{
+#endif
+
+    size_t arraysize = itemSize*itemCount;
+
+    // Stack alloc array of bytes
+    size_t msglen = arraysize+4; // length of message + 2 for itemsize + 2 for itemcount
+    uint8_t* msg = alloca(msglen);
+
+    // Interpret first 2 bytes as 16-bit unsigned int
+    *((uint16_t*)(&msg[0])) = itemSize;
+    // Interpret second 2 bytes as 16-bit unsigned int
+    *((uint16_t*)(&msg[2])) = itemCount;
+    // Copy contents into message starting from 5th byte
+    memcpy(&msg[4], items, arraysize);
+    
+    // Send msg through socket
+    size_t sentBytes = SDLNet_TCP_Send(socket, msg, msglen);
+    if(sentBytes < msglen)
+    {
+        // SDL_Log("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
+        return false;
+    }
+
+    return true;
+}
+
+#ifdef CR_CLIENT
+bool SendTCPMessageNoCopy(uint8_t* content, uint16_t contentLength)
+{
+    Network* network = GetNetwork();
+    TCPsocket socket = network->tcpSocket;
+#else
+bool SendTCPMessageNoCopy(TCPsocket socket, uint8_t* content, uint16_t contentLength)
+{
+#endif
+
+    // Send msg through socket
+    size_t sentBytes = SDLNet_TCP_Send(socket, content, contentLength);
+    if(sentBytes < contentLength)
     {
         // SDL_Log("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
         return false;
@@ -154,14 +210,14 @@ uint16_t GetTCPMessageLength(TCPsocket socket)
     else return contentlen;
 }
 
-// Call GetTCPMessageLength before RecieveTCPMessage!!!
+// Call GetTCPMessageLength before ReadTCPMessage!!!
 #ifdef CR_CLIENT
 bool ReadTCPMessage(uint8_t* buffer, uint16_t len)
 {
     Network* network = GetNetwork();
     TCPsocket socket = network->tcpSocket;
 #else
-bool ReadTCPMessage(TCPsocket socket, uint8_t* buffer,uint16_t len)
+bool ReadTCPMessage(TCPsocket socket, uint8_t* buffer, uint16_t len)
 {
 #endif
 
@@ -171,6 +227,30 @@ bool ReadTCPMessage(TCPsocket socket, uint8_t* buffer,uint16_t len)
         return false;
     }
 
+    return true;
+}
+
+// Call GetTCPMessageLength twice before ReadTCPMessageArray!!!
+#ifdef CR_CLIENT
+bool ReadTCPMessageArray(void* buffer, uint16_t datasize, uint16_t count)
+{
+    Network* network = GetNetwork();
+    TCPsocket socket = network->tcpSocket;
+#else
+bool ReadTCPMessageArray(TCPsocket socket, void* buffer, uint16_t datasize, uint16_t count)
+{
+#endif
+
+    // Read content
+    for (size_t i = 0; i < count; i++)
+    {
+        void* bufloc = (uintptr_t)buffer+(i*datasize);
+        if(SDLNet_TCP_Recv(socket, bufloc, datasize) <= 0)
+        {
+            return false;
+        }
+    }
+    
     return true;
 }
 
@@ -189,21 +269,3 @@ bool SendUDPPacket(UDPpacket* packet)
 
     return true;
 }
-
-// void PollUDPUpdates()
-// {
-//     Network* net = GetNetwork();
-
-// #ifdef CR_SERVER
-//     if(SDLNet_CheckSockets(net->udpSocketSet, 0) < 1)
-//         return; // No incoming packets
-// #endif
-
-//     UDPpacket* packet = SDLNet_AllocPacket(1024);
-//     while(SDLNet_UDP_Recv(net->udpSocket, packet))
-//     {
-//         printf("RECIEVED PACKET, LEN: %d\n", packet->len);
-
-//         HandleData();
-//     }
-// }

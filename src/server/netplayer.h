@@ -7,10 +7,5 @@
 
 typedef struct NetPlayer {
     TCPsocket tcpSocket;
-    int x, y;
-    float angle;
-    bool infected;
+    PlayerData data;
 } NetPlayer;
-
-void InitNetPlayer(NetPlayer* player, TCPsocket tcpSocket);
-void GetNetPlayerData(NetPlayer* player, PlayerData* data);

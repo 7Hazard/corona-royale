@@ -17,6 +17,7 @@
     "sdl_fontcache.h": "c",
     "unistd.h": "c",
     "stdlib.h": "c",
-    "*.rh": "c"
+    "*.rh": "c",
+    "windows.h": "c"
   }
 }

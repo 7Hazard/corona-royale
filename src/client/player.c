@@ -172,7 +172,7 @@ void ApplyPlayerData(Player* player, PlayerData* data)
     SetPlayerInfected(player, data->infected);
 }
 
-void GetPlayerPositionData(Player* player, PositionData* data)
+void GetPlayerPositionData(Player* player, PlayerPositionData* data)
 {
     data->x = player->position.x;
     data->y = player->position.y;

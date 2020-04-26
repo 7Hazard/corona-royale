@@ -10,22 +10,25 @@ typedef enum DataStruct {
     CR_DATA_POSITION
 } DataID;
 
+typedef uint16_t PlayerID;
+
 DataID GetDataID_UDP(UDPpacket* packet);
 
-
-typedef struct {
+typedef struct PlayerData {
+    PlayerID id;
     int x, y;
     float angle;
     bool infected;
 } PlayerData;
 
 
-typedef struct {
+typedef struct PlayerPositionData {
+    PlayerID id;
     int x, y;
-} PositionData;
+} PlayerPositionData;
 
-void SendPositionData_UDP(PositionData* data);
-PositionData* GetPositionData_UDP(UDPpacket* packet);
+void SendPositionData_UDP(PlayerPositionData* data);
+PlayerPositionData* GetPositionData_UDP(UDPpacket* packet);
 
 
 // void ReadData_UDP();

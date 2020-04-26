@@ -8,9 +8,9 @@ DataID GetDataID_UDP(UDPpacket* packet)
     return packet->data[0];
 }
 
-void SendPositionData_UDP(PositionData* data)
+void SendPositionData_UDP(PlayerPositionData* data)
 {
-    static const size_t size = sizeof(PositionData);
+    static const size_t size = sizeof(PlayerPositionData);
     static const uint8_t dataid = CR_DATA_POSITION;
 
     UDPpacket packet;
@@ -26,7 +26,7 @@ void SendPositionData_UDP(PositionData* data)
     SendUDPPacket(&packet);
 }
 
-PositionData* GetPositionData_UDP(UDPpacket* packet)
+PlayerPositionData* GetPositionData_UDP(UDPpacket* packet)
 {
     static const uint8_t dataid = CR_DATA_POSITION;
 

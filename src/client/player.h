@@ -37,4 +37,4 @@ void SetPlayerPosition(Player* player, int x, int y);
 void SetPlayerAngle(Player* player, float angle);
 void SetPlayerInfected(Player* player, bool infected);
 void ApplyPlayerData(Player* player, PlayerData* data);
-void GetPlayerPositionData(Player* player, PositionData* data);
+void GetPlayerPositionData(Player* player, PlayerPositionData* data);

@@ -130,6 +130,7 @@ endif()
 ######
 add_executable(CoronaRoyaleServer
   src/server/main.c
+  src/server/server.c
   src/server/netplayer.c
 
   ${SHARED_SOURCES}
