@@ -29,34 +29,13 @@ Network* GetNetwork();
 
 bool Connect(const char* host);
 
-// Returns false if could not read message, SOCKET IS INVALIDATED NOW!!
-bool SendTCPMessage(uint8_t* content, uint16_t contentLength);
-
-/** Sending an array of items over TCP
- * Returns false if could not read message, SOCKET IS INVALIDATED NOW!!
- * */
-bool SendTCPMessageArray(void* items, size_t itemSize, uint16_t itemCount);
-
-/** Sends without copying or length
- * Returns false if could not read message, SOCKET IS INVALIDATED NOW!!
- * */
-bool SendTCPMessageNoCopy(uint8_t* content, uint16_t contentLength);
-
-// Will wait until a message is incoming
-// If returns 0, SOCKET IS INVALIDATED THEN
-uint16_t GetTCPMessageLength();
-
-// Returns false if could not read message, CONNECTION IS INVALIDATED NOW!!
-bool ReadTCPMessage(uint8_t* buffer, uint16_t len);
-
-// Returns false if could not read message, CONNECTION IS INVALIDATED NOW!!
-bool ReadTCPMessageArray(void* buffer, uint16_t datasize, uint16_t count);
-
-bool SendUDPPacket(UDPpacket* packet);
-
 
 #else
 // SERVER FUNCTIONS
+
+
+#endif
+// Universal functions
 
 // Returns false if could not read message, SOCKET IS INVALIDATED NOW!!
 bool SendTCPMessage(TCPsocket socket, uint8_t* content, uint16_t contentLength);
@@ -67,9 +46,9 @@ bool SendTCPMessage(TCPsocket socket, uint8_t* content, uint16_t contentLength);
 bool SendTCPMessageArray(TCPsocket socket, void* items, uint16_t itemSize, uint16_t itemCount);
 
 /** Sends without copying or length
- * Returns false if could not read message, SOCKET IS INVALIDATED NOW!!
+ * Returns false if could not send message, SOCKET IS INVALIDATED NOW!!
  * */
-bool SendTCPMessageNoCopy(TCPsocket socket, uint8_t* content, uint16_t contentLength);
+bool SendTCPMessageNoCopy(TCPsocket socket, void* content, uint16_t contentLength);
 
 // Will wait until a message is incoming
 // If returns 0, SOCKET IS INVALIDATED THEN
@@ -78,10 +57,8 @@ uint16_t GetTCPMessageLength(TCPsocket socket);
 // Returns false if could not read message, SOCKET IS INVALIDATED NOW!!
 bool ReadTCPMessage(TCPsocket socket, uint8_t* buffer, uint16_t len);
 
-bool ReadTCPMessageArray(TCPsocket socket, uint8_t* buffer, uint16_t len);
+bool ReadTCPMessageArray(TCPsocket socket, void* buffer, uint16_t datasize, uint16_t count);
 
-
-#endif
-// Universal functions
+bool SendUDPPacket(UDPpacket* packet);
 
 // void PollUDPUpdates();

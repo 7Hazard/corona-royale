@@ -104,16 +104,8 @@ bool Connect(const char* host)
 }
 #endif
 
-#ifdef CR_CLIENT
-bool SendTCPMessage(uint8_t* content, uint16_t contentLength)
+bool SendTCPMessage(TCPsocket socket, void* content, uint16_t contentLength)
 {
-    Network* network = GetNetwork();
-    TCPsocket socket = network->tcpSocket;
-#else
-bool SendTCPMessage(TCPsocket socket, uint8_t* content, uint16_t contentLength)
-{
-#endif
-
     // Stack alloc array of bytes
     size_t msglen = contentLength+2; // length of message + 2 bytes for uint16_t
     uint8_t* msg = alloca(msglen);
@@ -134,16 +126,8 @@ bool SendTCPMessage(TCPsocket socket, uint8_t* content, uint16_t contentLength)
     return true;
 }
 
-#ifdef CR_CLIENT
-bool SendTCPMessageArray(void* items, uint16_t itemSize, uint16_t itemCount)
-{
-    Network* network = GetNetwork();
-    TCPsocket socket = network->tcpSocket;
-#else
 bool SendTCPMessageArray(TCPsocket socket, void* items, uint16_t itemSize, uint16_t itemCount)
 {
-#endif
-
     size_t arraysize = itemSize*itemCount;
 
     // Stack alloc array of bytes
@@ -168,15 +152,8 @@ bool SendTCPMessageArray(TCPsocket socket, void* items, uint16_t itemSize, uint1
     return true;
 }
 
-#ifdef CR_CLIENT
-bool SendTCPMessageNoCopy(uint8_t* content, uint16_t contentLength)
+bool SendTCPMessageNoCopy(TCPsocket socket, void* content, uint16_t contentLength)
 {
-    Network* network = GetNetwork();
-    TCPsocket socket = network->tcpSocket;
-#else
-bool SendTCPMessageNoCopy(TCPsocket socket, uint8_t* content, uint16_t contentLength)
-{
-#endif
 
     // Send msg through socket
     size_t sentBytes = SDLNet_TCP_Send(socket, content, contentLength);
@@ -189,15 +166,8 @@ bool SendTCPMessageNoCopy(TCPsocket socket, uint8_t* content, uint16_t contentLe
     return true;
 }
 
-#ifdef CR_CLIENT
-uint16_t GetTCPMessageLength()
-{
-    Network* network = GetNetwork();
-    TCPsocket socket = network->tcpSocket;
-#else
 uint16_t GetTCPMessageLength(TCPsocket socket)
 {
-#endif
 
     // Get length of content
     uint16_t contentlen = 0;
@@ -211,15 +181,8 @@ uint16_t GetTCPMessageLength(TCPsocket socket)
 }
 
 // Call GetTCPMessageLength before ReadTCPMessage!!!
-#ifdef CR_CLIENT
-bool ReadTCPMessage(uint8_t* buffer, uint16_t len)
+bool ReadTCPMessage(TCPsocket socket, void* buffer, uint16_t len)
 {
-    Network* network = GetNetwork();
-    TCPsocket socket = network->tcpSocket;
-#else
-bool ReadTCPMessage(TCPsocket socket, uint8_t* buffer, uint16_t len)
-{
-#endif
 
     // Read content
     if(SDLNet_TCP_Recv(socket, buffer, len) <= 0)
@@ -231,16 +194,8 @@ bool ReadTCPMessage(TCPsocket socket, uint8_t* buffer, uint16_t len)
 }
 
 // Call GetTCPMessageLength twice before ReadTCPMessageArray!!!
-#ifdef CR_CLIENT
-bool ReadTCPMessageArray(void* buffer, uint16_t datasize, uint16_t count)
-{
-    Network* network = GetNetwork();
-    TCPsocket socket = network->tcpSocket;
-#else
 bool ReadTCPMessageArray(TCPsocket socket, void* buffer, uint16_t datasize, uint16_t count)
 {
-#endif
-
     // Read content
     for (size_t i = 0; i < count; i++)
     {

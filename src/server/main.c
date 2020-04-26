@@ -87,6 +87,19 @@ int main(int argc, char const *argv[])
                     abort();
                 }
 
+                // Send connecting player event to all players
+                NetPlayer* players = GetAllPlayers();
+                for (size_t i = 0; i < playercount; i++)
+                {
+                    NetPlayer* player = &players[i];
+
+                    // Skip sending event to the connecting player himself
+                    if(player->tcpSocket == connectingplayer->tcpSocket)
+                        continue;
+
+                    // Send event
+                }
+
                 LogInfo("Player connected, ID: %d", connectingplayer->data.id);
             }
 		}

@@ -22,7 +22,7 @@
 int NetworkThread(void *ptr)
 {
     Game* game = GetGame();
-    Network* network = GetNetwork();
+    Network* net = GetNetwork();
 
     if(!Connect("localhost"))
     {
@@ -38,14 +38,14 @@ int NetworkThread(void *ptr)
     
     // Alloc text
     const char* text = "hello server";
-    if(!SendTCPMessage(text, strlen(text)+1))
+    if(!SendTCPMessage(net->tcpSocket, text, strlen(text)+1))
     {
         SDL_Log("Could not send message to server");
         abort();
     }
 
     { // Get confirmation
-        uint16_t len = GetTCPMessageLength();
+        uint16_t len = GetTCPMessageLength(net->tcpSocket);
         if(len == 0)
         {
             SDL_ShowSimpleMessageBox(
@@ -58,7 +58,7 @@ int NetworkThread(void *ptr)
         }
         
         char* confirmation = alloca(len);
-        if(!ReadTCPMessage(confirmation, len))
+        if(!ReadTCPMessage(net->tcpSocket, confirmation, len))
         {
             SDL_Log("COULD NOT READ CONFIRMATION");
             abort();
@@ -83,11 +83,11 @@ int NetworkThread(void *ptr)
     }
 
     { // Get other players
-        uint16_t datasize = GetTCPMessageLength();
-        uint16_t count = GetTCPMessageLength();
+        uint16_t datasize = GetTCPMessageLength(net->tcpSocket);
+        uint16_t count = GetTCPMessageLength(net->tcpSocket);
 
         PlayerData* data = alloca(datasize*count);
-        if(!ReadTCPMessageArray(data, datasize, count))
+        if(!ReadTCPMessageArray(net->tcpSocket, data, datasize, count))
         {
             abort();
         }
@@ -99,7 +99,7 @@ int NetworkThread(void *ptr)
     }
     
     { // Get player data
-        uint16_t len = GetTCPMessageLength();
+        uint16_t len = GetTCPMessageLength(net->tcpSocket);
         if(len == 0)
         {
             SDL_ShowSimpleMessageBox(
@@ -112,7 +112,7 @@ int NetworkThread(void *ptr)
         }
         
         PlayerData data;
-        if(!ReadTCPMessage(&data, len))
+        if(!ReadTCPMessage(net->tcpSocket, &data, len))
         {
             SDL_Log("COULD NOT READ PLAYER DATA");
             abort();
@@ -189,7 +189,6 @@ int main(int argc, const char *argv[])
             SDL_Delay(frameDelay - frameTime);
         }
     }
-
 
     IMG_Quit();
     SDL_Quit();
