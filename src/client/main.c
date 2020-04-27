@@ -18,6 +18,48 @@
 #include "shared/network.h"
 #include "shared/data.h"
 #include "shared/log.h"
+#include "shared/netevent.h"
+
+int NetEventThread(void *ptr)
+{
+    Game* game = GetGame();
+    Network* net = GetNetwork();
+
+    while (game->connected)
+    {
+        NetEvent event = GetNetEvent();
+        switch(event)
+        {
+        case CR_NETEVENT_DISCONNECTED:
+        {
+            LogInfo("DISCONNECTED");
+            SDL_ShowSimpleMessageBox(
+                SDL_MESSAGEBOX_INFORMATION,
+                "Connection",
+                "Disconnected from server",
+                NULL
+            );
+
+            return 0;
+            break;
+        }
+        case CR_NETEVENT_PLAYER_CONNECTED:
+        {
+            PlayerConnectedEvent e;
+            ReadPlayerConnectedEvent(net->tcpSocket, &e);
+            LogInfo("PLAYER CONNECTED: ID: %d | x: %d | y: %d | angle: %f | inf: %d", e.data.id, e.data.x, e.data.y, e.data.angle, e.data.infected);
+            
+            break;
+        }
+        
+        default:
+            LogInfo("Unhandled event %d", event);
+            break;
+        }
+    }
+
+    return 0;
+}
 
 int NetworkThread(void *ptr)
 {
@@ -121,8 +163,13 @@ int NetworkThread(void *ptr)
         ApplyPlayerData(&game->player, &data);
     }
 
+    game->connected = true;
+
+    // Start event thread
+    SDL_Thread* eventThread = SDL_CreateThread(NetEventThread, "NetEventThread", (void *)NULL);
+
     // Network loop
-    while (1)
+    while (game->connected)
     {
         time_t start = clock();
         ///////// START OF NET TICK
@@ -131,7 +178,7 @@ int NetworkThread(void *ptr)
         PlayerPositionData data;
         GetPlayerPositionData(&game->player, &data);
         SendPositionData_UDP(&data);
-        
+
         ///////// END OF NET TICK
         time_t end = clock();
         int result = end-start;

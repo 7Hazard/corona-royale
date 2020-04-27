@@ -34,6 +34,7 @@ Game* GetGame()
 
         // DONT FORGET TO INITIALIZE ALL MEMBERS OF THE STRUCT
         game.running = true;
+        game.connected = false;
         game.window = SDL_CreateWindow("Corona Royale", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_W, WINDOW_H, 0);
         game.renderer = SDL_CreateRenderer(game.window, -1, 0);
         CreatePlayer(&game.player,10,10);

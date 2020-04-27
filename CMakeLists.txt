@@ -30,6 +30,7 @@ add_definitions(
 set(SHARED_SOURCES
   src/shared/network.c
   src/shared/data.c
+  src/shared/netevent.c
 )
 
 ######

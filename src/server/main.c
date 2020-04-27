@@ -14,6 +14,7 @@
 #include "shared/network.h"
 #include "shared/data.h"
 #include "shared/log.h"
+#include "shared/netevent.h"
 
 #include "netplayer.h"
 #include "server.h"
@@ -98,9 +99,12 @@ int main(int argc, char const *argv[])
                         continue;
 
                     // Send event
+                    PlayerConnectedEvent ev;
+                    ev.data = connectingplayer->data;
+                    SendPlayerConnectedEvent(player->tcpSocket, &ev);
                 }
 
-                LogInfo("Player connected, ID: %d", connectingplayer->data.id);
+                LogInfo("Player connected, ID: %d\n", connectingplayer->data.id);
             }
 		}
 
