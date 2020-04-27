@@ -3,6 +3,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include "game.h"
+#include "fonts.h"
 
 
 void CreateTimer(Timer *timer)
@@ -14,16 +15,6 @@ void CreateTimer(Timer *timer)
     timer->mMinuteTime = 0;
     timer->mPrevTime = 0;
     timer->mStarted = true;
-
-    Game* game = GetGame();
-    
-    timer->Sans = FC_CreateFont();
-    FC_LoadFont(timer->Sans,game->renderer,"res/fonts/OpenSans-Semibold.ttf", 
-    24,FC_MakeColor(255, 255, 255, 255),TTF_STYLE_NORMAL);
-    if (!timer->Sans)
-    {
-        abort();
-    }
 }
 
 void ResetSeconds(Timer *timer)
@@ -58,16 +49,17 @@ void UpdateTimer(Timer *timer)
 void RendererTimer(Timer *timer)
 {
     Game* game = GetGame();
+    Fonts* fonts = GetFonts();
     UpdateTimer(timer);
     sprintf(timer->timerBuffer, "%d:%d", timer->mMinuteTime, timer->mDeltaTime); // copy string (timer.mStartTicks)to buffer
 
     if (!timer->mLast10Sek)
     {
-        FC_DrawColor(timer->Sans, game->renderer, 0, 50, FC_MakeColor(255, 255, 255, 255), timer->timerBuffer);
+        FC_DrawColor(fonts->openSansBold, game->renderer, 0, 50, FC_MakeColor(255, 255, 255, 255), timer->timerBuffer);
     }
     else if (timer->mLast10Sek)
     {
-         timer->surfaceTime = TTF_RenderText_Solid(timer->Sans, timer->timerBuffer, timer->Red);
-        FC_DrawColor(timer->Sans, game->renderer, 0, 50, FC_MakeColor(255, 0, 0, 255),timer->timerBuffer);
+         timer->surfaceTime = TTF_RenderText_Solid(fonts->openSansBold, timer->timerBuffer, timer->Red);
+        FC_DrawColor(fonts->openSansBold, game->renderer, 0, 50, FC_MakeColor(255, 0, 0, 255),timer->timerBuffer);
     }
 }

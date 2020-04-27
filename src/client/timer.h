@@ -17,7 +17,6 @@ typedef struct{
     int mDeltaTime;
     float mDeltaConvert;
     // TTF_Font* Sans;
-    FC_Font* Sans;
     SDL_Color White;
     SDL_Color Red;
     SDL_Surface* surfaceTime;
