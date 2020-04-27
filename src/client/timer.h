@@ -5,6 +5,8 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
+#include <SDL_FontCache.h>
+
 
 typedef struct{
     bool mStarted;
@@ -14,7 +16,7 @@ typedef struct{
     int mPrevTime;
     int mDeltaTime;
     float mDeltaConvert;
-    TTF_Font* Sans;
+    // TTF_Font* Sans;
     SDL_Color White;
     SDL_Color Red;
     SDL_Surface* surfaceTime;
