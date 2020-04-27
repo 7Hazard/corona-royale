@@ -34,3 +34,5 @@ typedef struct Game
 
 
 Game* GetGame();
+
+void DisposeGame();

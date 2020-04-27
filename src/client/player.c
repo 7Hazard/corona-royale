@@ -17,7 +17,7 @@ void CreatePlayer(Player* player, int xPos, int yPos)
 {
     Game *game = GetGame();
 
-    player->texture = LoadTexture("res/circle.png");
+    player->texture = LoadTexture("res/circleblue.png");
     SDL_QueryTexture(player->texture, NULL, NULL, &player->textureWidth, &player->textureHeight);
     player->frameWidth = (player->textureWidth);
     player->frameHeight = (player->textureHeight);

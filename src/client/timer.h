@@ -5,6 +5,8 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
+#include <SDL_FontCache.h>
+
 
 typedef struct{
     bool mStarted;
@@ -14,13 +16,10 @@ typedef struct{
     int mPrevTime;
     int mDeltaTime;
     float mDeltaConvert;
-    TTF_Font* Sans;
+    
     SDL_Color White;
     SDL_Color Red;
-    SDL_Surface* surfaceTime;
-    SDL_Texture* textureTime;
     SDL_Rect rect;
-    SDL_Rect position;
     char timerBuffer[50];
 }Timer;
 

@@ -96,7 +96,7 @@ int main(int argc, const char *argv[])
     const int frameDelay = 1000 / fps;
     Uint32 frameStart;
     int frameTime;
-
+    
     Game* game = GetGame();
     game->currentState = CR_STATE_MENU;
     // FC_Font* font = FC_CreateFont();
@@ -127,7 +127,8 @@ int main(int argc, const char *argv[])
                 OnPlayerRender(&game->player);
                 RendererTimer(&game->timer);
                 
-            } else if(game->currentState == CR_STATE_MENU)
+            } 
+            else if(game->currentState == CR_STATE_MENU)
             {
                 RenderMenu();
                 
@@ -140,18 +141,19 @@ int main(int argc, const char *argv[])
                      
                 }
             }
-
-            SDL_RenderPresent(game->renderer);
             
+            SDL_RenderPresent(game->renderer);
         } /////////// RENDERING PHASE END ///////////
-
+             
         frameTime = SDL_GetTicks() - frameStart;
         if (frameDelay > frameTime)
         {
             SDL_Delay(frameDelay - frameTime);
         }
     }
-    SDL_DestroyTexture(game->background);
+
+    DisposeGame();
+    TTF_Quit();
     IMG_Quit();
     SDL_Quit();
     StopAudio();
