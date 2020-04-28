@@ -49,6 +49,7 @@ set(CR_CLIENT_SOURCES
   src/client/timer.c
   src/client/textures.c
   src/client/fonts.c
+  src/client/netplayer.c
 
   deps/SDL_FontCache/SDL_FontCache.c
 

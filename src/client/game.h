@@ -5,6 +5,7 @@
 
 #include "player.h"
 #include "timer.h"
+#include "netplayer.h"
 
 #define WINDOW_W 375
 #define WINDOW_H 667
@@ -19,6 +20,8 @@ typedef struct Game
     int mapWidth, mapHeight;
     Player player;
     Timer timer;
+    NetPlayer* netPlayers;
+    uint16_t netPlayersCount;
 } Game;
 
 Game* GetGame();

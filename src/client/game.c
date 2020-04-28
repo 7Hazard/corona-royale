@@ -49,6 +49,9 @@ Game* GetGame()
         CreatePlayer(&game.player, 10, 10);
         CreateTimer(&game.timer);
 
+        game.netPlayers = NULL;
+        game.netPlayersCount = 0;
+
         // DONT FORGET TO INITIALIZE ALL MEMBERS OF THE STRUCT
     }
 

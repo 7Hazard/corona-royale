@@ -51,7 +51,7 @@ bool SendTCPMessageArray(TCPsocket socket, void* items, uint16_t itemSize, uint1
 bool SendTCPMessageNoCopy(TCPsocket socket, void* content, uint16_t contentLength);
 
 // Will wait until a message is incoming
-// If returns 0, SOCKET IS INVALIDATED THEN
+// If returns 0, SOCKET is maybe INVALIDATED then
 uint16_t GetTCPMessageLength(TCPsocket socket);
 
 // Returns false if could not read message, SOCKET IS INVALIDATED NOW!!
