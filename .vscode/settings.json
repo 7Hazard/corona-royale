@@ -19,5 +19,6 @@
     "stdlib.h": "c",
     "*.rh": "c",
     "windows.h": "c"
-  }
+  },
+  "editor.tabSize": 4
 }
