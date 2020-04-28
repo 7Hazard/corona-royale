@@ -39,7 +39,7 @@ NetPlayer* InitPlayer(TCPsocket tcpSocket)
     player.data.y = rand() % 500 + 1;
     player.data.angle = 0;
     player.data.infected = false;
-    player.data.id = GetPlayerCount()+1;
+    player.data.id = GetPlayerCount();
 
     return hashtable_insert(&server->players, tcpSocket, &player);
 }
