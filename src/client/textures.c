@@ -12,8 +12,10 @@ Textures* GetTextures()
     {
         // LOAD ALL TEXTURES THAT ARE GOING TO BE USED
         tex.grass = LoadTexture("res/grass.png");
+
         tex.healthyPlayer = LoadTexture("res/circleblue.png");
         tex.infectedPlayer = LoadTexture("res/circlered.png");
+        SDL_QueryTexture(tex.healthyPlayer, NULL, NULL, &tex.playerWidth, &tex.playerHeight);
     }
 
     return &tex;

@@ -21,9 +21,8 @@ void CreatePlayer(Player* player, int xPos, int yPos)
     Textures* tex = GetTextures();
 
     player->texture = tex->healthyPlayer;
-    SDL_QueryTexture(player->texture, NULL, NULL, &player->textureWidth, &player->textureHeight);
-    player->frameWidth = (player->textureWidth);
-    player->frameHeight = (player->textureHeight);
+    player->frameWidth = tex->playerWidth;
+    player->frameHeight = tex->playerHeight;
 
     player->infectedMutex = SDL_CreateMutex();
     player->infected = true;
