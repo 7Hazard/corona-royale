@@ -23,6 +23,7 @@ Game* GetGame()
             abort();
             exit(0);
         }
+        
         int flags = IMG_INIT_JPG|IMG_INIT_PNG;
         if((IMG_Init(flags) & flags) != flags) 
         {
@@ -30,6 +31,10 @@ Game* GetGame()
             printf("IMG_Init: %s\n", IMG_GetError());
             abort();
             exit(3);
+        }
+
+        if (TTF_Init() < 0) { 
+            abort();
         }
 
         // DONT FORGET TO INITIALIZE ALL MEMBERS OF THE STRUCT
@@ -42,10 +47,6 @@ Game* GetGame()
         SDL_QueryTexture(game.background, NULL, NULL, &game.mapWidth, &game.mapHeight);
         // DONT FORGET TO INITIALIZE ALL MEMBERS OF THE STRUCT
         CreateTimer(&game.timer);
-    }
-
-    if (TTF_Init() < 0) { 
-        abort();
     }
 
     return &game;
