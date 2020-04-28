@@ -38,11 +38,10 @@ Game* GetGame()
         game.window = SDL_CreateWindow("Corona Royale", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_W, WINDOW_H, 0);
         game.renderer = SDL_CreateRenderer(game.window, -1, 0);
         CreatePlayer(&game.player,10,10);
-        game.background = LoadTexture("res/BIG.jpg");
+        game.background = LoadTexture("res/grass.png");
         SDL_QueryTexture(game.background, NULL, NULL, &game.mapWidth, &game.mapHeight);
         // DONT FORGET TO INITIALIZE ALL MEMBERS OF THE STRUCT
         CreateTimer(&game.timer);
-        
     }
 
     if (TTF_Init() < 0) { 
