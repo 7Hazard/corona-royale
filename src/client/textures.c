@@ -10,6 +10,8 @@ Textures* GetTextures()
     static Textures tex;
     if(inited == false)
     {
+        inited = true;
+        
         // LOAD ALL TEXTURES THAT ARE GOING TO BE USED
         tex.grass = LoadTexture("res/grass.png");
 
