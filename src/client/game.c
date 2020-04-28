@@ -2,7 +2,7 @@
 
 #include "game.h"
 #include "timer.h"
-#include "texture.h"
+#include "textures.h"
 #include <SDL_image.h>
 #include <stdio.h>
 #include <string.h>
@@ -23,7 +23,7 @@ Game* GetGame()
             abort();
             exit(0);
         }
-        
+
         int flags = IMG_INIT_JPG|IMG_INIT_PNG;
         if((IMG_Init(flags) & flags) != flags) 
         {
@@ -42,11 +42,14 @@ Game* GetGame()
         game.connected = false;
         game.window = SDL_CreateWindow("Corona Royale", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_W, WINDOW_H, 0);
         game.renderer = SDL_CreateRenderer(game.window, -1, 0);
-        CreatePlayer(&game.player,10,10);
-        game.background = LoadTexture("res/grass.png");
+
+        Textures* tex = GetTextures(); // NEEDS TO BE CALLED AFTER RENDERER IS CREATED
+        game.background = tex->grass;
         SDL_QueryTexture(game.background, NULL, NULL, &game.mapWidth, &game.mapHeight);
-        // DONT FORGET TO INITIALIZE ALL MEMBERS OF THE STRUCT
+        CreatePlayer(&game.player, 10, 10);
         CreateTimer(&game.timer);
+
+        // DONT FORGET TO INITIALIZE ALL MEMBERS OF THE STRUCT
     }
 
     return &game;

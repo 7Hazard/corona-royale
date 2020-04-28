@@ -8,16 +8,19 @@
 #include "audio.h"
 #include "game.h"
 #include "timer.h"
-#include "texture.h"
+#include "textures.h"
 #include "collision.h"
 #include "mouse.h"
+#include "textures.h"
+
 #include "shared/data.h"
 
 void CreatePlayer(Player* player, int xPos, int yPos)
 {
     Game *game = GetGame();
+    Textures* tex = GetTextures();
 
-    player->texture = LoadTexture("res/circlered.png");
+    player->texture = tex->healthyPlayer;
     SDL_QueryTexture(player->texture, NULL, NULL, &player->textureWidth, &player->textureHeight);
     player->frameWidth = (player->textureWidth);
     player->frameHeight = (player->textureHeight);

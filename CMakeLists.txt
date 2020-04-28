@@ -47,7 +47,7 @@ set(CR_CLIENT_SOURCES
   src/client/collision.c
   src/client/mouse.c
   src/client/timer.c
-  src/client/texture.c
+  src/client/textures.c
   src/client/fonts.c
 
   deps/SDL_FontCache/SDL_FontCache.c
