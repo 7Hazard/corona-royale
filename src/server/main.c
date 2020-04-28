@@ -71,6 +71,12 @@ int main(int argc, char const *argv[])
                 char* reason = "OK";
                 SendTCPMessage(incomingSocket, reason, strlen(reason)+1);
 
+                // Send max players
+                {
+                    uint16_t maxplayers = CR_MAX_PLAYERS;
+                    SendTCPMessageNoCopy(incomingSocket, &maxplayers, sizeof(uint16_t));
+                }
+
                 // Send all player data to player
                 PlayerData* data = alloca(sizeof(PlayerData)+playercount);
                 int playercount = GetAllPlayerData(data);

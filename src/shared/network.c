@@ -180,7 +180,6 @@ uint16_t GetTCPMessageLength(TCPsocket socket)
     else return contentlen;
 }
 
-// Call GetTCPMessageLength before ReadTCPMessage!!!
 bool ReadTCPMessage(TCPsocket socket, void* buffer, uint16_t len)
 {
 

@@ -126,11 +126,26 @@ int NetworkThread(void *ptr)
         }
     }
 
+    // GetMaxPlayers
+    uint16_t maxPlayers = 0;
+    if(!ReadTCPMessage(net->tcpSocket, &maxPlayers, sizeof(uint16_t)))
+    {
+        SDL_ShowSimpleMessageBox(
+            SDL_MESSAGEBOX_ERROR,
+            "Connection failed",
+            "Could not get max players",
+            NULL
+        );
+        LogInfo("COULD NOT GET MAX PLAYERS");
+        abort();
+    }
+    LogInfo("MAX PLAYERS: %d", maxPlayers);
+
     // Get other players
     uint16_t datasize = GetTCPMessageLength(net->tcpSocket);
     game->netPlayersCount = GetTCPMessageLength(net->tcpSocket);
     // stack alloc enough pointers for all netplayers
-    game->netPlayers = alloca(sizeof(NetPlayer)*game->netPlayersCount);
+    game->netPlayers = alloca(sizeof(NetPlayer)*maxPlayers);
     
     { // keep the following stuff in the stack of the scope (doesn't actually do that on windows)
         PlayerData* data = alloca(datasize*game->netPlayersCount);
