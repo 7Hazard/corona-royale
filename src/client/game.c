@@ -1,11 +1,15 @@
 #pragma once
 
-#include "game.h"
-#include "timer.h"
-#include "textures.h"
 #include <SDL_image.h>
 #include <stdio.h>
 #include <string.h>
+
+#include "shared/log.h"
+
+#include "game.h"
+#include "timer.h"
+#include "textures.h"
+
 
 Game* GetGame()
 {
@@ -49,11 +53,70 @@ Game* GetGame()
         CreatePlayer(&game.player, 10, 10);
         CreateTimer(&game.timer);
 
-        game.netPlayers = NULL;
-        game.netPlayersCount = 0;
-
         // DONT FORGET TO INITIALIZE ALL MEMBERS OF THE STRUCT
     }
 
     return &game;
 }
+
+void GameInitNetPlayersTable(uint16_t count)
+{
+    Game* game = GetGame();
+    hashtable_init(&game->players, sizeof(NetPlayer), count, 0);
+}
+
+void GameInitNetPlayers(PlayerData* players, uint16_t count)
+{
+    Game* game = GetGame();
+
+    GameInitNetPlayersTable(count);
+    for (size_t i = 0; i < count; i++)
+    {
+        NetPlayer player;
+        InitNetPlayer(&player, &players[i]);
+
+        // debug
+        LogInfo("ID: %d | x: %d | y: %d | angle: %f | inf: %d", player.data.id, player.data.x, player.data.y, player.data.angle, player.data.infected);
+        // debug
+        
+        hashtable_insert(&game->players, player.data.id, &player);
+    }
+}
+
+void GameInitNetPlayer(PlayerData* data)
+{
+    Game* game = GetGame();
+
+    NetPlayer player;
+    InitNetPlayer(&player, data);
+
+    // debug
+    LogInfo("ID: %d | x: %d | y: %d | angle: %f | inf: %d", player.data.id, player.data.x, player.data.y, player.data.angle, player.data.infected);
+    // debug
+
+    hashtable_insert(&game->players, player.data.id, &player);
+}
+
+void GameDisposeNetPlayers()
+{
+    Game* game = GetGame();
+
+    NetPlayer* players = GetAllPlayers();
+    for (size_t i = 0; i < GetPlayerCount(); i++)
+    {
+        DisposeNetPlayer(&players[i]);
+    }
+
+    hashtable_term(&game->players);
+}
+
+uint16_t GetPlayerCount()
+{
+    return hashtable_count(&GetGame()->players);
+}
+
+NetPlayer* GetAllPlayers()
+{
+    return hashtable_items(&GetGame()->players);
+}
+

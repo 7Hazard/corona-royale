@@ -8,6 +8,10 @@
 #include <SDL_FontCache.h>
 #include <time.h> 
 
+#define HASHTABLE_IMPLEMENTATION
+#include "shared/hashtable.h"
+#undef HASHTABLE_IMPLEMENTATION
+
 #include "memory.h"
 #include "collision.h"
 #include "events.h"
@@ -140,27 +144,22 @@ int NetworkThread(void *ptr)
         abort();
     }
     LogInfo("MAX PLAYERS: %d", maxPlayers);
-
-    // Get other players
-    uint16_t datasize = GetTCPMessageLength(net->tcpSocket);
-    game->netPlayersCount = GetTCPMessageLength(net->tcpSocket);
-    // stack alloc enough pointers for all netplayers
-    game->netPlayers = alloca(sizeof(NetPlayer)*maxPlayers);
     
-    { // keep the following stuff in the stack of the scope (doesn't actually do that on windows)
-        PlayerData* data = alloca(datasize*game->netPlayersCount);
-        if(!ReadTCPMessageArray(net->tcpSocket, data, datasize, game->netPlayersCount))
-        {
-            abort();
-        }
+    { // Get other players
+        uint16_t datasize = GetTCPMessageLength(net->tcpSocket);
+        uint16_t count = GetTCPMessageLength(net->tcpSocket);
 
-        for (size_t i = 0; i < game->netPlayersCount; i++)
+        GameInitNetPlayersTable(count);
+
+        for (size_t i = 0; i < count; i++)
         {
-            // debug
-            LogInfo("ID: %d | x: %d | y: %d | angle: %f | inf: %d", data[i].id, data[i].x, data[i].y, data[i].angle, data[i].infected);
-            // debug
-            
-            InitNetPlayer(&game->netPlayers[i], &data[i]);
+            PlayerData data;
+            if(!ReadTCPMessage(net->tcpSocket, &data, sizeof(PlayerData)))
+            {
+                abort();
+            }
+
+            GameInitNetPlayer(&data);
         }
     }
     
@@ -212,13 +211,7 @@ int NetworkThread(void *ptr)
         }   
     }
 
-    // Cleanup stuff specific to the session (this function, stack allocated stuff)
-    for (size_t i = 0; i < game->netPlayersCount; i++)
-    {
-        DisposeNetPlayer(&game->netPlayers[i]);
-    }
-    game->netPlayersCount = 0;
-    game->netPlayers = NULL;
+    GameDisposeNetPlayers();
 
     return 0;
 }
@@ -256,9 +249,10 @@ int main(int argc, const char *argv[])
             SDL_RenderCopy(game->renderer, game->background, &game->player.camera.cameraRect, NULL);
 
             // Render all net players
-            for (size_t i = 0; i < game->netPlayersCount; i++)
+            NetPlayer* players = GetAllPlayers();
+            for (size_t i = 0; i < GetPlayerCount(); i++)
             {
-                RenderNetPlayer(&game->netPlayers[i]);
+                RenderNetPlayer(&players[i]);
             }
 
             OnPlayerRender(&game->player);
