@@ -120,3 +120,21 @@ NetPlayer* GetAllPlayers()
     return hashtable_items(&GetGame()->players);
 }
 
+NetPlayer* GetPlayer(PlayerID id)
+{
+    Game* game = GetGame();
+    return hashtable_find(&game->players, id);
+}
+
+void ApplyMovementDataToPlayer(PlayerMovementData* data)
+{
+    NetPlayer* player = GetPlayer(data->id);
+
+    SDL_LockMutex(player->mutex);
+    
+    player->data.angle = data->angle;
+    player->data.x = data->x;
+    player->data.y = data->y;
+
+    SDL_UnlockMutex(player->mutex);
+}

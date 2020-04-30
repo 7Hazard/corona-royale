@@ -32,7 +32,7 @@ void CreatePlayer(Player* player, int xPos, int yPos)
     player->rect.w = player->frameWidth;
     player->rect.h = player->frameHeight;
 
-    player->positionMutex = SDL_CreateMutex();
+    player->movementMutex = SDL_CreateMutex();
     player->position.x = xPos;
     player->position.y = yPos;
     player->position.w = player->frameWidth;
@@ -147,17 +147,17 @@ bool IsPlayerMoving(Player* player)
 
 void SetPlayerPosition(Player* player, int x, int y)
 {
-    SDL_LockMutex(player->positionMutex);
+    SDL_LockMutex(player->movementMutex);
     player->position.x = x;
     player->position.y = y;
-    SDL_UnlockMutex(player->positionMutex);
+    SDL_UnlockMutex(player->movementMutex);
 }
 
 void SetPlayerAngle(Player* player, float angle)
 {
-    // SDL_LockMutex(player->positionMutex);
-    // player->angle = angle;
-    // SDL_UnlockMutex(player->positionMutex);
+    SDL_LockMutex(player->movementMutex);
+    player->angle = angle;
+    SDL_UnlockMutex(player->movementMutex);
 }
 
 void SetPlayerInfected(Player* player, bool infected)
@@ -169,13 +169,16 @@ void SetPlayerInfected(Player* player, bool infected)
 
 void ApplyPlayerData(Player* player, PlayerData* data)
 {
+    player->id = data->id;
     SetPlayerPosition(player, data->x, data->y);
     SetPlayerAngle(player, data->angle);
     SetPlayerInfected(player, data->infected);
 }
 
-void GetPlayerPositionData(Player* player, PlayerPositionData* data)
+void GetPlayerMovementData(Player* player, PlayerMovementData* data)
 {
+    data->id = player->id;
+    data->angle = player->angle;
     data->x = player->position.x;
     data->y = player->position.y;
 }

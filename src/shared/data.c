@@ -1,4 +1,5 @@
 #include "data.h"
+
 #include "network.h"
 #include "log.h"
 #include "memory.h"
@@ -8,27 +9,44 @@ DataID GetDataID_UDP(UDPpacket* packet)
     return packet->data[0];
 }
 
-void SendPositionData_UDP(PlayerPositionData* data)
+#ifdef CR_CLIENT
+void SendMovementData_UDP(PlayerMovementData* data)
+#else
+void SendMovementData_UDP(IPaddress* dest, PlayerMovementData* data)
+#endif
 {
-    static const size_t size = sizeof(PlayerPositionData);
-    static const uint8_t dataid = CR_DATA_POSITION;
+    static const size_t datasize = sizeof(PlayerMovementData);
+    static const size_t packetsize = 1 + sizeof(PlayerMovementData);
+    static const uint8_t dataid = CR_DATA_MOVEMENT;
 
     UDPpacket packet;
 
     // 1 byte for data id, rest for size of struct
-    uint8_t* buffer = alloca(1 + size);
+    uint8_t* buffer = alloca(packetsize);
     buffer[0] = dataid;
-    memcpy(&buffer[1], data, size);
+    memcpy(&buffer[1], data, datasize);
 
     packet.data = buffer;
-    packet.len = size;
+    packet.len = packetsize;
+    packet.maxlen = packetsize;
 
-    SendUDPPacket(&packet);
+    Network* net = GetNetwork();
+
+#ifdef CR_SERVER
+    packet.address = *dest;
+#else
+    packet.address = net->address;
+#endif
+
+    if(!SendUDPPacket(&packet))
+    {
+        LogInfo("PACKET WAS NOT SENT | ERROR: %s\n", SDLNet_GetError());
+    }
 }
 
-PlayerPositionData* GetPositionData_UDP(UDPpacket* packet)
+PlayerMovementData* GetMovementData_UDP(UDPpacket* packet)
 {
-    static const uint8_t dataid = CR_DATA_POSITION;
+    static const uint8_t dataid = CR_DATA_MOVEMENT;
 
     uint8_t packetDataID = packet->data[0];
     if(packetDataID != dataid)

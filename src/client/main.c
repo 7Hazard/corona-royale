@@ -53,8 +53,8 @@ int NetEventThread(void *ptr)
         {
             PlayerConnectedEvent e;
             ReadPlayerConnectedEvent(net->tcpSocket, &e);
-            LogInfo("PLAYER CONNECTED: ID: %d | x: %d | y: %d | angle: %f | inf: %d", e.data.id, e.data.x, e.data.y, e.data.angle, e.data.infected);
-            
+            GameInitNetPlayer(&e.data);
+
             break;
         }
         
@@ -81,14 +81,6 @@ int NetworkThread(void *ptr)
             "Could not connect to server",
             NULL
         );
-        abort();
-    }
-    
-    // Alloc text
-    const char* text = "hello server";
-    if(!SendTCPMessage(net->tcpSocket, text, strlen(text)+1))
-    {
-        SDL_Log("Could not send message to server");
         abort();
     }
 
@@ -144,12 +136,11 @@ int NetworkThread(void *ptr)
         abort();
     }
     LogInfo("MAX PLAYERS: %d", maxPlayers);
+    GameInitNetPlayersTable(maxPlayers);
     
     { // Get other players
         uint16_t datasize = GetTCPMessageLength(net->tcpSocket);
         uint16_t count = GetTCPMessageLength(net->tcpSocket);
-
-        GameInitNetPlayersTable(count);
 
         for (size_t i = 0; i < count; i++)
         {
@@ -191,16 +182,37 @@ int NetworkThread(void *ptr)
     // Start event thread
     SDL_Thread* eventThread = SDL_CreateThread(NetEventThread, "NetEventThread", (void *)NULL);
 
+    UDPpacket* recvpacket = SDLNet_AllocPacket(1024);
+
     // Network loop
     while (game->connected)
     {
         time_t start = clock();
         ///////// START OF NET TICK
 
+        while(SDLNet_UDP_Recv(net->udpSocket, recvpacket))
+        {
+            DataID dataid = GetDataID_UDP(recvpacket);
+            switch (dataid)
+            {
+            case CR_DATA_MOVEMENT:
+            {
+                PlayerMovementData* data = GetMovementData_UDP(recvpacket);
+                // printf("RECIEVED POSITION {x: %d, y: %d, angle: %d}\n", data->x, data->y, data->angle);
+                ApplyMovementDataToPlayer(data);
+                break;
+            }
+            
+            default:
+                LogInfo("UNHANDLED DATA ID %d", dataid);
+                break;
+            }
+        }
+
         // Send 
-        PlayerPositionData data;
-        GetPlayerPositionData(&game->player, &data);
-        SendPositionData_UDP(&data);
+        PlayerMovementData data;
+        GetPlayerMovementData(&game->player, &data);
+        SendMovementData_UDP(&data);
 
         ///////// END OF NET TICK
         time_t end = clock();
@@ -211,7 +223,9 @@ int NetworkThread(void *ptr)
         }   
     }
 
+    // free session stuff
     GameDisposeNetPlayers();
+    SDLNet_FreePacket(recvpacket);
 
     return 0;
 }

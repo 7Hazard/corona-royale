@@ -20,6 +20,21 @@
       "preLaunchTask": "Run Server VS2019"
     },
     {
+      "name": "(Windows VS2019) Debug Server (Run Client)",
+      "request": "launch",
+      "type": "cppvsdbg",
+      "windows": {
+        "program": "${workspaceFolder}/BUILD/VS2019/Debug/CoronaRoyaleServer.exe",
+        "cwd": "${workspaceFolder}/BUILD/VS2019/Debug/",
+        "postDebugTask": "Shutdown Client"
+      },
+      "args": [],
+      "stopAtEntry": false,
+      "environment": [],
+      "externalConsole": true,
+      "preLaunchTask": "Run Client VS2019"
+    },
+    {
       "name": "(Windows VS2019) Client",
       "request": "launch",
       "type": "cppvsdbg",

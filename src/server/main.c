@@ -32,7 +32,7 @@ int main(int argc, char const *argv[])
     Server* server = GetServer();
 
 	TCPsocket incomingSocket;
-    UDPpacket* packet = SDLNet_AllocPacket(1024);
+    UDPpacket* recvpacket = SDLNet_AllocPacket(1024);
 
 	while (1)
 	{
@@ -42,18 +42,16 @@ int main(int argc, char const *argv[])
 		incomingSocket = SDLNet_TCP_Accept(net->tcpSocket);
 		if(incomingSocket)
         {
-            uint16_t len = GetTCPMessageLength(incomingSocket);
-            if(len == 0)
+            // Get client UDP port to send packets to
+            if(GetTCPMessageLength(incomingSocket) == 0)
             {
-                printf("Could not get length of TCP message, connection invalid!\n");
+                printf("Could not get client UDP port, connection invalid!\n");
                 continue;
             }
-
-            // Stack allocate enough memory for content
-            char* content = alloca(len);
-            if(!ReadTCPMessage(incomingSocket, content, len))
+            uint16_t udpPort = 0;
+            if(!ReadTCPMessage(incomingSocket, &udpPort, sizeof(uint16_t)))
             {
-                printf("COULD NOT READ MESSAGE");
+                printf("COULD NOT READ CLIENT PORT\n");
                 continue;
             }
             
@@ -87,7 +85,7 @@ int main(int argc, char const *argv[])
                 }
 
                 // Register and send player
-                NetPlayer* connectingplayer = InitPlayer(incomingSocket);
+                NetPlayer* connectingplayer = InitPlayer(incomingSocket, udpPort);
                 if(!SendTCPMessage(incomingSocket, &connectingplayer->data, sizeof(PlayerData)))
                 {
                     LogInfo("COULD NOT SEND PLAYER DATA");
@@ -114,20 +112,64 @@ int main(int argc, char const *argv[])
             }
 		}
 
-        if(SDLNet_CheckSockets(net->udpSocketSet, 0))
-        {
-            while(SDLNet_UDP_Recv(net->udpSocket, packet))
+        { // Send data to players
+            NetPlayer* players = GetAllPlayers();
+            uint16_t playercount = GetPlayerCount();
+            // PlayerData* data = alloca(sizeof(PlayerData)+playercount);
+            // int datacount = GetAllPlayerData(&data);
+
+            // for every player
+            for (size_t i = 0; i < playercount; i++)
             {
-                if(GetDataID_UDP(packet) == CR_DATA_POSITION)
+                // Get the player
+                NetPlayer* player = &players[i];
+
+                // send all others players data to the player
+                for (size_t i = 0; i < playercount; i++)
                 {
-                    PlayerPositionData* data = GetPositionData_UDP(packet);
-                    // printf("RECIEVED POSITION {x: %d, y: %d}\n", data->x, data->y);
+                    // get the other player
+                    NetPlayer* otherPlayer = &players[i];
+
+                    // don't send player data to himself
+                    if(otherPlayer == player) continue;
+
+                    // get other players data
+                    PlayerMovementData data;
+                    NetPlayerGetMovementData(otherPlayer, &data);
+                    // get recipient udp ip
+                    IPaddress udpaddr;
+                    udpaddr.host = NetPlayerGetTCPAddress(player)->host;
+                    udpaddr.port = player->udpPort;
+                    // send other player's data to the recipient
+                    SendMovementData_UDP(&udpaddr, &data);
                 }
             }
         }
-
-        // Send position data to all players
         
+        // Read updates from players
+        if(SDLNet_CheckSockets(net->udpSocketSet, 0))
+        {
+            while(SDLNet_UDP_Recv(net->udpSocket, recvpacket))
+            {
+                DataID dataid = GetDataID_UDP(recvpacket);
+                switch (dataid)
+                {
+                case CR_DATA_MOVEMENT:
+                {
+                    PlayerMovementData* data = GetMovementData_UDP(recvpacket);
+                    // printf("RECIEVED POSITION {x: %d, y: %d}\n", data->x, data->y);
+                    ApplyMovementDataToPlayer(data);
+                    break;
+                }
+                
+                default:
+                    LogInfo("UNHANDLE DATA ID %d", dataid);
+                    break;
+                }
+
+                
+            }
+        }
 
         ///////// END OF NET TICK
         time_t end = clock();

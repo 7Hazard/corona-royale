@@ -28,20 +28,30 @@ NetPlayer* GetAllPlayers()
     return hashtable_items(&GetServer()->players);
 }
 
-NetPlayer* InitPlayer(TCPsocket tcpSocket)
+NetPlayer* GetPlayer(PlayerID id)
+{
+    Server* server = GetServer();
+    return hashtable_find(&server->players, id);
+}
+
+NetPlayer* InitPlayer(TCPsocket tcpSocket, uint16_t udpPort)
 {
     Server* server = GetServer();
 
     NetPlayer player;
 
+    // IPaddress* ip = SDLNet_TCP_GetPeerAddress(tcpSocket);
+
     player.tcpSocket = tcpSocket;
+    // player.udpSocket = SDLNet_UDP_Open(ip);
+    player.udpPort = udpPort;
     player.data.x = rand() % 500 + 1;
     player.data.y = rand() % 500 + 1;
     player.data.angle = 0;
     player.data.infected = false;
     player.data.id = GetPlayerCount();
 
-    return hashtable_insert(&server->players, tcpSocket, &player);
+    return hashtable_insert(&server->players, player.data.id, &player);
 }
 
 int GetAllPlayerData(PlayerData* dataArray)
@@ -59,4 +69,18 @@ int GetAllPlayerData(PlayerData* dataArray)
     }
 
     return count;
+}
+
+void ApplyMovementDataToPlayer(PlayerMovementData* data)
+{
+    NetPlayer* player = GetPlayer(data->id);
+    if(player == NULL)
+    {
+        // player is sending data when it's not in this session
+        return;
+    }
+
+    player->data.angle = data->angle;
+    player->data.x = data->x;
+    player->data.y = data->y;
 }

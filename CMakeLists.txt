@@ -144,6 +144,7 @@ target_compile_definitions(CoronaRoyaleServer PRIVATE
 )
 target_include_directories(CoronaRoyaleServer PRIVATE
   src
+  src/server
 )
 
 set_target_properties(CoronaRoyaleServer PROPERTIES

@@ -25,14 +25,17 @@ Network* GetNetwork()
 
 #ifdef CR_SERVER
         // create a listening TCP socket on port 6969 (server)
-
-        if(SDLNet_ResolveHost(&network.ip, NULL, CR_NET_PORT) == -1) {
+        IPaddress tcpaddr;
+        if(SDLNet_ResolveHost(&tcpaddr, NULL, CR_NET_PORT) == -1) {
             printf("SDLNet_ResolveHost: %s\n", SDLNet_GetError());
             abort();
         }
 
-        network.tcpSocket = SDLNet_TCP_Open(&network.ip);
+        network.tcpSocket = SDLNet_TCP_Open(&tcpaddr);
 
+        // UDP
+        IPaddress udpaddr = tcpaddr;
+        udpaddr.port = CR_NET_PORT;
         network.udpSocket = SDLNet_UDP_Open(CR_NET_PORT);
         if(network.udpSocket == NULL)
         {
@@ -40,14 +43,14 @@ Network* GetNetwork()
             abort();
         }
 
-        network.udpChannel = SDLNet_UDP_Bind(network.udpSocket, -1, &network.ip);
-        if(network.udpChannel == -1)
-        {
-            printf("Could not bind UDP socket");
-            abort();
-        }
+        // network.udpChannel = SDLNet_UDP_Bind(network.udpSocket, 1, &udpaddr);
+        // if(network.udpChannel == -1)
+        // {
+        //     printf("Could not bind UDP socket");
+        //     abort();
+        // }
 
-        network.udpSocketSet = SDLNet_AllocSocketSet(1);
+        network.udpSocketSet = SDLNet_AllocSocketSet(2);
         if(network.udpSocketSet == NULL)
         {
             printf("Couldn't create socket set: %s\n", SDLNet_GetError());
@@ -73,12 +76,12 @@ bool Connect(const char* host)
     Network* network = GetNetwork();
 
     // TCP
-    if(SDLNet_ResolveHost(&network->ip, host, CR_NET_PORT) == -1) {
+    if(SDLNet_ResolveHost(&network->address, host, CR_NET_PORT) == -1) {
         printf("SDLNet_ResolveHost: %s\n", SDLNet_GetError());
         return false;
     }
     
-    network->tcpSocket = SDLNet_TCP_Open(&network->ip);
+    network->tcpSocket = SDLNet_TCP_Open(&network->address);
 
     if(network->tcpSocket == 0) {
         printf("SDLNet_TCP_Open: %s\n", SDLNet_GetError());
@@ -89,15 +92,16 @@ bool Connect(const char* host)
     network->udpSocket = SDLNet_UDP_Open(0);
     if(network->udpSocket == NULL)
     {
-        printf("Could not open UDP socket");
+        printf("Could not open UDP socket\n");
         return false;
     }
 
-    network->udpChannel = SDLNet_UDP_Bind(network->udpSocket, -1, &network->ip);
-    if(network->udpChannel == -1)
+    // Send client UDP port for server to talk to
+    uint16_t port = SDLNet_UDP_GetPeerAddress(network->udpSocket, -1)->port;
+    if(!SendTCPMessage(network->tcpSocket, &port, sizeof(uint16_t)))
     {
-        printf("Could not bind UDP socket");
-        return false;
+        LogInfo("Could not send UDP port to server");
+        abort();
     }
 
     return true;
@@ -219,7 +223,11 @@ bool SendUDPPacket(UDPpacket* packet)
         return false;
     }
 
-    SDLNet_UDP_Send(net->udpSocket, net->udpChannel, packet);
+    int result = SDLNet_UDP_Send(net->udpSocket, -1, packet);
+    if(!result)
+    {
+        return false;
+    }
 
     return true;
 }

@@ -64,6 +64,18 @@
       "group": "test"
     },
     {
+      "label": "Run Client VS2019",
+      "type": "shell",
+      "windows": {
+        "command": "cmd /c start ${workspaceFolder}/BUILD/VS2019/Debug/CoronaRoyale.exe",
+        "options": {
+          "cwd": "${workspaceFolder}/BUILD/VS2019/Debug"
+        }
+      },
+      "dependsOn": ["Build VS2019"],
+      "group": "test"
+    },
+    {
       "label": "Run Server VS2017",
       "type": "shell",
       "windows": {
@@ -95,6 +107,17 @@
       },
       "osx": {
         "command": "killall CoronaRoyaleServer",
+      },
+      "group": "test"
+    }
+    {
+      "label": "Shutdown Client",
+      "type": "shell",
+      "windows": {
+        "command": "taskkill /IM CoronaRoyale.exe",
+      },
+      "osx": {
+        "command": "killall CoronaRoyale",
       },
       "group": "test"
     }

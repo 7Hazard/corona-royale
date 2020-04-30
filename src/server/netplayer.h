@@ -7,5 +7,12 @@
 
 typedef struct NetPlayer {
     TCPsocket tcpSocket;
+    // UDPsocket udpSocket;
     PlayerData data;
+    uint16_t udpPort;
 } NetPlayer;
+
+IPaddress* NetPlayerGetTCPAddress(NetPlayer* player);
+
+// NOT THREAD SAFE
+void NetPlayerGetMovementData(NetPlayer* player, PlayerMovementData* data);

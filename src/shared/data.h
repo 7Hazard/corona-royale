@@ -7,7 +7,7 @@
 typedef enum DataStruct {
     CR_DATA_CUSTOM,
     CR_DATA_PLAYER,
-    CR_DATA_POSITION
+    CR_DATA_MOVEMENT
 } DataID;
 
 typedef uint16_t PlayerID;
@@ -22,13 +22,18 @@ typedef struct PlayerData {
 } PlayerData;
 
 
-typedef struct PlayerPositionData {
+typedef struct PlayerMovementData {
     PlayerID id;
     int x, y;
-} PlayerPositionData;
+    float angle;
+} PlayerMovementData;
 
-void SendPositionData_UDP(PlayerPositionData* data);
-PlayerPositionData* GetPositionData_UDP(UDPpacket* packet);
+#ifdef CR_CLIENT
+void SendMovementData_UDP(PlayerMovementData* data);
+#else
+void SendMovementData_UDP(IPaddress* addr, PlayerMovementData* data);
+#endif
+PlayerMovementData* GetMovementData_UDP(UDPpacket* packet);
 
 
 // void ReadData_UDP();

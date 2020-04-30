@@ -14,7 +14,7 @@ typedef struct Camera
 typedef struct Player
 {
     SDL_Rect rect;
-    SDL_mutex* positionMutex;
+    SDL_mutex* movementMutex;
     SDL_Rect position;
     Camera camera;
     SDL_mutex* infectedMutex;
@@ -24,6 +24,7 @@ typedef struct Player
     SDL_Texture* texture;
     int frameWidth, frameHeight;
     int textureWidth, textureHeight;
+    PlayerID id;
 } Player;
 
 void CreatePlayer(Player* player, int xPos, int yPos);
@@ -37,4 +38,4 @@ void SetPlayerPosition(Player* player, int x, int y);
 void SetPlayerAngle(Player* player, float angle);
 void SetPlayerInfected(Player* player, bool infected);
 void ApplyPlayerData(Player* player, PlayerData* data);
-void GetPlayerPositionData(Player* player, PlayerPositionData* data);
+void GetPlayerMovementData(Player* player, PlayerMovementData* data);
