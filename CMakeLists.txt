@@ -9,6 +9,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     "deps/SDL2*/lib/x64/*.dll"
   )
   file(COPY ${SDL2_SHARED_BINARIES} DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
+  file(COPY "res" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
 else()
   find_package(SDL2 REQUIRED)
   find_package(SDL2_image REQUIRED)
