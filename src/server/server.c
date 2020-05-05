@@ -35,6 +35,22 @@ NetPlayer* GetPlayer(PlayerID id)
     return hashtable_find(&server->players, id);
 }
 
+PlayerID GetFreeID()
+{
+    Server* server = GetServer();
+
+    PlayerID id = 0;
+    while (true)
+    {
+        if(GetPlayer(id) == NULL) return id;
+        id++;
+    }
+
+    // will never happen
+    // LogInfo("COULD NOT FIND A FREE ID");
+    // abort();
+}
+
 NetPlayer* InitPlayer(TCPsocket tcpSocket, uint16_t udpPort)
 {
     Server* server = GetServer();
@@ -46,7 +62,7 @@ NetPlayer* InitPlayer(TCPsocket tcpSocket, uint16_t udpPort)
     player.tcpSocket = tcpSocket;
     // player.udpSocket = SDLNet_UDP_Open(ip);
     player.udpPort = udpPort;
-    player.data.id = GetPlayerCount();
+    player.data.id = GetFreeID();
     player.data.x = rand() % CR_MAP_WIDTH;
     player.data.y = rand() % CR_MAP_HEIGHT;
     player.data.angle = 0;

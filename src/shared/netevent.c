@@ -10,7 +10,7 @@ NetEvent NetEventGet()
         // Failed to read
         // TCP socket invalid now
         // Disconnect
-        return CR_NETEVENT_PlayerDisconnected;
+        return CR_NETEVENT_Disconnected;
     }
     else
         return (NetEvent)event;

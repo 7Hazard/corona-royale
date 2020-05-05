@@ -19,7 +19,7 @@ int NetEventThread(void *ptr)
         NetEvent event = NetEventGet();
         switch(event)
         {
-        case CR_NETEVENT_PlayerDisconnected:
+        case CR_NETEVENT_Disconnected:
         {
             LogInfo("DISCONNECTED");
             SDL_ShowSimpleMessageBox(
@@ -31,6 +31,13 @@ int NetEventThread(void *ptr)
 
             return 0;
             break;
+        }
+        case CR_NETEVENT_PlayerDisconnected:
+        {
+            NetEventPlayerDisconnected e;
+            NetEventPlayerDisconnectedRead(net->tcpSocket, &e);
+            LogInfo("PLAYER %d DISCONNECTED\n", e.id);
+            GameDisposeNetPlayer(GameGetNetPlayer(e.id));
         }
         case CR_NETEVENT_PlayerConnected:
         {

@@ -84,24 +84,6 @@ void GameInitNetPlayersTable(uint16_t count)
     hashtable_init(&game->players, sizeof(NetPlayer), count, 0);
 }
 
-void GameInitNetPlayers(PlayerData* players, uint16_t count)
-{
-    Game* game = GetGame();
-
-    GameInitNetPlayersTable(count);
-    for (size_t i = 0; i < count; i++)
-    {
-        NetPlayer player;
-        InitNetPlayer(&player, &players[i]);
-
-        // debug
-        LogInfo("ID: %d | x: %d | y: %d | angle: %f | inf: %d", player.data.id, player.data.x, player.data.y, player.data.angle, player.data.infected);
-        // debug
-        
-        hashtable_insert(&game->players, player.data.id, &player);
-    }
-}
-
 void GameInitNetPlayer(PlayerData* data)
 {
     Game* game = GetGame();
@@ -116,6 +98,25 @@ void GameInitNetPlayer(PlayerData* data)
     hashtable_insert(&game->players, player.data.id, &player);
 }
 
+void GameInitNetPlayers(PlayerData* players, uint16_t count)
+{
+    Game* game = GetGame();
+
+    GameInitNetPlayersTable(count);
+    for (size_t i = 0; i < count; i++)
+    {
+        GameNetInitPlayer(&players[i]);
+    }
+}
+
+void GameDisposeNetPlayer(NetPlayer* player)
+{
+    Game* game = GetGame();
+
+    DisposeNetPlayer(player);
+    hashtable_remove(&game->players, player->data.id);
+}
+
 void GameDisposeNetPlayers()
 {
     Game* game = GetGame();
@@ -123,7 +124,7 @@ void GameDisposeNetPlayers()
     NetPlayer* players = GetAllPlayers();
     for (size_t i = 0; i < GetPlayerCount(); i++)
     {
-        DisposeNetPlayer(&players[i]);
+        GameDisposeNetPlayer(&players[i]);
     }
 
     hashtable_term(&game->players);
@@ -147,15 +148,10 @@ NetPlayer* GetAllPlayers()
     return hashtable_items(&GetGame()->players);
 }
 
-NetPlayer* GetPlayer(PlayerID id)
-{
-    Game* game = GetGame();
-    return hashtable_find(&game->players, id);
-}
-
 void ApplyMovementDataToPlayer(PlayerMovementData* data)
 {
-    NetPlayer* player = GetPlayer(data->id);
+    NetPlayer* player = GameGetNetPlayer(data->id);
+    if (player == NULL) return;
 
     SDL_LockMutex(player->mutex);
     

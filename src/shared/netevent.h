@@ -5,6 +5,7 @@
 
 typedef enum NetEvent {
     CR_NETEVENT_None,
+    CR_NETEVENT_Disconnected,
     CR_NETEVENT_PlayerConnected,
     CR_NETEVENT_PlayerDisconnected,
     CR_NETEVENT_PlayerInfected
