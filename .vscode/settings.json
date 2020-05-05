@@ -18,7 +18,8 @@
     "unistd.h": "c",
     "stdlib.h": "c",
     "*.rh": "c",
-    "windows.h": "c"
+    "windows.h": "c",
+    "network.h": "c"
   },
   "editor.tabSize": 4
 }

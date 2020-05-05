@@ -41,6 +41,7 @@ file(GLOB_RECURSE CR_CLIENT_RESOURCES "${CMAKE_SOURCE_DIR}/res/*")
 set(CR_CLIENT_SOURCES
   src/client/main.c
   src/client/game.c
+  src/client/gamenet.c
   src/client/audio.c
   src/client/player.c
   src/client/events.c

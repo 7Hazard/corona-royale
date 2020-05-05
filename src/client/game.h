@@ -15,8 +15,12 @@ typedef struct Game
 {
     bool running;
     bool connected;
+
     SDL_Window* window;
     SDL_Renderer* renderer;
+
+    Uint32 fps;
+
     SDL_Texture *background;
     int mapWidth, mapHeight;
     Player player;
@@ -25,6 +29,8 @@ typedef struct Game
 } Game;
 
 Game* GetGame();
+Uint32 GameStartFrame();
+void GameEndFrame(Uint32 framestart);
 void GameInitNetPlayersTable(uint16_t count);
 void GameInitNetPlayer(PlayerData* data);
 void GameInitNetPlayers(PlayerData* players, uint16_t count); // not used

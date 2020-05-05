@@ -46,6 +46,7 @@ Game* GetGame()
         game.connected = false;
         game.window = SDL_CreateWindow("Corona Royale", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_W, WINDOW_H, 0);
         game.renderer = SDL_CreateRenderer(game.window, -1, 0);
+        game.fps = 60; // default target FPS is 60
 
         Textures* tex = GetTextures(); // NEEDS TO BE CALLED AFTER RENDERER IS CREATED
         game.background = tex->grass;
@@ -57,6 +58,23 @@ Game* GetGame()
     }
 
     return &game;
+}
+
+Uint32 GameStartFrame()
+{
+    return SDL_GetTicks();
+}
+
+void GameEndFrame(Uint32 frameStart)
+{
+    Game* game = GetGame();
+
+    Uint32 frameDelay = 1000/game->fps;
+    Uint32 frameTime = SDL_GetTicks() - frameStart;
+    if (frameTime < frameDelay)
+    {
+        SDL_Delay(frameDelay - frameTime);
+    }
 }
 
 void GameInitNetPlayersTable(uint16_t count)
