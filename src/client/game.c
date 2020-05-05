@@ -134,7 +134,7 @@ NetPlayer* GameGetNetPlayer(PlayerID id)
 {
     Game* game = GetGame();
     NetPlayer* ply = hashtable_find(&game->players, id);
-    assert(ply != NULL, "PLAYER DOESNT EXIST");
+    //assert(ply != NULL, "PLAYER DOESNT EXIST");
     return ply;
 }
 

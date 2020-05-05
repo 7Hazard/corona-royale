@@ -80,6 +80,18 @@ void ServerDisconnectPlayer(NetPlayer* player)
     Server* server = GetServer();
 
     hashtable_remove(&server->players, player->data.id);
+
+    NetPlayer* players = GetAllPlayers();
+    for (size_t i = 0; i < GetPlayerCount(); i++)
+    {
+        NetPlayer* ply = &players[i];
+
+        NetEventPlayerDisconnected data = { player->data.id };
+        if(!NetEventPlayerDisconnectedSend(ply->tcpSocket, &data))   
+        {
+            ServerDisconnectPlayer(ply);
+        }
+    }
 }
 
 int GetAllPlayerData(PlayerData* dataArray)
