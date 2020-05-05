@@ -105,7 +105,7 @@ void GameInitNetPlayers(PlayerData* players, uint16_t count)
     GameInitNetPlayersTable(count);
     for (size_t i = 0; i < count; i++)
     {
-        GameNetInitPlayer(&players[i]);
+        GameInitNetPlayer(&players[i]);
     }
 }
 
