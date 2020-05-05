@@ -15,19 +15,18 @@ typedef struct Player
 {
     SDL_Rect rect;
     SDL_mutex* movementMutex;
-    SDL_Rect position;
     Camera camera;
     SDL_mutex* infectedMutex;
     bool infected;
     bool mouseClick;
+    bool moving;
     float angle;
+    float x,y;
     SDL_Texture* texture;
-    int frameWidth, frameHeight;
-    int textureWidth, textureHeight;
     PlayerID id;
 } Player;
 
-void CreatePlayer(Player* player, int xPos, int yPos);
+void CreatePlayer(Player* player, float xPos, float yPos);
 void HandlePlayerEvents(SDL_Event *event);
 void OnPlayerUpdate(Player* player);
 void RotatePlayer();
