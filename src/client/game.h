@@ -35,6 +35,7 @@ void GameInitNetPlayersTable(uint16_t count);
 void GameInitNetPlayer(PlayerData* data);
 void GameInitNetPlayers(PlayerData* players, uint16_t count); // not used
 void GameDisposeNetPlayers();
+NetPlayer* GameGetNetPlayer(PlayerID id);
 uint16_t GetPlayerCount();
 NetPlayer* GetAllPlayers();
 void ApplyMovementDataToPlayer(PlayerMovementData* data);

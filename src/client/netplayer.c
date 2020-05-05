@@ -9,7 +9,10 @@ void InitNetPlayer(NetPlayer* np, PlayerData* data)
 
     np->mutex = SDL_CreateMutex();
     np->data = *data; // Copy data
-    np->texture = tex->healthyPlayer;
+    
+    if(np->data.infected)
+        np->texture = tex->infectedPlayer;
+    else np->texture = tex->healthyPlayer;
 }
 
 void RenderNetPlayer(NetPlayer* np)
@@ -33,7 +36,6 @@ void RenderNetPlayer(NetPlayer* np)
 void DisposeNetPlayer(NetPlayer* np)
 {
     SDL_DestroyMutex(np->mutex);
-    // free(np);
 }
 
 void ApplyDataToNetPlayer(NetPlayer* np, PlayerData* data)

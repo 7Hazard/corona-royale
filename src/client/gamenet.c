@@ -1,6 +1,7 @@
 #include "gamenet.h"
 
 #include "game.h"
+#include "textures.h"
 
 #include "shared/network.h"
 #include "shared/data.h"
@@ -11,13 +12,14 @@ int NetEventThread(void *ptr)
 {
     Game* game = GetGame();
     Network* net = GetNetwork();
+    Textures* textures = GetTextures();
 
     while (game->connected)
     {
-        NetEvent event = GetNetEvent();
+        NetEvent event = NetEventGet();
         switch(event)
         {
-        case CR_NETEVENT_DISCONNECTED:
+        case CR_NETEVENT_PlayerDisconnected:
         {
             LogInfo("DISCONNECTED");
             SDL_ShowSimpleMessageBox(
@@ -30,17 +32,37 @@ int NetEventThread(void *ptr)
             return 0;
             break;
         }
-        case CR_NETEVENT_PLAYER_CONNECTED:
+        case CR_NETEVENT_PlayerConnected:
         {
-            PlayerConnectedEvent e;
-            ReadPlayerConnectedEvent(net->tcpSocket, &e);
+            NetEventPlayerConnected e;
+            NetEventPlayerConnectedRead(net->tcpSocket, &e);
             GameInitNetPlayer(&e.data);
+
+            break;
+        }
+        case CR_NETEVENT_PlayerInfected:
+        {
+            NetEventPlayerInfected e;
+            NetEventPlayerInfectedRead(net->tcpSocket, &e);
+            
+            if(e.id == game->player.id)
+            {
+                game->player.infected = true;
+                game->player.texture = textures->infectedPlayer;
+            }
+            else {
+                NetPlayer* player = GameGetNetPlayer(e.id);
+                player->data.infected = true;
+                player->texture = textures->infectedPlayer;
+                LogInfo("PLAYER %d GOT INFECTED\n", e.id);
+            }
 
             break;
         }
         
         default:
             LogInfo("Unhandled event %d", event);
+            abort();
             break;
         }
     }

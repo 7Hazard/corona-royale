@@ -16,3 +16,5 @@ IPaddress* NetPlayerGetTCPAddress(NetPlayer* player);
 
 // NOT THREAD SAFE
 void NetPlayerGetMovementData(NetPlayer* player, PlayerMovementData* data);
+
+void NetPlayerUpdateInfectionStatus();

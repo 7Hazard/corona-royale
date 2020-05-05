@@ -4,21 +4,40 @@
 #include "data.h"
 
 typedef enum NetEvent {
-    CR_NETEVENT_NONE,
-    CR_NETEVENT_DISCONNECTED,
-    CR_NETEVENT_PLAYER_CONNECTED
+    CR_NETEVENT_None,
+    CR_NETEVENT_PlayerConnected,
+    CR_NETEVENT_PlayerDisconnected,
+    CR_NETEVENT_PlayerInfected
 } NetEvent;
-
-typedef struct PlayerConnectedEvent {
-    PlayerData data;
-} PlayerConnectedEvent;
 
 /** Events should be polled in a separate thread
  * TCP, BLOCKING FUNCTION
  * returns the NetEvent recieved or CR_NETEVENT_DISCONNECTED if disconnected
  * */
-NetEvent GetNetEvent();
+NetEvent NetEventGet();
 
-bool ReadPlayerConnectedEvent(TCPsocket socket, PlayerConnectedEvent* destination);
+#define CR_NETEVENT_IMPL_READ(event) \
+inline bool NetEvent##event##Read(TCPsocket socket, NetEvent##event *destination) { \
+    if (!ReadTCPMessage(socket, destination, sizeof(NetEvent##event))) \
+        return false; \
+    return true; \
+}
+#define CR_NETEVENT_IMPL_SEND(event) \
+inline bool NetEvent##event##Send(TCPsocket socket, NetEvent##event *data) { \
+    uint16_t id = CR_NETEVENT_##event; \
+    if (!SendTCPMessageNoCopy(socket, &id, sizeof(id)) || !SendTCPMessageNoCopy(socket, data, sizeof(NetEvent##event))) \
+        return false; \
+    return true; \
+}
+#define CR_NETEVENT_STRUCT(event, fields) typedef struct NetEvent##event fields NetEvent##event;
+#define CR_NETEVENT(event, fields) CR_NETEVENT_STRUCT(event, fields) CR_NETEVENT_IMPL_READ(event) CR_NETEVENT_IMPL_SEND(event)
 
-bool SendPlayerConnectedEvent(TCPsocket socket, PlayerConnectedEvent* data);
+CR_NETEVENT(PlayerConnected, {
+    PlayerData data;
+})
+CR_NETEVENT(PlayerDisconnected, {
+    PlayerID id;
+})
+CR_NETEVENT(PlayerInfected, {
+    PlayerID id;
+})

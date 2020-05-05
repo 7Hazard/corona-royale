@@ -46,13 +46,24 @@ NetPlayer* InitPlayer(TCPsocket tcpSocket, uint16_t udpPort)
     player.tcpSocket = tcpSocket;
     // player.udpSocket = SDLNet_UDP_Open(ip);
     player.udpPort = udpPort;
-    player.data.x = rand() % 500 + 1;
-    player.data.y = rand() % 500 + 1;
-    player.data.angle = 0;
-    player.data.infected = false;
     player.data.id = GetPlayerCount();
+    player.data.x = rand() % CR_MAP_WIDTH;
+    player.data.y = rand() % CR_MAP_HEIGHT;
+    player.data.angle = 0;
+    if(player.data.id == 0) player.data.infected = true;
+    else player.data.infected = false;
+    player.data.infectionRadius = 50;
 
     return hashtable_insert(&server->players, player.data.id, &player);
+}
+
+void ServerDisconnectPlayer(NetPlayer* player)
+{
+    LogInfo("PLAYER %d DISCONNECTED\n", player->data.id);
+
+    Server* server = GetServer();
+
+    hashtable_remove(&server->players, player->data.id);
 }
 
 int GetAllPlayerData(PlayerData* dataArray)
@@ -84,6 +95,21 @@ void ApplyMovementDataToPlayer(PlayerMovementData* data)
     player->data.angle = data->angle;
     player->data.x = data->x;
     player->data.y = data->y;
+}
+
+void ServerUpdate()
+{
+    NetPlayer* players = GetAllPlayers();
+    uint16_t playercount = GetPlayerCount();
+
+    // for every player
+    for (size_t i = 0; i < playercount; i++)
+    {
+        // Get the player
+        NetPlayer* player = &players[i];
+
+        NetPlayerUpdate();
+    }
 }
 
 void ServerAcceptConnection()
@@ -159,9 +185,12 @@ void ServerAcceptConnection()
                 continue;
 
             // Send event
-            PlayerConnectedEvent ev;
+            NetEventPlayerConnected ev;
             ev.data = connectingplayer->data;
-            SendPlayerConnectedEvent(player->tcpSocket, &ev);
+            if(!NetEventPlayerConnectedSend(player->tcpSocket, &ev))
+            {
+                // disconnect player
+            }
         }
 
         LogInfo("Player connected, ID: %d\n", connectingplayer->data.id);

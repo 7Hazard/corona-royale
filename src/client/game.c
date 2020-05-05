@@ -3,6 +3,7 @@
 #include <SDL_image.h>
 #include <stdio.h>
 #include <string.h>
+#include <assert.h>
 
 #include "shared/log.h"
 
@@ -126,6 +127,14 @@ void GameDisposeNetPlayers()
     }
 
     hashtable_term(&game->players);
+}
+
+NetPlayer* GameGetNetPlayer(PlayerID id)
+{
+    Game* game = GetGame();
+    NetPlayer* ply = hashtable_find(&game->players, id);
+    assert(ply != NULL, "PLAYER DOESNT EXIST");
+    return ply;
 }
 
 uint16_t GetPlayerCount()

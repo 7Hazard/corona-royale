@@ -36,6 +36,7 @@ int main(int argc, char const *argv[])
 		time_t tickstart = NetworkStartTick();
         ///////// START OF NET TICK
         
+        ServerUpdate();
 		ServerAcceptConnection();
         ServerBroadcastPlayerData();
         ServerReadUpdates();

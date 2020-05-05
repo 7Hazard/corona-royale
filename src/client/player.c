@@ -162,8 +162,12 @@ void SetPlayerAngle(Player* player, float angle)
 
 void SetPlayerInfected(Player* player, bool infected)
 {
+    Textures* textures = GetTextures();
+
     SDL_LockMutex(player->infectedMutex);
     player->infected = infected;
+    if(infected) player->texture = textures->infectedPlayer;
+    else player->texture = textures->healthyPlayer;
     SDL_UnlockMutex(player->infectedMutex);
 }
 
