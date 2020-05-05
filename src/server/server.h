@@ -19,8 +19,12 @@ NetPlayer* GetPlayer(PlayerID id);
 
 NetPlayer* InitPlayer(TCPsocket tcpSocket, uint16_t udpPort);
 
-// Fills dataArray and returns count
+// Fills dataArray and returns the count
 int GetAllPlayerData(PlayerData* dataArray);
 
 // NOT THREAD SAFE
 void ApplyMovementDataToPlayer(PlayerMovementData* data);
+
+void ServerAcceptConnection();
+void ServerBroadcastPlayerData();
+void ServerReadUpdates();

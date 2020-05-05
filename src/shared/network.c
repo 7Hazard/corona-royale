@@ -130,32 +130,6 @@ bool SendTCPMessage(TCPsocket socket, void* content, uint16_t contentLength)
     return true;
 }
 
-bool SendTCPMessageArray(TCPsocket socket, void* items, uint16_t itemSize, uint16_t itemCount)
-{
-    size_t arraysize = itemSize*itemCount;
-
-    // Stack alloc array of bytes
-    size_t msglen = arraysize+4; // length of message + 2 for itemsize + 2 for itemcount
-    uint8_t* msg = alloca(msglen);
-
-    // Interpret first 2 bytes as 16-bit unsigned int
-    *((uint16_t*)(&msg[0])) = itemSize;
-    // Interpret second 2 bytes as 16-bit unsigned int
-    *((uint16_t*)(&msg[2])) = itemCount;
-    // Copy contents into message starting from 5th byte
-    memcpy(&msg[4], items, arraysize);
-    
-    // Send msg through socket
-    size_t sentBytes = SDLNet_TCP_Send(socket, msg, msglen);
-    if(sentBytes < msglen)
-    {
-        // SDL_Log("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
-        return false;
-    }
-
-    return true;
-}
-
 bool SendTCPMessageNoCopy(TCPsocket socket, void* content, uint16_t contentLength)
 {
 
@@ -165,6 +139,30 @@ bool SendTCPMessageNoCopy(TCPsocket socket, void* content, uint16_t contentLengt
     {
         // SDL_Log("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
         return false;
+    }
+
+    return true;
+}
+
+bool SendTCPMessageArray(TCPsocket socket, void* items, uint16_t itemSize, uint16_t itemsCount)
+{
+    size_t arraysize = itemSize*itemsCount;
+
+    // Send item size
+    SendTCPMessageNoCopy(socket, &itemSize, sizeof(uint16_t));
+    // Send items count
+    SendTCPMessageNoCopy(socket, &itemsCount, sizeof(uint16_t));
+    
+    // Send msg through socket
+    for (size_t i = 0; i < itemsCount; i++)
+    {
+        void* item = (uintptr_t)items+(i*itemSize);
+        size_t sentBytes = SDLNet_TCP_Send(socket, item, itemSize);
+        if(sentBytes < itemSize)
+        {
+            // SDL_Log("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
+            return false;
+        }
     }
 
     return true;
@@ -230,4 +228,19 @@ bool SendUDPPacket(UDPpacket* packet)
     }
 
     return true;
+}
+
+time_t NetworkStartTick()
+{
+    return clock();
+}
+
+void NetworkEndTick(time_t tickstart)
+{
+    time_t end = clock();
+    int result = end-tickstart;
+    if (result < CR_NET_TICK_TIME)
+    {
+        Sleep(CR_NET_TICK_TIME-result);
+    }
 }

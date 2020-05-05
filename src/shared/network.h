@@ -1,6 +1,7 @@
 #pragma once
 #include <stdbool.h>
 #include <SDL_net.h>
+#include <time.h>
 
 #define CR_NET_PORT 6969
 #define CR_MAX_UDP_PACKET_SIZE 256
@@ -64,3 +65,6 @@ bool ReadTCPMessageArray(TCPsocket socket, void* buffer, uint16_t datasize, uint
 bool SendUDPPacket(UDPpacket* packet);
 
 // void PollUDPUpdates();
+
+time_t NetworkStartTick();
+void NetworkEndTick(time_t tickstart);
