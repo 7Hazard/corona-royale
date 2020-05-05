@@ -15,33 +15,30 @@
 
 #include "shared/data.h"
 
-void CreatePlayer(Player* player, int xPos, int yPos)
+void CreatePlayer(Player* player, float xPos, float yPos)
 {
     Game *game = GetGame();
     Textures* tex = GetTextures();
 
     player->texture = tex->healthyPlayer;
-    player->frameWidth = tex->playerWidth;
-    player->frameHeight = tex->playerHeight;
+    player->rect.w = tex->playerWidth;
+    player->rect.h = tex->playerHeight;
 
     player->infectedMutex = SDL_CreateMutex();
     player->infected = true;
 
     player->rect.x = 0;
     player->rect.y = 0;
-    player->rect.w = player->frameWidth;
-    player->rect.h = player->frameHeight;
 
     player->movementMutex = SDL_CreateMutex();
-    player->position.x = xPos;
-    player->position.y = yPos;
-    player->position.w = player->frameWidth;
-    player->position.h = player->frameHeight;
 
+    player->x = xPos;
+    player->y = yPos;
     player->camera.cameraRect.w = WINDOW_W;
     player->camera.cameraRect.h = WINDOW_H;
 
     player->mouseClick = false;
+    player->moving = false;
 }
 
 void HandlePlayerEvents(SDL_Event *event)
@@ -56,6 +53,7 @@ void HandlePlayerEvents(SDL_Event *event)
     if (event->type == SDL_MOUSEBUTTONUP)
     {
         player->mouseClick = false;
+        player->moving = false;
     }
 }
 
@@ -67,19 +65,46 @@ void RotatePlayer(Player *player)
     //Get "world" coordinates instead of windowpos
     mousex += player->camera.cameraRect.x;
     mousey += player->camera.cameraRect.y;
-    player->angle = GetAngle(player->position.x + player->rect.w/2, mousex, player->position.y + player->rect.h/2, mousey);
+    player->angle = GetAngle((int)player->x + player->rect.w/2, mousex, (int)player->y + player->rect.h/2, mousey);
 }
 
 void MoveTowardsMouse(Player *player)
 {
-    int mousex, mousey;
-    int newPosX, newPosY;
-    SDL_GetMouseState(&mousex, &mousey);
+    int mouseX, mouseY;
+    float distance;
+    float originX, originY;
+    float directionX, directionY;
+    SDL_GetMouseState(&mouseX, &mouseY);
+    int d = 15;
+
+    originX  = player->x + player->rect.w/2;
+    originY = player->y + player->rect.h/2;
+    distance = sqrt(pow((mouseX + player->camera.cameraRect.x)-originX,2)+pow((mouseY + player->camera.cameraRect.y)-originY,2));
+    directionX = (mouseX+ player->camera.cameraRect.x-originX)/distance;
+    directionY = (mouseY + player->camera.cameraRect.y-originY)/distance;
     
-    newPosX = (mousex + player->camera.cameraRect.x)- player->position.x + player->rect.w/2;
-    newPosY = (mousey + player->camera.cameraRect.y) - player->position.y + player->rect.h/2;
-    player->position.x += newPosX/20;
-    player->position.y +=newPosY/20;
+    if ((mouseX +player->camera.cameraRect.x)>= (player->x - d) && ((mouseX +player->camera.cameraRect.x) < (player->x + player->rect.w + d)))
+    {
+        if (mouseY + player->camera.cameraRect.y>= (player->y - d) && (mouseY + player->camera.cameraRect.y< (player->y + player->rect.h + d)))
+        {
+            player->moving = false;
+            return;
+        }
+    }
+
+    if (player->moving == true)
+    {
+        player->x +=directionX*7;
+        player->y += directionY*7;
+        if (sqrt(pow(player->x-originX,2)+pow(player->y-originY,2)) >= distance)
+        {
+
+            player->x = (float)(mouseX + player->camera.cameraRect.x);
+            player->y = (float)(mouseY + player->camera.cameraRect.y);
+            return;
+        }
+        
+    }
 }
 
 void OnPlayerUpdate(Player* player)
@@ -90,11 +115,12 @@ void OnPlayerUpdate(Player* player)
     HandleBorders(player);
     RotatePlayer(player);
 
-    int posx = player->position.x;
-    int posy = player->position.y;
+    int posx = player->x;
+    int posy = player->y;
    
     if (player->mouseClick == true)
     {
+        player->moving = true;
         MoveTowardsMouse(player);
     }
     
@@ -105,8 +131,8 @@ void OnPlayerUpdate(Player* player)
 
     //make player centered on the screen
     //make the camera scroll depending on the player position
-    player->camera.cameraRect.x = (posx + player->textureWidth/2) - WINDOW_W/2;
-    player->camera.cameraRect.y = (posy + player->textureHeight/2) - WINDOW_H/2;
+    player->camera.cameraRect.x = (posx + player->rect.w/2) - WINDOW_W/2;
+    player->camera.cameraRect.y = (posy + player->rect.h/2) - WINDOW_H/2;
 
     //background rendering boundries
     if (player->camera.cameraRect.x < 0)
@@ -148,8 +174,8 @@ bool IsPlayerMoving(Player* player)
 void SetPlayerPosition(Player* player, int x, int y)
 {
     SDL_LockMutex(player->movementMutex);
-    player->position.x = x;
-    player->position.y = y;
+    player->x = x;
+    player->y = y;
     SDL_UnlockMutex(player->movementMutex);
 }
 
@@ -179,6 +205,6 @@ void GetPlayerMovementData(Player* player, PlayerMovementData* data)
 {
     data->id = player->id;
     data->angle = player->angle;
-    data->x = player->position.x;
-    data->y = player->position.y;
+    data->x = player->x;
+    data->y = player->y;
 }
