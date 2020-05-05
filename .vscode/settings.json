@@ -16,6 +16,10 @@
     "events.h": "c",
     "sdl_fontcache.h": "c",
     "unistd.h": "c",
-    "stdlib.h": "c"
-  }
+    "stdlib.h": "c",
+    "*.rh": "c",
+    "windows.h": "c",
+    "network.h": "c"
+  },
+  "editor.tabSize": 4
 }

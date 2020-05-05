@@ -27,6 +27,12 @@ add_definitions(
   -DUNICODE
 )
 
+set(SHARED_SOURCES
+  src/shared/network.c
+  src/shared/data.c
+  src/shared/netevent.c
+)
+
 ######
 ###### CLIENT
 ######
@@ -35,26 +41,29 @@ file(GLOB_RECURSE CR_CLIENT_RESOURCES "${CMAKE_SOURCE_DIR}/res/*")
 set(CR_CLIENT_SOURCES
   src/client/main.c
   src/client/game.c
+  src/client/gamenet.c
   src/client/audio.c
   src/client/player.c
   src/client/events.c
   src/client/collision.c
   src/client/mouse.c
   src/client/timer.c
-  src/client/texture.c
+  src/client/textures.c
   src/client/fonts.c
+  src/client/netplayer.c
 
   deps/SDL_FontCache/SDL_FontCache.c
+
+  ${SHARED_SOURCES}
 )
 add_executable(CoronaRoyale ${CR_CLIENT_SOURCES})
 
 target_compile_definitions(CoronaRoyale PRIVATE
-
+  CR_CLIENT
 )
 target_include_directories(CoronaRoyale PRIVATE
   src
   deps/SDL_FontCache
-  # ${PROJECT_SOURCE_DIR}
 )
 
 
@@ -125,13 +134,18 @@ endif()
 ######
 add_executable(CoronaRoyaleServer
   src/server/main.c
+  src/server/server.c
+  src/server/netplayer.c
+
+  ${SHARED_SOURCES}
 )
 target_compile_definitions(CoronaRoyaleServer PRIVATE
-
+  CR_SERVER
+  WITHOUT_SDL
 )
 target_include_directories(CoronaRoyaleServer PRIVATE
   src
-  # ${PROJECT_SOURCE_DIR}
+  src/server
 )
 
 set_target_properties(CoronaRoyaleServer PROPERTIES
@@ -151,19 +165,15 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     deps/SDL2_net/lib/x64
   )
   target_link_libraries(CoronaRoyaleServer PRIVATE
-    SDL2
-    SDL2main
     SDL2_net
   )
 else()
   # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++17 -fms-extensions -fdelayed-template-parsing -fexceptions")
   
   target_include_directories(CoronaRoyaleServer PRIVATE
-    ${SDL2_INCLUDE_DIR}
     ${SDL2_NET_INCLUDE_DIR}
   )
   target_link_libraries(CoronaRoyaleServer PRIVATE
-    ${SDL2_LIBRARY}
     ${SDL2_NET_LIBRARIES}
   )
 endif()

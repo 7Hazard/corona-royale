@@ -59,7 +59,6 @@ void RendererTimer(Timer *timer)
     }
     else if (timer->mLast10Sek)
     {
-         timer->surfaceTime = TTF_RenderText_Solid(fonts->openSansBold, timer->timerBuffer, timer->Red);
         FC_DrawColor(fonts->openSansBold, game->renderer, 0, 50, FC_MakeColor(255, 0, 0, 255),timer->timerBuffer);
     }
 }
