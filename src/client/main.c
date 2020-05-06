@@ -81,12 +81,12 @@ int main(int argc, const char *argv[])
                 }
 
                 OnPlayerRender(&game->player);
-                { // Draw CORONA ROYALE text
-                    static Uint8 r = 0;
-                    static float theta = 0.f; theta+=0.03f;
-                    r = ((sin(theta)+1)/2)*255;
-                    FC_DrawColor(fonts->openSans, game->renderer, 200, 50, FC_MakeColor(r, 20, 20, 255), "CORONA\n%s", "ROYALE");
-                }
+                // { // Draw CORONA ROYALE text
+                //     static Uint8 r = 0;
+                //     static float theta = 0.f; theta+=0.03f;
+                //     r = ((sin(theta)+1)/2)*255;
+                //     FC_DrawColor(fonts->openSans, game->renderer, 200, 50, FC_MakeColor(r, 20, 20, 255), "CORONA\n%s", "ROYALE");
+                // }
                 RendererTimer(&game->timer);
             }
 
