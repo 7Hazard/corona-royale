@@ -11,11 +11,8 @@
 typedef struct
 {
     SDL_Texture* textureMenu;
-    SDL_Texture* texturePlayButton;
-    SDL_Texture* textureExitButton;
-    SDL_Rect rectPlayButton;
-    int heigth,width;
-    int x,y;
+    SDL_Texture* textureLogo;
+    SDL_Rect logoRect;
     bool menuClick;
 }Menu;
 

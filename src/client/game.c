@@ -55,8 +55,6 @@ Game* GetGame()
 void DisposeGame(){
     Game* game = GetGame();
 
-    SDL_DestroyTexture(game->menu.textureExitButton);
-    SDL_DestroyTexture(game->menu.texturePlayButton);
     SDL_DestroyTexture(game->menu.textureMenu);
     SDL_DestroyTexture(game->background);
     SDL_DestroyTexture(game->player.texture);
