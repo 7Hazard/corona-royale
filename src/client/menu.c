@@ -17,7 +17,7 @@ void LoadMenu(Menu* menu){
     menu->textureMenu = IMG_LoadTexture(game->renderer,"res/menu/background_menu.jpg");
     menu->textureLogo = IMG_LoadTexture(game->renderer,"res/menu/CoronaRoyalBackground.png");
 
-    menu->iterator = 0;
+    menu->textLength = -1;
 
     menu->logoRect.x = 50;
     menu->logoRect.y = 30;
@@ -81,34 +81,19 @@ void RenderMenu(){
 void HandleMenuEvents(SDL_Event* event)
 {
     Game* game = GetGame();
-    bool done = false;
 
     if (event->type == SDL_KEYDOWN)
     {
         SDL_StartTextInput();
-
-        if (SDL_PollEvent(&game->event)) {
-            switch (game->event.type) {
-                case SDL_QUIT:
-                    /* Quit */
-                    done = true;
-                    break;
-                case SDL_TEXTINPUT:
-                    /* Add new text onto the end of our text */
-                    game->menu.textInTextBox[game->menu.iterator]+= *game->event.text.text;
-                    game->menu.iterator++;
-                    break;
-                case SDL_TEXTEDITING:
-                    /*
-                    Update the composition text.
-                    Update the cursor position.
-                    Update the selection length (if any).
-                    */
-       
-                    break;
+        while(SDL_PollEvent(&game->event))
+        {
+            if(game->event.type == SDL_TEXTINPUT)
+            {
+             /* Add new text onto the end of our text */
+                game->menu.textLength++;
+                game->menu.textInTextBox[game->menu.textLength]+= *game->event.text.text;
             }
         }
- 
     }
 }
 

@@ -23,8 +23,15 @@ void HandleEvents()
             HandleMenuEvents(&game->event);
         }
 
+        if(game->event.key.keysym.sym==SDLK_BACKSPACE && game->menu.textLength >= 0)
+        {
+                game->menu.textInTextBox[game->menu.textLength] = '\0';
+                game->menu.textLength--;
+        }
+        if(game->event.key.keysym.sym==SDLK_RETURN)
+        {
+            game->currentState = CR_STATE_RUNNING;
+        }
     }
-    
-    
 }
 

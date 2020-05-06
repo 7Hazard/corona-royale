@@ -58,4 +58,5 @@ void DisposeGame(){
     SDL_DestroyTexture(game->menu.textureMenu);
     SDL_DestroyTexture(game->background);
     SDL_DestroyTexture(game->player.texture);
+    SDL_StopTextInput();
 }

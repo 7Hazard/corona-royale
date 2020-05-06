@@ -22,7 +22,7 @@ typedef struct Menu
     SDL_Color boxOutlineColor;
     SDL_Color textColor;
     char textInTextBox[50];
-    int iterator;
+    int textLength;
  
 }Menu;
 
