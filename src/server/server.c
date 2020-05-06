@@ -145,7 +145,7 @@ NetPlayer* ServerInitPlayer(TCPsocket tcpSocket, uint16_t udpPort)
     if(player.data.id == 0) player.data.infected = true;
     else player.data.infected = false;
     player.data.infectionRadius = 50;
-    player.connected = true;
+    // player.connected = true;
 
     SDLNet_TCP_AddSocket(server->tcpSocketSet, tcpSocket);
 
