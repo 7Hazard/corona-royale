@@ -33,7 +33,7 @@ void RenderNetPlayer(NetPlayer* np)
     SDL_UnlockMutex(np->mutex);
 }
 
-void DisposeNetPlayer(NetPlayer* np)
+void NetPlayerDispose(NetPlayer* np)
 {
     SDL_DestroyMutex(np->mutex);
 }

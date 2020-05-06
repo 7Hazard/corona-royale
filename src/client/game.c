@@ -93,7 +93,13 @@ void GameInitNetPlayer(PlayerData* data)
 {
     Game* game = GetGame();
 
-    assert(GameGetNetPlayer(data->id) == NULL, "PLAYER ID ALREADY EXISTS");
+    NetPlayer* prev = GameGetNetPlayer(data->id);
+    if(prev != NULL)
+    {
+        LogInfo("PLAYER ID EXISTS, DISPOSING PREVIOUS INSTANCE");
+        GameDisposeNetPlayer(prev);
+    }
+    // assert(GameGetNetPlayer(data->id) == NULL, "PLAYER ID ALREADY EXISTS");
 
     NetPlayer player;
     InitNetPlayer(&player, data);
@@ -122,7 +128,7 @@ void GameDisposeNetPlayer(NetPlayer* player)
 
     Game* game = GetGame();
 
-    DisposeNetPlayer(player);
+    NetPlayerDispose(player);
     hashtable_remove(&game->players, player->data.id);
 }
 
