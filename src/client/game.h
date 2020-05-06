@@ -6,15 +6,27 @@
 #include "player.h"
 #include "timer.h"
 #include "netplayer.h"
+#include "menu.h"
+
 #include "shared/hashtable.h"
 
 #define WINDOW_W 375
 #define WINDOW_H 667
 
+typedef enum GameState {
+    CR_STATE_PRELOAD,
+    CR_STATE_MENU,
+    CR_STATE_LOADGAME,
+    CR_STATE_CONNECTED,
+    CR_STATE_WINSCREEN
+}GameState; 
+
 typedef struct Game
 {
     bool running;
-    bool connected;
+
+    SDL_mutex* stateMutex;
+    GameState state;
 
     SDL_Window* window;
     SDL_Renderer* renderer;
@@ -25,16 +37,25 @@ typedef struct Game
     int mapWidth, mapHeight;
     Player player;
     Timer timer;
+    Menu menu;
+    
     hashtable_t players;
 } Game;
 
+
+
 Game* GetGame();
+void DisposeGame();
 Uint32 GameStartFrame();
 void GameEndFrame(Uint32 framestart);
+GameState GameGetState();
+void GameSetState(GameState state);
 void GameInitNetPlayersTable(uint16_t count);
 void GameInitNetPlayer(PlayerData* data);
 void GameInitNetPlayers(PlayerData* players, uint16_t count); // not used
+void GameDisposeNetPlayer(NetPlayer* player);
 void GameDisposeNetPlayers();
-uint16_t GetPlayerCount();
-NetPlayer* GetAllPlayers();
+NetPlayer* GameGetNetPlayer(PlayerID id);
+uint16_t GameGetPlayerCount();
+NetPlayer* GameGetAllPlayers();
 void ApplyMovementDataToPlayer(PlayerMovementData* data);

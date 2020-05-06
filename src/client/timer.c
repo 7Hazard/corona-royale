@@ -41,7 +41,7 @@ void UpdateTimer(Timer *timer)
         if (timer->mMinuteTime == 2)
         {
             timer->mStarted = false;
-            ResetSeconds;
+            ResetSeconds(timer);
         }
     }
 }
@@ -50,15 +50,14 @@ void RendererTimer(Timer *timer)
 {
     Game* game = GetGame();
     Fonts* fonts = GetFonts();
-    UpdateTimer(timer);
     sprintf(timer->timerBuffer, "%d:%d", timer->mMinuteTime, timer->mDeltaTime); // copy string (timer.mStartTicks)to buffer
 
     if (!timer->mLast10Sek)
     {
-        FC_DrawColor(fonts->openSansBold, game->renderer, 0, 50, FC_MakeColor(255, 255, 255, 255), timer->timerBuffer);
+        FC_DrawColor(fonts->openSans, game->renderer, 0, 50, FC_MakeColor(255, 255, 255, 255), timer->timerBuffer);
     }
     else if (timer->mLast10Sek)
     {
-        FC_DrawColor(fonts->openSansBold, game->renderer, 0, 50, FC_MakeColor(255, 0, 0, 255),timer->timerBuffer);
+        FC_DrawColor(fonts->openSans, game->renderer, 0, 50, FC_MakeColor(255, 0, 0, 255),timer->timerBuffer);
     }
 }

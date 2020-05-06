@@ -1,3 +1,6 @@
 #pragma once
 
-void GameNetStartThread();
+#include <stdbool.h>
+
+void GameNetConnect();
+void GameNetDisconnect();

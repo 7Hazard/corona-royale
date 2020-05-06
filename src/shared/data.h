@@ -19,6 +19,7 @@ typedef struct PlayerData {
     int x, y;
     float angle;
     bool infected;
+    uint8_t infectionRadius;
 } PlayerData;
 
 

@@ -10,9 +10,14 @@ typedef struct NetPlayer {
     // UDPsocket udpSocket;
     PlayerData data;
     uint16_t udpPort;
+    // bool connected;
 } NetPlayer;
 
 IPaddress* NetPlayerGetTCPAddress(NetPlayer* player);
 
 // NOT THREAD SAFE
 void NetPlayerGetMovementData(NetPlayer* player, PlayerMovementData* data);
+
+void NetPlayerUpdateInfectionStatus();
+
+void NetPlayerUpdate(NetPlayer* player);

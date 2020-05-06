@@ -1,7 +1,5 @@
 #include <stdio.h>
 #include <stdbool.h>
-#include <string.h>
-#include <stdlib.h>
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
@@ -18,20 +16,36 @@
 #include "player.h"
 #include "game.h"
 #include "audio.h"
+#include "fonts.h"
 #include "timer.h"
 #include "netplayer.h"
 #include "gamenet.h"
 
+#include "shared/log.h"
+
+void NetworkDisconnected(TCPsocket socket)
+{
+    LogInfo("DISCONNECTED");
+
+    GameSetState(CR_STATE_MENU);
+
+    SDL_ShowSimpleMessageBox(
+        SDL_MESSAGEBOX_INFORMATION,
+        "Connection",
+        "Disconnected from server",
+        NULL
+    );
+}
+
 int main(int argc, const char *argv[])
 {
-    SDL_Log("Corona Royale\n");
+    printf("Corona Royale\n");
 
     Game* game = GetGame();
-    
-    GameNetStartThread();
+    Fonts* fonts = GetFonts();
 
-    FC_Font* Sans = FC_CreateFont();  
-    FC_LoadFont(Sans, game->renderer, "res/fonts/ComicSansMS3.ttf", 20, FC_MakeColor(255, 255, 255, 255), TTF_STYLE_BOLD|TTF_STYLE_ITALIC);
+    GameSetState(CR_STATE_MENU);
+    
     while (game->running)
     {
         Uint32 frameStart = GameStartFrame();
@@ -41,29 +55,40 @@ int main(int argc, const char *argv[])
             HandleEvents();
             OnPlayerUpdate(&game->player);
         } /////////// STATE UPDATES PHASE END /////////////
-        
+
         { /////////// RENDERING PHASE BEGIN /////////
             SDL_SetRenderDrawColor(game->renderer, 0, 0, 0, 255);
             SDL_RenderClear(game->renderer);
 
-            // Draw background
-            SDL_RenderCopy(game->renderer, game->background, &game->player.camera.cameraRect, NULL);
-
-            // Render all net players
-            NetPlayer* players = GetAllPlayers();
-            for (size_t i = 0; i < GetPlayerCount(); i++)
+            
+            if(GameGetState() == CR_STATE_MENU)
             {
-                RenderNetPlayer(&players[i]);
+                RenderMenu();
             }
+            else if(GameGetState() == CR_STATE_CONNECTED)
+            {
+                // Draw background
+                SDL_RenderCopy(game->renderer, game->background, &game->player.camera.cameraRect, NULL);
 
-            OnPlayerRender(&game->player);
-            { // Draw CORONA ROYALE text
-                static Uint8 r = 0;
-                static float theta = 0.f; theta+=0.03f;
-                r = ((sin(theta)+1)/2)*255;
-                FC_DrawColor(Sans, game->renderer, 200, 50, FC_MakeColor(r, 20, 20, 255), "CORONA\n%s", "ROYALE");
+                // Render all net players
+                if(GameGetState())
+                {
+                    NetPlayer* players = GameGetAllPlayers();
+                    for (size_t i = 0; i < GameGetPlayerCount(); i++)
+                    {
+                        RenderNetPlayer(&players[i]);
+                    }
+                }
+
+                OnPlayerRender(&game->player);
+                // { // Draw CORONA ROYALE text
+                //     static Uint8 r = 0;
+                //     static float theta = 0.f; theta+=0.03f;
+                //     r = ((sin(theta)+1)/2)*255;
+                //     FC_DrawColor(fonts->openSans, game->renderer, 200, 50, FC_MakeColor(r, 20, 20, 255), "CORONA\n%s", "ROYALE");
+                // }
+                RendererTimer(&game->timer);
             }
-            RendererTimer(&game->timer);
 
             SDL_RenderPresent(game->renderer);
         } /////////// RENDERING PHASE END ///////////
@@ -72,6 +97,7 @@ int main(int argc, const char *argv[])
         GameEndFrame(frameStart);
     }
 
+    DisposeGame();
     TTF_Quit();
     IMG_Quit();
     SDL_Quit();

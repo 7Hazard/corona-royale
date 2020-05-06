@@ -19,6 +19,29 @@
 #include "netplayer.h"
 #include "server.h"
 
+void NetworkDisconnected(TCPsocket socket)
+{
+    NetPlayer* player = ServerGetPlayerBySocket(socket);
+    if(player == NULL)
+    {
+        LogInfo("UNASSIGNED PLAYER GOT DISCONNECTED\n");
+        return;
+    }
+
+    PlayerID id = player->data.id;
+    LogInfo("Player %d DISCONNECTED\n", id);
+    ServerDisposePlayer(player);
+
+    NetPlayer* players = ServerGetAllPlayers();
+    for (size_t i = 0; i < ServerGetPlayerCount(); i++)
+    {
+        NetEventPlayerDisconnected data = { id };
+        NetEventPlayerDisconnectedSend(players[i].tcpSocket, &data);
+    }
+
+    // abort();
+}
+
 int main(int argc, char const *argv[])
 {
 	printf("Corona Royale Server\n");
@@ -36,6 +59,8 @@ int main(int argc, char const *argv[])
 		time_t tickstart = NetworkStartTick();
         ///////// START OF NET TICK
         
+        ServerReadEvents();
+        ServerUpdate();
 		ServerAcceptConnection();
         ServerBroadcastPlayerData();
         ServerReadUpdates();

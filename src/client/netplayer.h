@@ -12,4 +12,4 @@ typedef struct NetPlayer
 
 void InitNetPlayer(NetPlayer* np, PlayerData* data);
 void RenderNetPlayer(NetPlayer* np);
-void DisposeNetPlayer(NetPlayer* np);
+void NetPlayerDispose(NetPlayer* np);

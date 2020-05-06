@@ -21,6 +21,9 @@ Fonts* GetFonts()
 
         fonts.openSansBold = FC_CreateFont();
         FC_LoadFont(fonts.openSansBold, game->renderer, "res/fonts/OpenSans-Semibold.ttf", 20, FC_MakeColor(255,255,255,255), TTF_STYLE_BOLD);
+
+        fonts.openSans = FC_CreateFont();
+        FC_LoadFont(fonts.openSans, game->renderer, "res/fonts/OpenSans-Semibold.ttf", 20, FC_MakeColor(255,255,255,255), 0);
     }
 
     return &fonts;

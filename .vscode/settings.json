@@ -19,7 +19,12 @@
     "stdlib.h": "c",
     "*.rh": "c",
     "windows.h": "c",
-    "network.h": "c"
+    "network.h": "c",
+    "netevent.h": "c",
+    "game.h": "c",
+    "xiosbase": "c",
+    "xlocale": "c",
+    "xlocnum": "c"
   },
   "editor.tabSize": 4
 }

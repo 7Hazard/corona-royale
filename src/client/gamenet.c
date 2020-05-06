@@ -1,6 +1,7 @@
 #include "gamenet.h"
 
 #include "game.h"
+#include "textures.h"
 
 #include "shared/network.h"
 #include "shared/data.h"
@@ -11,36 +12,58 @@ int NetEventThread(void *ptr)
 {
     Game* game = GetGame();
     Network* net = GetNetwork();
+    Textures* textures = GetTextures();
 
-    while (game->connected)
+    while (GameGetState() == CR_STATE_CONNECTED)
     {
-        NetEvent event = GetNetEvent();
+        NetEvent event = NetEventGet(net->tcpSocket);
         switch(event)
         {
-        case CR_NETEVENT_DISCONNECTED:
+        case CR_NETEVENT_Disconnected:
         {
-            LogInfo("DISCONNECTED");
-            SDL_ShowSimpleMessageBox(
-                SDL_MESSAGEBOX_INFORMATION,
-                "Connection",
-                "Disconnected from server",
-                NULL
-            );
-
-            return 0;
+            LogInfo("(EVENT) DISCONNECTED");
             break;
         }
-        case CR_NETEVENT_PLAYER_CONNECTED:
+        case CR_NETEVENT_PlayerDisconnected:
         {
-            PlayerConnectedEvent e;
-            ReadPlayerConnectedEvent(net->tcpSocket, &e);
+            NetEventPlayerDisconnected e;
+            if(!NetEventPlayerDisconnectedRead(net->tcpSocket, &e)) break;
+            LogInfo("PLAYER %d DISCONNECTED\n", e.id);
+            GameDisposeNetPlayer(GameGetNetPlayer(e.id));
+
+            break;
+        }
+        case CR_NETEVENT_PlayerConnected:
+        {
+            NetEventPlayerConnected e;
+            if(!NetEventPlayerConnectedRead(net->tcpSocket, &e)) break;
             GameInitNetPlayer(&e.data);
+
+            break;
+        }
+        case CR_NETEVENT_PlayerInfected:
+        {
+            NetEventPlayerInfected e;
+            if(!NetEventPlayerInfectedRead(net->tcpSocket, &e)) break;
+            
+            if(e.id == game->player.id)
+            {
+                game->player.infected = true;
+                game->player.texture = textures->infectedPlayer;
+            }
+            else {
+                NetPlayer* player = GameGetNetPlayer(e.id);
+                player->data.infected = true;
+                player->texture = textures->infectedPlayer;
+                LogInfo("PLAYER %d GOT INFECTED\n", e.id);
+            }
 
             break;
         }
         
         default:
             LogInfo("Unhandled event %d", event);
+            abort();
             break;
         }
     }
@@ -53,7 +76,58 @@ int NetworkThread(void *ptr)
     Game* game = GetGame();
     Network* net = GetNetwork();
 
-    if(!Connect("localhost"))
+    // Start event thread
+    SDL_Thread* eventThread = SDL_CreateThread(NetEventThread, "NetEventThread", (void *)NULL);
+
+    UDPpacket* recvpacket = SDLNet_AllocPacket(1024);
+
+    // Network loop
+    while (GameGetState() == CR_STATE_CONNECTED)
+    {
+        time_t tickstart = NetworkStartTick();
+        ///////// START OF NET TICK
+
+        while(SDLNet_UDP_Recv(net->udpSocket, recvpacket))
+        {
+            DataID dataid = GetDataID_UDP(recvpacket);
+            switch (dataid)
+            {
+            case CR_DATA_MOVEMENT:
+            {
+                PlayerMovementData* data = GetMovementData_UDP(recvpacket);
+                // printf("RECIEVED POSITION {x: %d, y: %d, angle: %d}\n", data->x, data->y, data->angle);
+                ApplyMovementDataToPlayer(data);
+                break;
+            }
+            
+            default:
+                LogInfo("UNHANDLED DATA ID %d", dataid);
+                break;
+            }
+        }
+
+        // Send 
+        PlayerMovementData data;
+        GetPlayerMovementData(&game->player, &data);
+        SendMovementData_UDP(&data);
+
+        ///////// END OF NET TICK
+        NetworkEndTick(tickstart);
+    }
+
+    // free session stuff
+    GameDisposeNetPlayers();
+    SDLNet_FreePacket(recvpacket);
+
+    return 0;
+}
+
+void GameNetConnect()
+{
+    Game* game = GetGame();
+    Network* net = GetNetwork();
+
+    if(!Connect(game->menu.textInTextBox))
     {
         SDL_Log("COULD NOT CONNECT TO GAME SERVER");
         SDL_ShowSimpleMessageBox(
@@ -62,7 +136,8 @@ int NetworkThread(void *ptr)
             "Could not connect to server",
             NULL
         );
-        abort();
+        
+        return;
     }
 
     { // Get confirmation
@@ -95,7 +170,7 @@ int NetworkThread(void *ptr)
             );
             LogInfo("CONNECTION FAILED: %s", confirmation);
 
-            return 1;
+            return;
         }
         else
         {
@@ -158,56 +233,22 @@ int NetworkThread(void *ptr)
         ApplyPlayerData(&game->player, &data);
     }
 
-    game->connected = true;
+    GameSetState(CR_STATE_CONNECTED);
 
-    // Start event thread
-    SDL_Thread* eventThread = SDL_CreateThread(NetEventThread, "NetEventThread", (void *)NULL);
-
-    UDPpacket* recvpacket = SDLNet_AllocPacket(1024);
-
-    // Network loop
-    while (game->connected)
-    {
-        time_t tickstart = NetworkStartTick();
-        ///////// START OF NET TICK
-
-        while(SDLNet_UDP_Recv(net->udpSocket, recvpacket))
-        {
-            DataID dataid = GetDataID_UDP(recvpacket);
-            switch (dataid)
-            {
-            case CR_DATA_MOVEMENT:
-            {
-                PlayerMovementData* data = GetMovementData_UDP(recvpacket);
-                // printf("RECIEVED POSITION {x: %d, y: %d, angle: %d}\n", data->x, data->y, data->angle);
-                ApplyMovementDataToPlayer(data);
-                break;
-            }
-            
-            default:
-                LogInfo("UNHANDLED DATA ID %d", dataid);
-                break;
-            }
-        }
-
-        // Send 
-        PlayerMovementData data;
-        GetPlayerMovementData(&game->player, &data);
-        SendMovementData_UDP(&data);
-
-        ///////// END OF NET TICK
-        NetworkEndTick(tickstart);
-    }
-
-    // free session stuff
-    GameDisposeNetPlayers();
-    SDLNet_FreePacket(recvpacket);
-
-    return 0;
-}
-
-void GameNetStartThread()
-{
     // Start network thread
     SDL_Thread* networkThread = SDL_CreateThread(NetworkThread, "NetworkThread", (void *)NULL);
+    SDL_DetachThread(networkThread);
+}
+
+void GameNetDisconnect()
+{
+    Game* game = GetGame();
+    Network* net = GetNetwork();
+
+    if(!GameGetState()) return;
+    
+    NetEventPlayerDisconnected e = { game->player.id };
+    NetEventPlayerDisconnectedSend(net->tcpSocket, &e);
+
+    GameSetState(CR_STATE_MENU);
 }
