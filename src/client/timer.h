@@ -16,13 +16,10 @@ typedef struct{
     int mPrevTime;
     int mDeltaTime;
     float mDeltaConvert;
-    // TTF_Font* Sans;
+    
     SDL_Color White;
     SDL_Color Red;
-    SDL_Surface* surfaceTime;
-    SDL_Texture* textureTime;
     SDL_Rect rect;
-    SDL_Rect position;
     char timerBuffer[50];
 }Timer;
 

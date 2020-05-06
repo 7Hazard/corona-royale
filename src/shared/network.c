@@ -70,6 +70,8 @@ bool Connect(const char* host)
 {
     Network* network = GetNetwork();
 
+    LogInfo("Connecting to %s", host);
+
     // TCP
     if(SDLNet_ResolveHost(&network->address, host, CR_NET_PORT) == -1) {
         printf("SDLNet_ResolveHost: %s\n", SDLNet_GetError());

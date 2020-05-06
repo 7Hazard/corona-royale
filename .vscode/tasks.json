@@ -55,7 +55,7 @@
       "label": "Run Server VS2019",
       "type": "shell",
       "windows": {
-        "command": "cmd /c start ${workspaceFolder}/BUILD/VS2019/Debug/CoronaRoyaleServer.exe",
+        "command": "cmd /c start \"\" \"${workspaceFolder}/BUILD/VS2019/Debug/CoronaRoyaleServer.exe\"",
         "options": {
           "cwd": "${workspaceFolder}/BUILD/VS2019/Debug"
         }
@@ -79,7 +79,7 @@
       "label": "Run Server VS2017",
       "type": "shell",
       "windows": {
-        "command": "cmd /c start ${workspaceFolder}/BUILD/VS2017/Debug/CoronaRoyaleServer.exe",
+        "command": "cmd /c start \"\" \"${workspaceFolder}/BUILD/VS2017/Debug/CoronaRoyaleServer.exe\"",
         "options": {
           "cwd": "${workspaceFolder}/BUILD/VS2017/Debug"
         }

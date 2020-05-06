@@ -5,10 +5,12 @@
 #include "player.h"
 #include "gamenet.h"
 
+
 void HandleEvents()
 {
-    SDL_Event event;
+    Game* game = GetGame();
 
+    SDL_Event event;
     while (SDL_PollEvent(&event))
     {
         if (event.type == SDL_QUIT) 
@@ -23,8 +25,9 @@ void HandleEvents()
         }
         HandlePlayerEvents(&event); 
 
+        if(GameGetState() == CR_STATE_MENU){
+            HandleMenuEvents(&event);
+        }
     }
-    
-    
 }
 

@@ -9,17 +9,18 @@
 #include "timer.h"
 #include "textures.h"
 #include "gamenet.h"
+#include "game.h"
+#include "timer.h"
+#include "menu.h"
 
 #include "shared/log.h"
 #include "shared/netevent.h"
-
 
 Game* GetGame()
 {
     // Will initialize after first call
     static bool inited = false;
     static Game game;
-
     if(inited == false)
     {
         inited = true;
@@ -47,8 +48,7 @@ Game* GetGame()
         // DONT FORGET TO INITIALIZE ALL MEMBERS OF THE STRUCT
         game.running = true;
 
-        game.conenctedMutex = SDL_CreateMutex();
-        game.connected = false;
+        game.stateMutex = SDL_CreateMutex();
         
         game.window = SDL_CreateWindow("Corona Royale", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_W, WINDOW_H, 0);
         game.renderer = SDL_CreateRenderer(game.window, -1, 0);
@@ -59,11 +59,22 @@ Game* GetGame()
         SDL_QueryTexture(game.background, NULL, NULL, &game.mapWidth, &game.mapHeight);
         CreatePlayer(&game.player, 10, 10);
         CreateTimer(&game.timer);
+        LoadMenu(&game.menu);
 
         // DONT FORGET TO INITIALIZE ALL MEMBERS OF THE STRUCT
     }
 
     return &game;
+}
+
+void DisposeGame()
+{
+    Game* game = GetGame();
+
+    SDL_DestroyTexture(game->menu.textureMenu);
+    SDL_DestroyTexture(game->background);
+    SDL_DestroyTexture(game->player.texture);
+    SDL_StopTextInput();
 }
 
 Uint32 GameStartFrame()
@@ -83,10 +94,37 @@ void GameEndFrame(Uint32 frameStart)
     }
 }
 
+GameState GameGetState()
+{
+    Game* game = GetGame();
+    SDL_LockMutex(game->stateMutex);
+    GameState state = game->state;
+    SDL_UnlockMutex(game->stateMutex);
+    return state;
+}
+
+void GameSetState(GameState state)
+{
+    Game* game = GetGame();
+    SDL_LockMutex(game->stateMutex);
+    game->state = state;
+    SDL_UnlockMutex(game->stateMutex);
+}
+
 void GameInitNetPlayersTable(uint16_t count)
 {
     Game* game = GetGame();
     hashtable_init(&game->players, sizeof(NetPlayer), count, 0);
+}
+
+uint16_t GameGetPlayerCount()
+{
+    return hashtable_count(&GetGame()->players);
+}
+
+NetPlayer* GameGetAllPlayers()
+{
+    return hashtable_items(&GetGame()->players);
 }
 
 void GameInitNetPlayer(PlayerData* data)
@@ -136,8 +174,8 @@ void GameDisposeNetPlayers()
 {
     Game* game = GetGame();
 
-    NetPlayer* players = ServerGetAllPlayers();
-    for (size_t i = 0; i < ServerGetPlayerCount(); i++)
+    NetPlayer* players = GameGetAllPlayers();
+    for (size_t i = 0; i < GameGetPlayerCount(); i++)
     {
         GameDisposeNetPlayer(&players[i]);
     }
@@ -151,16 +189,6 @@ NetPlayer* GameGetNetPlayer(PlayerID id)
     NetPlayer* ply = hashtable_find(&game->players, id);
     //assert(ply != NULL, "PLAYER DOESNT EXIST");
     return ply;
-}
-
-uint16_t ServerGetPlayerCount()
-{
-    return hashtable_count(&GetGame()->players);
-}
-
-NetPlayer* ServerGetAllPlayers()
-{
-    return hashtable_items(&GetGame()->players);
 }
 
 void ApplyMovementDataToPlayer(PlayerMovementData* data)
