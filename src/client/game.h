@@ -29,6 +29,7 @@ typedef struct Game
     Timer timer;
     Menu menu;
     GameState currentState;
+    SDL_Event event;
 } Game;
 
 

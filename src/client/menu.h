@@ -8,12 +8,22 @@
 #include <SDL_FontCache.h>
 
 
-typedef struct
+typedef struct Menu
 {
     SDL_Texture* textureMenu;
     SDL_Texture* textureLogo;
     SDL_Rect logoRect;
     bool menuClick;
+
+    SDL_Rect textBoxRect;
+    SDL_Rect serverTextRect;
+    FC_Font* Sans;
+    SDL_Color boxBackgroundcolor;
+    SDL_Color boxOutlineColor;
+    SDL_Color textColor;
+    char textInTextBox[50];
+    int iterator;
+ 
 }Menu;
 
 

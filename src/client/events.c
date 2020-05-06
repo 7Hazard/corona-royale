@@ -7,20 +7,20 @@
 void HandleEvents()
 {
     Game* game = GetGame();
-    SDL_Event event;
 
-    while (SDL_PollEvent(&event))
+
+    while (SDL_PollEvent(&game->event))
     {
-        if (event.type == SDL_QUIT) 
+        if (game->event.type == SDL_QUIT) 
         {
             game->running = 0;
-            SDL_Log("Program quit after %i ticks", event.quit.timestamp);
+            SDL_Log("Program quit after %i ticks", game->event.quit.timestamp);
             break;
         }
-        HandlePlayerEvents(&event); 
+        HandlePlayerEvents(&game->event); 
 
         if(game->currentState == CR_STATE_MENU){
-            HandleMenuEvents(&event);
+            HandleMenuEvents(&game->event);
         }
 
     }
