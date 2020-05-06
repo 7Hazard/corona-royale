@@ -8,41 +8,52 @@
 #include "shared/log.h"
 #include "shared/netevent.h"
 
+bool GameNetIsConnected()
+{
+    Game* game = GetGame();
+    SDL_LockMutex(game->conenctedMutex);
+    bool connected = game->connected;
+    SDL_UnlockMutex(game->conenctedMutex);
+    return connected;
+}
+
+void GameNetSetConnected(bool value)
+{
+    Game* game = GetGame();
+    SDL_LockMutex(game->conenctedMutex);
+    game->connected = value;
+    SDL_UnlockMutex(game->conenctedMutex);
+}
+
 int NetEventThread(void *ptr)
 {
     Game* game = GetGame();
     Network* net = GetNetwork();
     Textures* textures = GetTextures();
 
-    while (game->connected)
+    while (GameNetIsConnected())
     {
-        NetEvent event = NetEventGet();
+        NetEvent event = NetEventGet(net->tcpSocket);
         switch(event)
         {
         case CR_NETEVENT_Disconnected:
         {
-            LogInfo("DISCONNECTED");
-            SDL_ShowSimpleMessageBox(
-                SDL_MESSAGEBOX_INFORMATION,
-                "Connection",
-                "Disconnected from server",
-                NULL
-            );
-
-            return 0;
+            LogInfo("(EVENT) DISCONNECTED");
             break;
         }
         case CR_NETEVENT_PlayerDisconnected:
         {
             NetEventPlayerDisconnected e;
-            NetEventPlayerDisconnectedRead(net->tcpSocket, &e);
+            if(!NetEventPlayerDisconnectedRead(net->tcpSocket, &e)) break;
             LogInfo("PLAYER %d DISCONNECTED\n", e.id);
             GameDisposeNetPlayer(GameGetNetPlayer(e.id));
+
+            break;
         }
         case CR_NETEVENT_PlayerConnected:
         {
             NetEventPlayerConnected e;
-            NetEventPlayerConnectedRead(net->tcpSocket, &e);
+            if(!NetEventPlayerConnectedRead(net->tcpSocket, &e)) break;
             GameInitNetPlayer(&e.data);
 
             break;
@@ -50,7 +61,7 @@ int NetEventThread(void *ptr)
         case CR_NETEVENT_PlayerInfected:
         {
             NetEventPlayerInfected e;
-            NetEventPlayerInfectedRead(net->tcpSocket, &e);
+            if(!NetEventPlayerInfectedRead(net->tcpSocket, &e)) break;
             
             if(e.id == game->player.id)
             {
@@ -187,7 +198,7 @@ int NetworkThread(void *ptr)
         ApplyPlayerData(&game->player, &data);
     }
 
-    game->connected = true;
+    GameNetSetConnected(true);
 
     // Start event thread
     SDL_Thread* eventThread = SDL_CreateThread(NetEventThread, "NetEventThread", (void *)NULL);
@@ -195,7 +206,7 @@ int NetworkThread(void *ptr)
     UDPpacket* recvpacket = SDLNet_AllocPacket(1024);
 
     // Network loop
-    while (game->connected)
+    while (GameNetIsConnected())
     {
         time_t tickstart = NetworkStartTick();
         ///////// START OF NET TICK
@@ -239,4 +250,18 @@ void GameNetStartThread()
 {
     // Start network thread
     SDL_Thread* networkThread = SDL_CreateThread(NetworkThread, "NetworkThread", (void *)NULL);
+    SDL_DetachThread(networkThread);
+}
+
+void GameNetDisconnect()
+{
+    Game* game = GetGame();
+    Network* net = GetNetwork();
+
+    if(!GameNetIsConnected()) return;
+    
+    NetEventPlayerDisconnected e = { game->player.id };
+    NetEventPlayerDisconnectedSend(net->tcpSocket, &e);
+
+    GameNetSetConnected(false);
 }

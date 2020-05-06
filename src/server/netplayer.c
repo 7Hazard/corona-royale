@@ -6,16 +6,6 @@
 #include "shared/netevent.h"
 #include "shared/log.h"
 
-// void InitNetPlayer(NetPlayer* player)
-// {
-
-// }
-
-// void GetNetPlayerPositionData(NetPlayer* player, PlayerMovementData* data)
-// {
-    
-// }
-
 IPaddress* NetPlayerGetTCPAddress(NetPlayer* player)
 {
     return SDLNet_TCP_GetPeerAddress(player->tcpSocket);
@@ -31,8 +21,8 @@ void NetPlayerGetMovementData(NetPlayer* player, PlayerMovementData* data)
 
 void NetPlayerUpdate(NetPlayer* player)
 {
-    NetPlayer* players = GetAllPlayers();
-    uint16_t playercount = GetPlayerCount();
+    NetPlayer* players = ServerGetAllPlayers();
+    uint16_t playercount = ServerGetPlayerCount();
 
     // Check if player can infect someone
     for (size_t i = 0; i < playercount; i++)
@@ -50,7 +40,6 @@ void NetPlayerUpdate(NetPlayer* player)
         {
             LogInfo("PLAYER %d INFECTED %d\n", player->data.id, otherply->data.id);
             otherply->data.infected = true;
-            // otherply->data.infectionRadius = 50;
 
             NetEventPlayerInfected data = { otherply->data.id };
 
@@ -60,10 +49,7 @@ void NetPlayerUpdate(NetPlayer* player)
                 // Get the player
                 NetPlayer* ply = &players[i];
 
-                if(!NetEventPlayerInfectedSend(ply->tcpSocket, &data))
-                {
-                    ServerDisconnectPlayer(ply);
-                }
+                NetEventPlayerInfectedSend(ply->tcpSocket, &data);
             }
         }
     }

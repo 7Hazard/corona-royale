@@ -165,15 +165,18 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     deps/SDL2_net/lib/x64
   )
   target_link_libraries(CoronaRoyaleServer PRIVATE
+    SDL2
     SDL2_net
   )
 else()
   # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++17 -fms-extensions -fdelayed-template-parsing -fexceptions")
   
   target_include_directories(CoronaRoyaleServer PRIVATE
+    ${SDL2_INCLUDE_DIR}
     ${SDL2_NET_INCLUDE_DIR}
   )
   target_link_libraries(CoronaRoyaleServer PRIVATE
+    ${SDL2_LIBRARY}
     ${SDL2_NET_LIBRARIES}
   )
 endif()

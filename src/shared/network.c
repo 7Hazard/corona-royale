@@ -39,27 +39,7 @@ Network* GetNetwork()
         network.udpSocket = SDLNet_UDP_Open(CR_NET_PORT);
         if(network.udpSocket == NULL)
         {
-            printf("Could not bind open socket");
-            abort();
-        }
-
-        // network.udpChannel = SDLNet_UDP_Bind(network.udpSocket, 1, &udpaddr);
-        // if(network.udpChannel == -1)
-        // {
-        //     printf("Could not bind UDP socket");
-        //     abort();
-        // }
-
-        network.udpSocketSet = SDLNet_AllocSocketSet(2);
-        if(network.udpSocketSet == NULL)
-        {
-            printf("Couldn't create socket set: %s\n", SDLNet_GetError());
-            abort();
-        }
-
-        int numused = SDLNet_UDP_AddSocket(network.udpSocketSet, network.udpSocket);
-        if(numused == -1) {
-            printf("SDLNet_AddSocket: %s\n", SDLNet_GetError());
+            printf("Could not open socket");
             abort();
         }
 #else
@@ -68,6 +48,21 @@ Network* GetNetwork()
     }
     
     return &network;
+}
+
+time_t NetworkStartTick()
+{
+    return clock();
+}
+
+void NetworkEndTick(time_t tickstart)
+{
+    time_t end = clock();
+    int result = end-tickstart;
+    if (result < CR_NET_TICK_TIME)
+    {
+        Sleep(CR_NET_TICK_TIME-result);
+    }
 }
 
 #ifdef CR_CLIENT
@@ -110,6 +105,7 @@ bool Connect(const char* host)
 
 bool SendTCPMessage(TCPsocket socket, void* content, uint16_t contentLength)
 {
+    Network* net = GetNetwork();
     // Stack alloc array of bytes
     size_t msglen = contentLength+2; // length of message + 2 bytes for uint16_t
     uint8_t* msg = alloca(msglen);
@@ -123,7 +119,7 @@ bool SendTCPMessage(TCPsocket socket, void* content, uint16_t contentLength)
     size_t sentBytes = SDLNet_TCP_Send(socket, msg, msglen);
     if(sentBytes < msglen)
     {
-        // SDL_Log("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
+        NetworkDisconnected(socket);
         return false;
     }
 
@@ -132,12 +128,13 @@ bool SendTCPMessage(TCPsocket socket, void* content, uint16_t contentLength)
 
 bool SendTCPMessageNoCopy(TCPsocket socket, void* content, uint16_t contentLength)
 {
+    Network* net = GetNetwork();
 
     // Send msg through socket
     size_t sentBytes = SDLNet_TCP_Send(socket, content, contentLength);
     if(sentBytes < contentLength)
     {
-        // SDL_Log("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
+        NetworkDisconnected(socket);
         return false;
     }
 
@@ -146,6 +143,7 @@ bool SendTCPMessageNoCopy(TCPsocket socket, void* content, uint16_t contentLengt
 
 bool SendTCPMessageArray(TCPsocket socket, void* items, uint16_t itemSize, uint16_t itemsCount)
 {
+    Network* net = GetNetwork();
     size_t arraysize = itemSize*itemsCount;
 
     // Send item size
@@ -160,7 +158,7 @@ bool SendTCPMessageArray(TCPsocket socket, void* items, uint16_t itemSize, uint1
         size_t sentBytes = SDLNet_TCP_Send(socket, item, itemSize);
         if(sentBytes < itemSize)
         {
-            // SDL_Log("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
+            NetworkDisconnected(socket);
             return false;
         }
     }
@@ -170,6 +168,7 @@ bool SendTCPMessageArray(TCPsocket socket, void* items, uint16_t itemSize, uint1
 
 uint16_t GetTCPMessageLength(TCPsocket socket)
 {
+    Network* net = GetNetwork();
 
     // Get length of content
     uint16_t contentlen = 0;
@@ -177,6 +176,7 @@ uint16_t GetTCPMessageLength(TCPsocket socket)
         //if zero of less then or equal to zero,then an error occured or the remote host has closed conct.
         // An error may have occured, but sometimes you can just ignore it
         // It may be good to disconnect sock because it is likely invalid now.
+        NetworkDisconnected(socket);
         return 0;
     }
     else return contentlen;
@@ -184,10 +184,12 @@ uint16_t GetTCPMessageLength(TCPsocket socket)
 
 bool ReadTCPMessage(TCPsocket socket, void* buffer, uint16_t len)
 {
+    Network* net = GetNetwork();
 
     // Read content
     if(SDLNet_TCP_Recv(socket, buffer, len) <= 0)
     {
+        NetworkDisconnected(socket);
         return false;
     }
 
@@ -197,12 +199,15 @@ bool ReadTCPMessage(TCPsocket socket, void* buffer, uint16_t len)
 // Call GetTCPMessageLength twice before ReadTCPMessageArray!!!
 bool ReadTCPMessageArray(TCPsocket socket, void* buffer, uint16_t datasize, uint16_t count)
 {
+    Network* net = GetNetwork();
+
     // Read content
     for (size_t i = 0; i < count; i++)
     {
         void* bufloc = (uintptr_t)buffer+(i*datasize);
         if(SDLNet_TCP_Recv(socket, bufloc, datasize) <= 0)
         {
+            NetworkDisconnected(socket);
             return false;
         }
     }
@@ -228,19 +233,4 @@ bool SendUDPPacket(UDPpacket* packet)
     }
 
     return true;
-}
-
-time_t NetworkStartTick()
-{
-    return clock();
-}
-
-void NetworkEndTick(time_t tickstart)
-{
-    time_t end = clock();
-    int result = end-tickstart;
-    if (result < CR_NET_TICK_TIME)
-    {
-        Sleep(CR_NET_TICK_TIME-result);
-    }
 }

@@ -22,6 +22,22 @@
 #include "netplayer.h"
 #include "gamenet.h"
 
+#include "shared/log.h"
+
+void NetworkDisconnected(TCPsocket socket)
+{
+    LogInfo("DISCONNECTED");
+
+    GameNetSetConnected(false);
+
+    SDL_ShowSimpleMessageBox(
+        SDL_MESSAGEBOX_INFORMATION,
+        "Connection",
+        "Disconnected from server",
+        NULL
+    );
+}
+
 int main(int argc, const char *argv[])
 {
     SDL_Log("Corona Royale\n");
@@ -50,10 +66,13 @@ int main(int argc, const char *argv[])
             SDL_RenderCopy(game->renderer, game->background, &game->player.camera.cameraRect, NULL);
 
             // Render all net players
-            NetPlayer* players = GetAllPlayers();
-            for (size_t i = 0; i < GetPlayerCount(); i++)
+            if(GameNetIsConnected())
             {
-                RenderNetPlayer(&players[i]);
+                NetPlayer* players = ServerGetAllPlayers();
+                for (size_t i = 0; i < ServerGetPlayerCount(); i++)
+                {
+                    RenderNetPlayer(&players[i]);
+                }
             }
 
             OnPlayerRender(&game->player);

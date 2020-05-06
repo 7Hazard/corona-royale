@@ -5,11 +5,13 @@
 #include <string.h>
 #include <assert.h>
 
-#include "shared/log.h"
-
 #include "game.h"
 #include "timer.h"
 #include "textures.h"
+#include "gamenet.h"
+
+#include "shared/log.h"
+#include "shared/netevent.h"
 
 
 Game* GetGame()
@@ -44,7 +46,10 @@ Game* GetGame()
 
         // DONT FORGET TO INITIALIZE ALL MEMBERS OF THE STRUCT
         game.running = true;
+
+        game.conenctedMutex = SDL_CreateMutex();
         game.connected = false;
+        
         game.window = SDL_CreateWindow("Corona Royale", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_W, WINDOW_H, 0);
         game.renderer = SDL_CreateRenderer(game.window, -1, 0);
         game.fps = 60; // default target FPS is 60
@@ -88,6 +93,8 @@ void GameInitNetPlayer(PlayerData* data)
 {
     Game* game = GetGame();
 
+    assert(GameGetNetPlayer(data->id) == NULL, "PLAYER ID ALREADY EXISTS");
+
     NetPlayer player;
     InitNetPlayer(&player, data);
 
@@ -111,6 +118,8 @@ void GameInitNetPlayers(PlayerData* players, uint16_t count)
 
 void GameDisposeNetPlayer(NetPlayer* player)
 {
+    assert(player != NULL);
+
     Game* game = GetGame();
 
     DisposeNetPlayer(player);
@@ -121,8 +130,8 @@ void GameDisposeNetPlayers()
 {
     Game* game = GetGame();
 
-    NetPlayer* players = GetAllPlayers();
-    for (size_t i = 0; i < GetPlayerCount(); i++)
+    NetPlayer* players = ServerGetAllPlayers();
+    for (size_t i = 0; i < ServerGetPlayerCount(); i++)
     {
         GameDisposeNetPlayer(&players[i]);
     }
@@ -138,12 +147,12 @@ NetPlayer* GameGetNetPlayer(PlayerID id)
     return ply;
 }
 
-uint16_t GetPlayerCount()
+uint16_t ServerGetPlayerCount()
 {
     return hashtable_count(&GetGame()->players);
 }
 
-NetPlayer* GetAllPlayers()
+NetPlayer* ServerGetAllPlayers()
 {
     return hashtable_items(&GetGame()->players);
 }

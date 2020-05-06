@@ -14,6 +14,8 @@
 typedef struct Game
 {
     bool running;
+
+    SDL_mutex* conenctedMutex;
     bool connected;
 
     SDL_Window* window;
@@ -34,8 +36,9 @@ void GameEndFrame(Uint32 framestart);
 void GameInitNetPlayersTable(uint16_t count);
 void GameInitNetPlayer(PlayerData* data);
 void GameInitNetPlayers(PlayerData* players, uint16_t count); // not used
+void GameDisposeNetPlayer(NetPlayer* player);
 void GameDisposeNetPlayers();
 NetPlayer* GameGetNetPlayer(PlayerID id);
-uint16_t GetPlayerCount();
-NetPlayer* GetAllPlayers();
+uint16_t ServerGetPlayerCount();
+NetPlayer* ServerGetAllPlayers();
 void ApplyMovementDataToPlayer(PlayerMovementData* data);

@@ -18,25 +18,29 @@ typedef struct Network
 
     // UDP
     UDPsocket udpSocket;
-#ifdef CR_SERVER
-    SDLNet_SocketSet udpSocketSet;
-#endif
 } Network;
+
+// CALLBACK FUNCTION THAT HAS TO BE IMPLEMENTED
+void NetworkDisconnected(TCPsocket socket);
 
 Network* GetNetwork();
 
+time_t NetworkStartTick();
+void NetworkEndTick(time_t tickstart);
+
 #ifdef CR_CLIENT
-// CLIENT FUNCTIONS
+/// CLIENT FUNCTIONS
 
 bool Connect(const char* host);
 
 
 #else
-// SERVER FUNCTIONS
+/// SERVER FUNCTIONS
 
 
 #endif
-// Universal functions
+
+/// Universal functions
 
 // Returns false if could not read message, SOCKET IS INVALIDATED NOW!!
 bool SendTCPMessage(TCPsocket socket, void* content, uint16_t contentLength);
@@ -66,5 +70,3 @@ bool SendUDPPacket(UDPpacket* packet);
 
 // void PollUDPUpdates();
 
-time_t NetworkStartTick();
-void NetworkEndTick(time_t tickstart);

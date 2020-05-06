@@ -5,6 +5,7 @@
 
 typedef enum NetEvent {
     CR_NETEVENT_None,
+    // CR_NETEVENT_Status, // keep alive
     CR_NETEVENT_Disconnected,
     CR_NETEVENT_PlayerConnected,
     CR_NETEVENT_PlayerDisconnected,
@@ -13,9 +14,9 @@ typedef enum NetEvent {
 
 /** Events should be polled in a separate thread
  * TCP, BLOCKING FUNCTION
- * returns the NetEvent recieved or CR_NETEVENT_DISCONNECTED if disconnected
+ * returns the NetEvent recieved or CR_NETEVENT_Disconnected if disconnected
  * */
-NetEvent NetEventGet();
+NetEvent NetEventGet(TCPsocket socket);
 
 #define CR_NETEVENT_IMPL_READ(event) \
 inline bool NetEvent##event##Read(TCPsocket socket, NetEvent##event *destination) { \
