@@ -1,12 +1,12 @@
+#include <string.h>
+#include <stdio.h>
+#include <SDL_FontCache.h>
+#include <SDL_image.h> 
 
 #include "menu.h"
 #include "game.h"
 #include "fonts.h"
-#include <string.h>
-#include <stdio.h>
-
-#include <SDL_FontCache.h>
-#include <SDL_image.h> 
+#include "gamenet.h"
 
 void LoadMenu(Menu* menu){
     Game* game = GetGame();

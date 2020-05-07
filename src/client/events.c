@@ -23,11 +23,15 @@ void HandleEvents()
             SDL_Log("Program quit after %i ticks", event.quit.timestamp);
             break;
         }
-        HandlePlayerEvents(&event); 
 
         if(GameGetState() == CR_STATE_MENU){
             HandleMenuEvents(&event);
         }
+        else if (GameGetState() == CR_STATE_CONNECTED)
+        {
+            HandlePlayerEvents(&event);
+        }
+        
     }
 }
 

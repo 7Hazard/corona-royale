@@ -53,7 +53,10 @@ int main(int argc, const char *argv[])
         
         { /////////// STATE UPDATES PHASE BEGIN ///////////
             HandleEvents();
-            OnPlayerUpdate(&game->player);
+            if(GameGetState() == CR_STATE_CONNECTED)
+            {
+                OnPlayerUpdate(&game->player);
+            }
         } /////////// STATE UPDATES PHASE END /////////////
 
         { /////////// RENDERING PHASE BEGIN /////////
