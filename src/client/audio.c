@@ -25,7 +25,7 @@ Audio* GetAudio()
         // DONT FORGET TO INITIALIZE ALL MEMBERS OF THE STRUCT
         // Mix_Music *backgroundSound = Mix_LoadMUS("res/Heroic Demise (New).mp3");
         audio.cough = Mix_LoadWAV("res/cough.wav");
-        audio.steps = Mix_LoadWAV("res/footstep.wav");
+        audio.steps = Mix_LoadWAV("res/FootstepsGrass.wav");
         // Mix_PlayMusic(backgroundSound, -1);
         // DONT FORGET TO INITIALIZE ALL MEMBERS OF THE STRUCT
     }
