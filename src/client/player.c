@@ -124,7 +124,7 @@ void OnPlayerUpdate(Player* player)
         MoveTowardsMouse(player);
     }
     
-    if (player->mouseClick == true && !Mix_Playing(1))
+    if (player->moving == true && !Mix_Playing(1))
     {
         Mix_PlayChannel(1, audio->steps, 0);
     }
