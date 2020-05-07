@@ -8,6 +8,7 @@
 
 void CreateTimer(Timer *timer)
 {
+    Game* game = GetGame();
     timer->mCurrentTime = 0;
     timer->mDeltaConvert = 0;
     timer->mDeltaTime = 0;
@@ -15,6 +16,20 @@ void CreateTimer(Timer *timer)
     timer->mMinuteTime = 0;
     timer->mPrevTime = 0;
     timer->mStarted = true;
+
+    timer->textureGrayBox = IMG_LoadTexture(game->renderer,"res/TransparentGrayBox.png");
+    timer->textureTimerClock = IMG_LoadTexture(game->renderer,"res/TimerClockPicture.png");
+
+    timer->grayBoxRect.x = 0;
+    timer->grayBoxRect.y = 40;
+    timer->grayBoxRect.w = 80;
+    timer->grayBoxRect.h = 40;
+
+    timer->timerClockRect.x = 50;
+    timer->timerClockRect.y = 55;
+    timer->timerClockRect.w = 20;
+    timer->timerClockRect.h = 20;
+
 }
 
 void ResetSeconds(Timer *timer)
@@ -51,6 +66,9 @@ void RendererTimer(Timer *timer)
     Game* game = GetGame();
     Fonts* fonts = GetFonts();
     sprintf(timer->timerBuffer, "%d:%d", timer->mMinuteTime, timer->mDeltaTime); // copy string (timer.mStartTicks)to buffer
+
+    SDL_RenderCopy(game->renderer,game->timer.textureGrayBox,NULL,&game->timer.grayBoxRect);
+    SDL_RenderCopy(game->renderer,game->timer.textureTimerClock,NULL,&game->timer.timerClockRect);
 
     if (!timer->mLast10Sek)
     {

@@ -17,6 +17,10 @@ typedef struct{
     int mDeltaTime;
     float mDeltaConvert;
     
+    SDL_Texture* textureGrayBox;
+    SDL_Rect grayBoxRect;
+    SDL_Texture* textureTimerClock;
+    SDL_Rect timerClockRect;
     SDL_Color White;
     SDL_Color Red;
     SDL_Rect rect;
