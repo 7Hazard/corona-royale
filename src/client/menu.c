@@ -12,6 +12,8 @@ void LoadMenu(Menu* menu){
     Game* game = GetGame();
 
     game->menu.textBoxClick = false;
+    game->menu.cursorBlink = false;
+    game->menu.i = 0;
 
     menu->textureMenu = IMG_LoadTexture(game->renderer,"res/menu/background_menu.jpg");
     menu->textureLogo = IMG_LoadTexture(game->renderer,"res/menu/CoronaRoyalBackground.png");
@@ -48,15 +50,39 @@ void LoadMenu(Menu* menu){
     menu->boxBackgroundcolor.g = 0;
     menu->boxBackgroundcolor.b = 0;
     menu->boxBackgroundcolor.a = 0;
+
+    menu->textCursorRect.x = 107;
+    menu->textCursorRect.y = 365;
+    menu->textCursorRect.w = 1;
+    menu->textCursorRect.h = 27;
+
+    menu->textCursorColor.r = 255;
+    menu->textCursorColor.g = 255;
+    menu->textCursorColor.b = 255;
+    menu->textCursorColor.a = 255;
 }
 
 void RenderMenu(){
-    Game* game = GetGame();;
+    Game* game = GetGame();
     Fonts* font = GetFonts();
 
     SDL_RenderCopy(game->renderer,game->menu.textureMenu,NULL,NULL);
     SDL_RenderCopy(game->renderer,game->menu.textureLogo,NULL,&game->menu.logoRect);
     SDL_RenderCopy(game->renderer,game->menu.textureTextBox,NULL,&game->menu.textBoxRect);
+
+    if(game->menu.cursorBlink == true && game->menu.textBoxClick == true)
+    {
+        SDL_SetRenderDrawColor(game->renderer, 0, 0, 0, 0);
+        game->menu.cursorBlink = false;
+    }
+    else if(game->menu.cursorBlink == false && game->menu.textBoxClick == true)
+    {
+        SDL_SetRenderDrawColor(game->renderer, 255, 255, 255, 255);
+        game->menu.cursorBlink = true;
+    }
+
+    SDL_RenderFillRect(game->renderer,&game->menu.textCursorRect);
+    SDL_RenderDrawRect(game->renderer,&game->menu.textCursorRect);
 
     FC_DrawColor(font->openSans, game->renderer, 110, 365, FC_MakeColor(255, 255, 255, 255), game->menu.textInTextBox);
     FC_DrawColor(font->openSans, game->renderer, 10, 365 , FC_MakeColor(255, 255, 255, 255), "Enter IP:");
@@ -65,12 +91,11 @@ void RenderMenu(){
 void HandleMenuEvents(SDL_Event* event)
 {
     Game* game = GetGame();
-
     if (event->type == SDL_KEYDOWN && game->menu.textBoxClick == true)
     {
         SDL_StartTextInput();
-
         SDL_Event inputEvent;
+
         while(SDL_PollEvent(&inputEvent))
         {
             if(inputEvent.type == SDL_TEXTINPUT)
@@ -78,6 +103,17 @@ void HandleMenuEvents(SDL_Event* event)
                 /* Add new text onto the end of our text */
                 game->menu.textLength++;
                 game->menu.textInTextBox[game->menu.textLength]+= *inputEvent.text.text;
+                game->menu.textCursorRect.x+= 13 * strlen(game->menu.textInTextBox) - 13 * game->menu.i;
+                game->menu.i++;
+            }
+            else if( inputEvent.key.keysym.sym ==  SDLK_v && SDL_GetModState() && KMOD_CTRL)
+            {//Handle paste
+                strcpy( game->menu.textInTextBox,SDL_GetClipboardText());
+                game->menu.textCursorRect.x+= 13 * strlen(game->menu.textInTextBox);
+            }
+            else if( inputEvent.key.keysym.sym == SDLK_c && SDL_GetModState() & KMOD_CTRL )
+            { //Handle copy
+                SDL_SetClipboardText( game->menu.textInTextBox );
             }
         }
     }
@@ -85,6 +121,7 @@ void HandleMenuEvents(SDL_Event* event)
     {
         game->menu.textInTextBox[game->menu.textLength] = '\0';
         game->menu.textLength--;
+        game->menu.textCursorRect.x-= 13;
     }
     else if(event->key.keysym.sym == SDLK_RETURN)
     {
@@ -93,7 +130,7 @@ void HandleMenuEvents(SDL_Event* event)
     else if(event->type == SDL_MOUSEBUTTONDOWN)
     {
         SDL_GetMouseState(&game->menu.mouseX,&game->menu.mouseY);
-                //If the mouse is over the textbox
+        //If the mouse is over the textbox
         if( (game->menu.mouseX > game->menu.textBoxRect.x ) && ( game->menu.mouseX < game->menu.textBoxRect.x + game->menu.textBoxRect.w ) && ( game->menu.mouseY > game->menu.textBoxRect.y  ) && ( game->menu.mouseY < game->menu.textBoxRect.y  + game->menu.textBoxRect.h ) )
         {
             game->menu.textBoxClick = true;
