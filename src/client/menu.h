@@ -12,8 +12,9 @@ typedef struct Menu
 {
     SDL_Texture* textureMenu;
     SDL_Texture* textureLogo;
+    SDL_Texture* textureTextBox;
     SDL_Rect logoRect;
-    bool menuClick;
+    bool textBoxClick;
 
     SDL_Rect textBoxRect;
     SDL_Rect serverTextRect;
@@ -21,7 +22,7 @@ typedef struct Menu
     SDL_Color boxOutlineColor;
     SDL_Color textColor;
     char textInTextBox[50];
-    int textLength;
+    int textLength,mouseX,mouseY;
 } Menu;
 
 
