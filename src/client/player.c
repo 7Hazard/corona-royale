@@ -126,6 +126,7 @@ void OnPlayerUpdate(Player* player)
     
     if (player->moving == true && !Mix_Playing(1))
     {
+        Mix_VolumeChunk(audio->steps,20);
         Mix_PlayChannel(1, audio->steps, 0);
     }
 
