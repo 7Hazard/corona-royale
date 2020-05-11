@@ -66,3 +66,13 @@ void playMusic(){
         }
     }
 }
+
+void stopMusic(){
+
+    Audio* audio = GetAudio();
+    
+    if(GameGetState() == CR_STATE_CONNECTED)
+    {
+       Mix_FreeMusic(audio->menuMusic); 
+    }
+}
