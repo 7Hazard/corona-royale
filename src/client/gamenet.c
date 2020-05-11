@@ -14,7 +14,7 @@ int NetEventThread(void *ptr)
     Network* net = GetNetwork();
     Textures* textures = GetTextures();
 
-    while (GameIsPlaying())
+    while (GameGetState() == CR_STATE_CONNECTED)
     {
         NetEvent event = NetEventGet(net->tcpSocket);
         switch(event)
@@ -60,11 +60,6 @@ int NetEventThread(void *ptr)
 
             break;
         }
-        case CR_NETEVENT_VirusWin:
-        {
-            GameSetState(CR_STATE_VIRUSWIN);
-            break;
-        }
         
         default:
             LogInfo("Unhandled event %d", event);
@@ -87,7 +82,7 @@ int NetworkThread(void *ptr)
     UDPpacket* recvpacket = SDLNet_AllocPacket(1024);
 
     // Network loop
-    while (GameIsPlaying())
+    while (GameGetState() == CR_STATE_CONNECTED)
     {
         time_t tickstart = NetworkStartTick();
         ///////// START OF NET TICK

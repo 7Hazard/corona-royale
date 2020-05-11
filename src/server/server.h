@@ -16,9 +16,6 @@ typedef struct Server {
     
     SDLNet_SocketSet udpSocketSet;
     SDLNet_SocketSet tcpSocketSet;
-
-    bool gameEnded;
-    time_t gameEndTime;
 } Server;
 Server* GetServer();
 

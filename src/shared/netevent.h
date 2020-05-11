@@ -9,9 +9,7 @@ typedef enum NetEvent {
     CR_NETEVENT_Disconnected,
     CR_NETEVENT_PlayerConnected,
     CR_NETEVENT_PlayerDisconnected,
-    CR_NETEVENT_PlayerInfected,
-    CR_NETEVENT_GameStart,
-    CR_NETEVENT_VirusWin
+    CR_NETEVENT_PlayerInfected
 } NetEvent;
 
 /** Events should be polled in a separate thread
@@ -44,10 +42,4 @@ CR_NETEVENT(PlayerDisconnected, {
 })
 CR_NETEVENT(PlayerInfected, {
     PlayerID id;
-})
-CR_NETEVENT(GameStart, {
-    bool reserved;
-})
-CR_NETEVENT(VirusWin, {
-    uint16_t count;
 })

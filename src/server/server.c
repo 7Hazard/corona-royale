@@ -53,8 +53,6 @@ Server* GetServer()
             printf("SDLNet_AddSocket: %s\n", SDLNet_GetError());
             abort();
         }
-
-        server.gameEnded = false;
     }
 
     return &server;
@@ -219,8 +217,6 @@ void ApplyMovementDataToPlayer(PlayerMovementData* data)
 
 void ServerUpdate()
 {
-    Server* server = GetServer();
-
     NetPlayer* players = ServerGetAllPlayers();
     uint16_t playercount = ServerGetPlayerCount();
 
@@ -233,30 +229,6 @@ void ServerUpdate()
         // if(!NetPlayerConnected(player)) continue;
 
         NetPlayerUpdate(player);
-    }
-
-    // check how many are inected, send event for game end if all infected
-    if(!server->gameEnded && playercount > 1)
-    {
-        size_t playersInfected = 0;
-        for (size_t i = 0; i < playercount; i++)
-        {
-            NetPlayer* ply = &players[i];
-            if(ply->data.infected) playersInfected++;
-        }
-
-        if(playersInfected >= playercount)
-        {
-            server->gameEnded = true;
-            server->gameEndTime = time(0);
-
-            for (size_t i = 0; i < playercount; i++)
-            {
-                NetPlayer* ply = &players[i];
-                NetEventVirusWin data = { playersInfected };
-                NetEventVirusWinSend(ply->tcpSocket, &data);
-            }
-        }
     }
 }
 

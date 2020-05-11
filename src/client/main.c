@@ -45,7 +45,7 @@ int main(int argc, const char *argv[])
     Fonts* fonts = GetFonts();
 
     GameSetState(CR_STATE_MENU);
-
+    
     while (game->running)
     {
         Uint32 frameStart = GameStartFrame();
@@ -53,10 +53,7 @@ int main(int argc, const char *argv[])
         
         { /////////// STATE UPDATES PHASE BEGIN ///////////
             HandleEvents();
-            if(GameIsPlaying())
-            {
-                OnPlayerUpdate(&game->player);
-            }
+            OnPlayerUpdate(&game->player);
         } /////////// STATE UPDATES PHASE END /////////////
 
         { /////////// RENDERING PHASE BEGIN /////////
@@ -68,7 +65,7 @@ int main(int argc, const char *argv[])
             {
                 RenderMenu();
             }
-            else if(GameIsPlaying())
+            else if(GameGetState() == CR_STATE_CONNECTED)
             {
                 // Draw background
                 SDL_RenderCopy(game->renderer, game->background, &game->player.camera.cameraRect, NULL);
@@ -91,19 +88,6 @@ int main(int argc, const char *argv[])
                 //     FC_DrawColor(fonts->openSans, game->renderer, 200, 50, FC_MakeColor(r, 20, 20, 255), "CORONA\n%s", "ROYALE");
                 // }
                 RendererTimer(&game->timer);
-
-                if(GameGetState() == CR_STATE_VIRUSWIN)
-                {
-                    // background
-                    SDL_Rect rect; rect.x = 20; rect.y = 90; rect.w = 335; rect.h = 80;
-                    SDL_SetRenderDrawColor(game->renderer, 70, 70, 70, 150); // alpha doesnt work
-                    SDL_RenderFillRect(game->renderer, &rect);
-
-                    // text
-                    SDL_Color color = {143, 21, 21, 230};
-                    FC_DrawColor(fonts->openSansBold, game->renderer, 30, 100, color, "ALLA AROPPA KREN VAIRUS");
-                    FC_DrawColor(fonts->openSansBold, game->renderer, 60, 130, color, "%d people got infected!", GameGetPlayerCount());
-                }
             }
 
             SDL_RenderPresent(game->renderer);
@@ -117,7 +101,7 @@ int main(int argc, const char *argv[])
     TTF_Quit();
     IMG_Quit();
     SDL_Quit();
-    DisposeAudio();
+    StopAudio();
     return 0;
 }
 
