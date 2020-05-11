@@ -45,7 +45,7 @@ int main(int argc, const char *argv[])
     Fonts* fonts = GetFonts();
 
     GameSetState(CR_STATE_MENU);
-    
+    playMusic();
     while (game->running)
     {
         Uint32 frameStart = GameStartFrame();
