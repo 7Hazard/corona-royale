@@ -10,8 +10,8 @@
 
 #include "shared/hashtable.h"
 
-#define WINDOW_W 375
-#define WINDOW_H 667
+#define CR_WINDOW_W 375
+#define CR_WINDOW_H 667
 
 typedef enum GameState {
     CR_STATE_PRELOAD,
