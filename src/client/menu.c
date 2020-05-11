@@ -2,11 +2,13 @@
 #include <stdio.h>
 #include <SDL_FontCache.h>
 #include <SDL_image.h> 
+#include <SDL_mixer.h>
 
 #include "menu.h"
 #include "game.h"
 #include "fonts.h"
 #include "gamenet.h"
+#include "audio.h"
 
 void LoadMenu(Menu* menu){
     Game* game = GetGame();
@@ -96,3 +98,5 @@ void HandleMenuEvents(SDL_Event* event)
         GameNetConnect();
     }
 }
+
+
