@@ -25,7 +25,7 @@ typedef struct Menu
     SDL_Color textColor;
     SDL_Color textCursorColor;
     char textInTextBox[50];
-    int textLength,mouseX,mouseY,i;
+    int textLength,mouseX,mouseY,delay;
 } Menu;
 
 
