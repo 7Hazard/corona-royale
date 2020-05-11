@@ -36,7 +36,7 @@ Audio* GetAudio()
 }
 
 
-void StopAudio()
+void DisposeAudio()
 {
     Audio* audio = GetAudio();
 
@@ -52,8 +52,8 @@ void StopAudio()
     Mix_Quit();
 }
 
-void PlayMenuMusic(){
-
+void PlayMenuMusic()
+{
     Audio* audio = GetAudio();
     if(GameGetState() == CR_STATE_MENU)
     {
@@ -69,9 +69,9 @@ void PlayMenuMusic(){
     }
 }
 
-void StopMenuMusic(){
-
+void StopMenuMusic()
+{
     Audio* audio = GetAudio();
     
-    Mix_FreeMusic(audio->menuMusic);
+    Mix_HaltMusic(audio->menuMusic);
 }

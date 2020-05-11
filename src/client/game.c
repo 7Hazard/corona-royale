@@ -51,8 +51,9 @@ Game* GetGame()
 
         game.stateMutex = SDL_CreateMutex();
         
-        game.window = SDL_CreateWindow("Corona Royale", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_W, WINDOW_H, 0);
+        game.window = SDL_CreateWindow("Corona Royale", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, CR_WINDOW_W, CR_WINDOW_H, 0);
         game.renderer = SDL_CreateRenderer(game.window, -1, 0);
+        SDL_SetRenderDrawBlendMode(game.renderer, SDL_BLENDMODE_BLEND);
         game.fps = 60; // default target FPS is 60
 
         Textures* tex = GetTextures(); // NEEDS TO BE CALLED AFTER RENDERER IS CREATED
@@ -130,6 +131,11 @@ void GameSetState(GameState state)
     default:
         break;
     }
+}
+
+bool GameIsPlaying()
+{
+    return GameGetState() == CR_STATE_CONNECTED || GameGetState() == CR_STATE_VIRUSWIN;
 }
 
 void GameInitNetPlayersTable(uint16_t count)
