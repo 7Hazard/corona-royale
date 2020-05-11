@@ -30,7 +30,7 @@ void HandleEvents()
         if(GameGetState() == CR_STATE_MENU){
             HandleMenuEvents(&event);
         }
-        else if (GameGetState() == CR_STATE_CONNECTED)
+        else if (GameIsPlaying())
         {
             HandlePlayerEvents(&event);
         }

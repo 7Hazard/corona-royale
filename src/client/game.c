@@ -133,6 +133,11 @@ void GameSetState(GameState state)
     }
 }
 
+bool GameIsPlaying()
+{
+    return GameGetState() == CR_STATE_CONNECTED || GameGetState() == CR_STATE_VIRUSWIN;
+}
+
 void GameInitNetPlayersTable(uint16_t count)
 {
     Game* game = GetGame();
