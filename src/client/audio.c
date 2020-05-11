@@ -4,6 +4,7 @@
 
 #include "audio.h"
 #include "game.h"
+#include "shared/log.h"
 
 Audio* GetAudio()
 {
@@ -51,28 +52,26 @@ void StopAudio()
     Mix_Quit();
 }
 
-void playMusic(){
+void PlayMenuMusic(){
 
     Audio* audio = GetAudio();
     if(GameGetState() == CR_STATE_MENU)
     {
         if(Mix_PlayMusic(audio->menuMusic, -1) == -1)
         {
-            printf("Mix_PlayMusic: %s\n", Mix_GetError());
+            LogInfo("Mix_PlayMusic: %s\n", Mix_GetError());
         }
         else if(!Mix_PlayingMusic() == 0)
         {
-            Mix_PlayMusic(audio->menuMusic, 1);
+            Mix_VolumeMusic(20);
+            Mix_PlayMusic(audio->menuMusic, -1);
         }
     }
 }
 
-void stopMusic(){
+void StopMenuMusic(){
 
     Audio* audio = GetAudio();
     
-    if(GameGetState() == CR_STATE_CONNECTED)
-    {
-       Mix_FreeMusic(audio->menuMusic); 
-    }
+    Mix_FreeMusic(audio->menuMusic);
 }

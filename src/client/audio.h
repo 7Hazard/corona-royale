@@ -12,5 +12,5 @@ typedef struct Audio
 
 Audio* GetAudio();
 void StopAudio();
-void playMusic();
-void stopMusic();
+void PlayMenuMusic();
+void StopMenuMusic();

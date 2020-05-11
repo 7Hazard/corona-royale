@@ -12,6 +12,7 @@
 #include "game.h"
 #include "timer.h"
 #include "menu.h"
+#include "audio.h"
 
 #include "shared/log.h"
 #include "shared/netevent.h"
@@ -109,6 +110,26 @@ void GameSetState(GameState state)
     SDL_LockMutex(game->stateMutex);
     game->state = state;
     SDL_UnlockMutex(game->stateMutex);
+
+    LogInfo("Switched to state %d", state);
+
+    switch (state)
+    {
+    case CR_STATE_MENU:
+    {
+        PlayMenuMusic();
+        break;
+    }
+    case CR_STATE_CONNECTED:
+    {
+        //Remove menu music
+        StopMenuMusic();
+        break;
+    }
+    
+    default:
+        break;
+    }
 }
 
 void GameInitNetPlayersTable(uint16_t count)

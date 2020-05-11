@@ -19,7 +19,7 @@ typedef enum GameState {
     CR_STATE_LOADGAME,
     CR_STATE_CONNECTED,
     CR_STATE_WINSCREEN
-}GameState; 
+} GameState;
 
 typedef struct Game
 {
