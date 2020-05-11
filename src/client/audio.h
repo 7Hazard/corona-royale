@@ -11,6 +11,6 @@ typedef struct Audio
 } Audio;
 
 Audio* GetAudio();
-void StopAudio();
+void DisposeAudio();
 void PlayMenuMusic();
 void StopMenuMusic();
