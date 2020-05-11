@@ -17,7 +17,10 @@ void HandleEvents()
         {
             Game* game = GetGame();
 
-            GameNetDisconnect();
+            if(GameIsPlaying())
+            {
+                GameNetDisconnect();
+            }
 
             game->running = 0;
             SDL_Log("Program quit after %i ticks", event.quit.timestamp);
