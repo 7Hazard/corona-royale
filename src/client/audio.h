@@ -7,7 +7,10 @@ typedef struct Audio
 {
   Mix_Chunk* cough;
   Mix_Chunk* steps;
+  Mix_Music* menuMusic;
 } Audio;
 
 Audio* GetAudio();
-void StopAudio();
+void DisposeAudio();
+void PlayMenuMusic();
+void StopMenuMusic();

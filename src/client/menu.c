@@ -10,7 +10,7 @@
 #include <ctype.h>
 
 #include <SDL_FontCache.h>
-#include <SDL_image.h>
+
 
 Menu *GetMenu()
 {
@@ -239,3 +239,5 @@ void HandleMenuEvents(SDL_Event *event)
         }
     }
 }
+
+

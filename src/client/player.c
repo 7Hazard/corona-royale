@@ -34,8 +34,8 @@ void CreatePlayer(Player* player, float xPos, float yPos)
 
     player->x = xPos;
     player->y = yPos;
-    player->camera.cameraRect.w = WINDOW_W;
-    player->camera.cameraRect.h = WINDOW_H;
+    player->camera.cameraRect.w = CR_WINDOW_W;
+    player->camera.cameraRect.h = CR_WINDOW_H;
 
     player->mouseClick = false;
     player->moving = false;
@@ -124,15 +124,16 @@ void OnPlayerUpdate(Player* player)
         MoveTowardsMouse(player);
     }
     
-    if (player->mouseClick == true && !Mix_Playing(1))
+    if (player->moving == true && !Mix_Playing(1))
     {
+        Mix_VolumeChunk(audio->steps,20);
         Mix_PlayChannel(1, audio->steps, 0);
     }
 
     //make player centered on the screen
     //make the camera scroll depending on the player position
-    player->camera.cameraRect.x = (posx + player->rect.w/2) - WINDOW_W/2;
-    player->camera.cameraRect.y = (posy + player->rect.h/2) - WINDOW_H/2;
+    player->camera.cameraRect.x = (posx + player->rect.w/2) - CR_WINDOW_W/2;
+    player->camera.cameraRect.y = (posy + player->rect.h/2) - CR_WINDOW_H/2;
 
     //background rendering boundries
     if (player->camera.cameraRect.x < 0)
