@@ -23,6 +23,9 @@ Textures* GetTextures()
         tex.textureMenu = LoadTexture("res/menu/background_menu.jpg");
         tex.textureLogo = LoadTexture("res/menu/CoronaRoyalBackground.png");
         tex.textureTextBox = LoadTexture("res/TextBoxCoronaRoyalr2.png");
+
+        tex.textureGrayBox = LoadTexture("res/TransparentGrayBox.png");
+        tex.textureTimerClock = LoadTexture("res/TimerClockPicture.png");
     }
 
     return &tex;
@@ -36,6 +39,9 @@ void DisposeTextures()
     SDL_DestroyTexture(tex->grass);
     SDL_DestroyTexture(tex->healthyPlayer);
     SDL_DestroyTexture(tex->infectedPlayer);
+    SDL_DestroyTexture(tex->textureMenu);
+    SDL_DestroyTexture(tex->textureLogo);
+    SDL_DestroyTexture(tex->textureTextBox);
 }
 
 SDL_Texture* LoadTexture(const char* filename)

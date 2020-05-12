@@ -11,7 +11,6 @@
 
 typedef struct Menu
 {
-
     SDL_Rect logoRect;
     bool textBoxClick;
     bool cursorBlink;
