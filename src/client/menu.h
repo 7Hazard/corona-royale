@@ -10,9 +10,7 @@
 
 typedef struct Menu
 {
-    SDL_Texture* textureMenu;
-    SDL_Texture* textureLogo;
-    SDL_Texture* textureTextBox;
+
     SDL_Rect logoRect;
     bool textBoxClick;
     bool cursorBlink;
@@ -29,6 +27,6 @@ typedef struct Menu
 } Menu;
 
 
-void LoadMenu(Menu* menu);
+Menu* GetMenu();
 void RenderMenu();
 void HandleMenuEvents(SDL_Event* event);

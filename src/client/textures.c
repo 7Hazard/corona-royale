@@ -18,6 +18,11 @@ Textures* GetTextures()
         tex.healthyPlayer = LoadTexture("res/circleblue.png");
         tex.infectedPlayer = LoadTexture("res/circlered.png");
         SDL_QueryTexture(tex.healthyPlayer, NULL, NULL, &tex.playerWidth, &tex.playerHeight);
+
+        
+        tex.textureMenu = LoadTexture("res/menu/background_menu.jpg");
+        tex.textureLogo = LoadTexture("res/menu/CoronaRoyalBackground.png");
+        tex.textureTextBox = LoadTexture("res/TextBoxCoronaRoyalr2.png");
     }
 
     return &tex;
