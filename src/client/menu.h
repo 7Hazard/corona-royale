@@ -11,21 +11,22 @@
 
 typedef struct Menu
 {
-    SDL_Texture* textureMenu;
-    SDL_Texture* textureLogo;
     SDL_Rect logoRect;
-    bool menuClick;
+    bool textBoxClick;
+    bool cursorBlink;
 
+    SDL_Rect textCursorRect;
     SDL_Rect textBoxRect;
     SDL_Rect serverTextRect;
     SDL_Color boxBackgroundcolor;
     SDL_Color boxOutlineColor;
     SDL_Color textColor;
+    SDL_Color textCursorColor;
     char textInTextBox[50];
-    int textLength;
+    int textLength,mouseX,mouseY,delay;
 } Menu;
 
 
-void LoadMenu(Menu* menu);
+Menu* GetMenu();
 void RenderMenu();
 void HandleMenuEvents(SDL_Event* event);

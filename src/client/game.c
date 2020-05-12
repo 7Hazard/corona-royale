@@ -61,7 +61,6 @@ Game* GetGame()
         SDL_QueryTexture(game.background, NULL, NULL, &game.mapWidth, &game.mapHeight);
         CreatePlayer(&game.player, 10, 10);
         CreateTimer(&game.timer);
-        LoadMenu(&game.menu);
 
         // DONT FORGET TO INITIALIZE ALL MEMBERS OF THE STRUCT
     }
@@ -72,8 +71,9 @@ Game* GetGame()
 void DisposeGame()
 {
     Game* game = GetGame();
+    Textures* tex = GetTextures();
 
-    SDL_DestroyTexture(game->menu.textureMenu);
+    //SDL_DestroyTexture(game->menu.textureMenu);
     SDL_DestroyTexture(game->background);
     SDL_DestroyTexture(game->player.texture);
     SDL_StopTextInput();

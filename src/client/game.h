@@ -37,7 +37,6 @@ typedef struct Game
     int mapWidth, mapHeight;
     Player player;
     Timer timer;
-    Menu menu;
     
     hashtable_t players;
 } Game;

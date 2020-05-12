@@ -131,8 +131,9 @@ void GameNetConnect()
 {
     Game* game = GetGame();
     Network* net = GetNetwork();
+    Menu* menu = GetMenu();
 
-    if(!Connect(game->menu.textInTextBox))
+    if(!Connect(menu->textInTextBox))
     {
         SDL_Log("COULD NOT CONNECT TO GAME SERVER");
         SDL_ShowSimpleMessageBox(

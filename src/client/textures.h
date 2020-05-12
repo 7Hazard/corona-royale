@@ -10,6 +10,11 @@ typedef struct Textures
     int playerWidth, playerHeight;
     SDL_Texture* healthyPlayer;
     SDL_Texture* infectedPlayer;
+    SDL_Texture* textureMenu;
+    SDL_Texture* textureLogo;
+    SDL_Texture* textureTextBox;
+    SDL_Texture* textureGrayBox;
+    SDL_Texture* textureTimerClock;
 } Textures;
 
 Textures* GetTextures();

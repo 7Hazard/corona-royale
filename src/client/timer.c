@@ -4,10 +4,14 @@
 #include <SDL_image.h>
 #include "game.h"
 #include "fonts.h"
+#include "textures.h"
 
 
 void CreateTimer(Timer *timer)
 {
+    Game* game = GetGame();
+    Textures* tex = GetTextures();
+
     timer->mCurrentTime = 0;
     timer->mDeltaConvert = 0;
     timer->mDeltaTime = 0;
@@ -15,6 +19,17 @@ void CreateTimer(Timer *timer)
     timer->mMinuteTime = 0;
     timer->mPrevTime = 0;
     timer->mStarted = true;
+
+    timer->grayBoxRect.x = 0;
+    timer->grayBoxRect.y = 40;
+    timer->grayBoxRect.w = 80;
+    timer->grayBoxRect.h = 40;
+
+    timer->timerClockRect.x = 50;
+    timer->timerClockRect.y = 55;
+    timer->timerClockRect.w = 20;
+    timer->timerClockRect.h = 20;
+
 }
 
 void ResetSeconds(Timer *timer)
@@ -50,7 +65,12 @@ void RendererTimer(Timer *timer)
 {
     Game* game = GetGame();
     Fonts* fonts = GetFonts();
+    Textures* tex = GetTextures();
+
     sprintf(timer->timerBuffer, "%d:%d", timer->mMinuteTime, timer->mDeltaTime); // copy string (timer.mStartTicks)to buffer
+
+    SDL_RenderCopy(game->renderer,tex->textureGrayBox,NULL,&game->timer.grayBoxRect);
+    SDL_RenderCopy(game->renderer,tex->textureTimerClock,NULL,&game->timer.timerClockRect);
 
     if (!timer->mLast10Sek)
     {

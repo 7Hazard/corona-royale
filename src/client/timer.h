@@ -8,7 +8,7 @@
 #include <SDL_FontCache.h>
 
 
-typedef struct{
+typedef struct Timer{
     bool mStarted;
     bool mLast10Sek;
     int mCurrentTime;
@@ -17,6 +17,8 @@ typedef struct{
     int mDeltaTime;
     float mDeltaConvert;
     
+    SDL_Rect grayBoxRect;
+    SDL_Rect timerClockRect;
     SDL_Color White;
     SDL_Color Red;
     SDL_Rect rect;

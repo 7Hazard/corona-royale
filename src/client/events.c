@@ -9,6 +9,7 @@
 void HandleEvents()
 {
     Game* game = GetGame();
+    Menu* menu = GetMenu();
 
     SDL_Event event;
     while (SDL_PollEvent(&event))
