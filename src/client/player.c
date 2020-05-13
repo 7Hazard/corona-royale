@@ -12,8 +12,10 @@
 #include "collision.h"
 #include "textures.h"
 
+
 #include "shared/data.h"
 #include "shared/math.h"
+#include "shared/log.h"
 
 void CreatePlayer(Player* player, float xPos, float yPos)
 {
@@ -31,7 +33,7 @@ void CreatePlayer(Player* player, float xPos, float yPos)
     player->rect.y = 0;
 
     player->movementMutex = SDL_CreateMutex();
-
+    player->radius = 25;
     player->x = xPos;
     player->y = yPos;
     player->camera.cameraRect.w = CR_WINDOW_W;
@@ -159,11 +161,72 @@ void OnPlayerUpdate(Player* player)
     player->rect.x = posx - player->camera.cameraRect.x;
     player->rect.y = posy - player->camera.cameraRect.y;
 }
+void DrawCircle(Player* player)
+{
+    Game* game = GetGame();
+    const int32_t diameter = (player->radius * 2);
+
+    int32_t x = (player->radius - 1);
+    int32_t y = 0;
+    int32_t tx = 1;
+    int32_t ty = 1;
+    int32_t error = (tx - diameter);
+    int centreX = ((int)player->x + player->rect.w/2) - player->camera.cameraRect.x;
+    int centreY = ((int)player->y + player->rect.h/2) - player->camera.cameraRect.y;
+    SDL_SetRenderDrawColor(game->renderer, 255,0,0,255);
+
+    while (x >= y) 
+    {
+        //  Each of the following renders an octant of the circle
+        SDL_RenderDrawPoint(game->renderer, centreX + x, centreY - y);
+        SDL_RenderDrawPoint(game->renderer, centreX + x, centreY + y);
+        SDL_RenderDrawPoint(game->renderer, centreX - x, centreY - y);
+        SDL_RenderDrawPoint(game->renderer, centreX - x, centreY + y);
+        SDL_RenderDrawPoint(game->renderer, centreX + y, centreY - x);
+        SDL_RenderDrawPoint(game->renderer, centreX + y, centreY + x);
+        SDL_RenderDrawPoint(game->renderer, centreX - y, centreY - x);
+        SDL_RenderDrawPoint(game->renderer, centreX - y, centreY + x);
+
+        if (error <= 0)
+        {
+            ++y;
+            error += ty;
+            ty += 2;
+        }
+
+        if (error > 0)
+        {
+            --x;
+            tx += 2;
+            error += (tx - diameter);
+        }
+    }
+}
 
 void OnPlayerRender(Player* player)
 {
     Game* game = GetGame();
+    static int frameTime = 0;
+    
     SDL_RenderCopyEx(game->renderer, player->texture, NULL, &player->rect, player->angle, NULL, SDL_FLIP_NONE);
+    if (player->infected)
+    {
+        if (player->radius <= 50)
+        {
+            DrawCircle(player);
+            if (frameTime == 30)
+            {
+                player->radius = player->radius + 5;
+                frameTime = 0;
+            }
+            
+            if (player->radius == 40)
+            {
+                player->radius = 25;
+            }
+            frameTime++;   
+        }
+    }
 }
 
 bool IsPlayerMoving(Player* player)
