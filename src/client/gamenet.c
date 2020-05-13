@@ -62,6 +62,8 @@ int NetEventThread(void *ptr)
         }
         case CR_NETEVENT_VirusWin:
         {
+            NetEventVirusWin e;
+            NetEventVirusWinRead(net->tcpSocket, &e);
             GameSetState(CR_STATE_VIRUSWIN);
             break;
         }
