@@ -41,7 +41,6 @@ add_executable(CoronaRoyale
   src/client/events.c
   src/client/collision.c
   src/client/menu.c
-  src/client/mouse.c
   src/client/timer.c
   src/client/textures.c
   src/client/fonts.c

@@ -231,3 +231,13 @@ void ApplyMovementDataToPlayer(PlayerMovementData* data)
 
     SDL_UnlockMutex(player->mutex);
 }
+
+bool GameIsWithinCamera(int x, int y)
+{
+    Game* game = GetGame();
+    SDL_Rect* cam = &game->player.camera.cameraRect;
+
+    if (x >= cam->x && x < cam->x + cam->w && y >= cam->y && y < cam->y+cam->h)
+        return true;
+    return false;
+}

@@ -2,7 +2,6 @@
 
 #include <stdbool.h>
 #include <SDL.h>
-#include "mouse.h"
 #include "events.h"
 #include "shared/data.h"
 

@@ -26,6 +26,8 @@ Textures* GetTextures()
 
         tex.textureGrayBox = LoadTexture("res/TransparentGrayBox.png");
         tex.textureTimerClock = LoadTexture("res/TimerClockPicture.png");
+
+        tex.arrowIndicator = LoadTexture("res/arrow_indicator.png");
     }
 
     return &tex;
