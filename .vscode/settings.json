@@ -24,7 +24,8 @@
     "game.h": "c",
     "xiosbase": "c",
     "xlocale": "c",
-    "xlocnum": "c"
+    "xlocnum": "c",
+    "iosfwd": "c"
   },
   "editor.tabSize": 4
 }

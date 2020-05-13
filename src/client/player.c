@@ -10,10 +10,10 @@
 #include "timer.h"
 #include "textures.h"
 #include "collision.h"
-#include "mouse.h"
 #include "textures.h"
 
 #include "shared/data.h"
+#include "shared/math.h"
 
 void CreatePlayer(Player* player, float xPos, float yPos)
 {
@@ -65,7 +65,7 @@ void RotatePlayer(Player *player)
     //Get "world" coordinates instead of windowpos
     mousex += player->camera.cameraRect.x;
     mousey += player->camera.cameraRect.y;
-    player->angle = GetAngle((int)player->x + player->rect.w/2, mousex, (int)player->y + player->rect.h/2, mousey);
+    player->angle = GetAngle(player->x + player->rect.w/2, player->y + player->rect.h/2, mousex, mousey)-90;
 }
 
 void MoveTowardsMouse(Player *player)

@@ -57,3 +57,4 @@ NetPlayer* GameGetNetPlayer(PlayerID id);
 uint16_t GameGetPlayerCount();
 NetPlayer* GameGetAllPlayers();
 void ApplyMovementDataToPlayer(PlayerMovementData* data);
+bool GameIsWithinCamera(int x, int y);
