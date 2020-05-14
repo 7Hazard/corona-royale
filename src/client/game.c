@@ -127,6 +127,12 @@ void GameSetState(GameState state)
         StopMenuMusic();
         break;
     }
+
+    case CR_STATE_VIRUSWIN:
+    {
+        PlayVirusWin();
+        break;
+    }
     
     default:
         break;
