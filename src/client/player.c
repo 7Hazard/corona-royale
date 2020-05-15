@@ -33,7 +33,7 @@ void CreatePlayer(Player* player, float xPos, float yPos)
     player->rect.y = 0;
 
     player->movementMutex = SDL_CreateMutex();
-    player->radius = 25;
+    player->radius = 40;
     player->x = xPos;
     player->y = yPos;
     player->camera.cameraRect.w = CR_WINDOW_W;
@@ -211,22 +211,22 @@ void OnPlayerRender(Player* player)
     SDL_RenderCopyEx(game->renderer, player->texture, NULL, &player->rect, player->angle, NULL, SDL_FLIP_NONE);
     if (player->infected)
     {
-        if (player->radius <= 50)
-        {
-            DrawCircle(player);
-            if (frameTime == 30)
-            {
-                player->radius = player->radius + 5;
-                frameTime = 0;
-            }
-            
-            if (player->radius == 40)
-            {
-                player->radius = 25;
-            }
-            frameTime++;   
-        }
+    //     if (player->radius <= 50)
+    //     {
+        DrawCircle(player);
+    //         if (frameTime == 30)
+    //         {
+    //             player->radius = player->radius + 5;
+    //             frameTime = 0;
     }
+            
+    //         if (player->radius == 40)
+    //         {
+    //             player->radius = 25;
+    //         }
+    //         frameTime++;   
+    //     }
+    // }
 }
 
 bool IsPlayerMoving(Player* player)
