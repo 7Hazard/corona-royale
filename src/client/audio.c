@@ -29,7 +29,7 @@ Audio* GetAudio()
         audio.steps = Mix_LoadWAV("res/FootstepsGrass.wav");
         audio.menuMusic = Mix_LoadMUS("res/Resilience.mp3");
         audio.virusWin = Mix_LoadWAV("res/crenvajrus.wav");
-        audio.healthyWin = Mix_LoadMUS("res/gtasound.mp3");
+        audio.healthyWin = Mix_LoadWAV("res/gtasound.wav");
         // Mix_PlayMusic(backgroundSound, -1);
         // DONT FORGET TO INITIALIZE ALL MEMBERS OF THE STRUCT
     }
@@ -94,5 +94,5 @@ void PlayHealthyWin()
     Audio* audio = GetAudio();
 
     Mix_VolumeChunk(audio->healthyWin, 20);
-    Mix_PlayChannel(1,audio->healthyWin,0);
+    Mix_PlayChannel(1, audio->healthyWin, 0);
 }

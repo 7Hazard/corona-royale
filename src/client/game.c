@@ -125,7 +125,6 @@ void GameSetState(GameState state)
     {
         //Remove menu music
         StopMenuMusic();
-        PlayHealthyWin();
         break;
     }
 
