@@ -23,6 +23,7 @@ typedef struct Player
     float x,y;
     SDL_Texture* texture;
     PlayerID id;
+    int radius;
 } Player;
 
 void CreatePlayer(Player* player, float xPos, float yPos);
@@ -37,3 +38,4 @@ void SetPlayerAngle(Player* player, float angle);
 void SetPlayerInfected(Player* player, bool infected);
 void ApplyPlayerData(Player* player, PlayerData* data);
 void GetPlayerMovementData(Player* player, PlayerMovementData* data);
+void DrawCircle(Player* player);

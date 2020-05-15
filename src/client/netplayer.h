@@ -13,3 +13,4 @@ typedef struct NetPlayer
 void InitNetPlayer(NetPlayer* np, PlayerData* data);
 void RenderNetPlayer(NetPlayer* np);
 void NetPlayerDispose(NetPlayer* np);
+void NetPlayerDrawCircle(NetPlayer* np);
