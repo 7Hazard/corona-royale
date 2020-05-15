@@ -9,6 +9,7 @@ typedef struct Audio
   Mix_Chunk* steps;
   Mix_Music* menuMusic;
   Mix_Chunk* virusWin;
+  Mix_Chunk* healthyWin;
 } Audio;
 
 Audio* GetAudio();
@@ -16,3 +17,4 @@ void DisposeAudio();
 void PlayMenuMusic();
 void StopMenuMusic();
 void PlayVirusWin();
+void PlayHealthyWin();

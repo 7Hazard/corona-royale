@@ -125,12 +125,19 @@ void GameSetState(GameState state)
     {
         //Remove menu music
         StopMenuMusic();
+        PlayHealthyWin();
         break;
     }
 
     case CR_STATE_VIRUSWIN:
     {
         PlayVirusWin();
+        break;
+    }
+
+    case CR_STATE_HEALTHYWIN:
+    {
+        PlayHealthyWin();
         break;
     }
     

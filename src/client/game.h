@@ -18,7 +18,8 @@ typedef enum GameState {
     CR_STATE_MENU,
     CR_STATE_LOADGAME,
     CR_STATE_CONNECTED,
-    CR_STATE_VIRUSWIN
+    CR_STATE_VIRUSWIN,
+    CR_STATE_HEALTHYWIN
 } GameState; 
 
 typedef struct Game
