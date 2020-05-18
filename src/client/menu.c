@@ -57,11 +57,6 @@ Menu *GetMenu()
         menu.boxBackgroundcolor.b = 0;
         menu.boxBackgroundcolor.a = 0;
 
-        menu.textCursorRect.x = 110;
-        menu.textCursorRect.y = 366;
-        menu.textCursorRect.w = 1;
-        menu.textCursorRect.h = 25;
-
         menu.textCursorColor.r = 255;
         menu.textCursorColor.g = 255;
         menu.textCursorColor.b = 255;
@@ -103,10 +98,22 @@ void RenderMenu()
         }
     }
 
-    SDL_RenderFillRect(game->renderer, &menu->textCursorRect);
-    SDL_RenderDrawRect(game->renderer, &menu->textCursorRect);
+    char* torender = menu->textInTextBox;
+    if(menu->textLength > 19)
+    {
+        torender += menu->textLength-19;
+    }
 
-    FC_DrawColor(font->openSans, game->renderer, 110, 365, FC_MakeColor(255, 255, 255, 255), menu->textInTextBox);
+    uint16_t width = FC_GetWidth(font->openSans, torender);
+    SDL_Rect textCursorRect;
+    textCursorRect.x = 110+width;
+    textCursorRect.y = 366;
+    textCursorRect.w = 1;
+    textCursorRect.h = 25;
+    SDL_RenderFillRect(game->renderer, &textCursorRect);
+    SDL_RenderDrawRect(game->renderer, &textCursorRect);
+
+    FC_DrawColor(font->openSans, game->renderer, 110, 365, FC_MakeColor(255, 255, 255, 255), torender);
     FC_DrawColor(font->openSans, game->renderer, 10, 365, FC_MakeColor(255, 255, 255, 255), "Enter IP:");
 }
 
@@ -114,6 +121,7 @@ void HandleMenuEvents(SDL_Event *event)
 {
     Game *game = GetGame();
     Menu *menu = GetMenu();
+    Fonts *font = GetFonts();
 
     if (event->type == SDL_KEYDOWN && menu->textBoxClick == true)
     {
@@ -122,79 +130,20 @@ void HandleMenuEvents(SDL_Event *event)
 
         while (SDL_PollEvent(&inputEvent))
         {
-            if (strlen(menu->textInTextBox) < 20)
+            if(inputEvent.type == SDL_TEXTINPUT && menu->textLength != 256)
             {
-                if (inputEvent.type == SDL_TEXTINPUT)
-                {
-                    /* Add new text onto the end of our text */
-                    menu->textLength++; // sparas inte
-                    menu->textInTextBox[menu->textLength] += *inputEvent.text.text;
-                    //only small letters
-                    menu->textInTextBox[menu->textLength] = tolower(menu->textInTextBox[menu->textLength]);
-
-                    if (menu->textInTextBox[menu->textLength] == '.')
-                    {
-                        menu->textCursorRect.x += 5;
-                    }
-                    else if (isalpha(menu->textInTextBox[menu->textLength]) > 0)
-                    {
-                        if (menu->textInTextBox[menu->textLength] == 'i' || menu->textInTextBox[menu->textLength] == 'l')
-                        {
-                            menu->textCursorRect.x += 5;
-                        }
-                        else if (menu->textInTextBox[menu->textLength] == 'm')
-                        {
-                            menu->textCursorRect.x += 20;
-                        }
-                        else
-                        {
-                            menu->textCursorRect.x += 12;
-                        }
-                    }
-                    else if (isdigit(menu->textInTextBox[menu->textLength]) > 0)
-                    {
-                        menu->textCursorRect.x += 12;
-                    }
-                }
-                else if (inputEvent.key.keysym.sym == SDLK_v && SDL_GetModState() && KMOD_CTRL)
-                { //Handle paste
-                    menu->textCursorRect.x = 110;
-                    strcpy(menu->textInTextBox, SDL_GetClipboardText());
-                    menu->textLength = strlen(menu->textInTextBox) - 1;
-                    for (int i = 0; i < 20; i++)
-                    {
-                        if (menu->textInTextBox[i] == '\0')
-                        {
-                            break;
-                        }
-                        else
-                        {
-                            if (menu->textInTextBox[i] == '.')
-                            {
-                                menu->textCursorRect.x += 5;
-                            }
-                            else if (isalpha(menu->textInTextBox[i]))
-                            {
-                                if (menu->textInTextBox[i] == 'i' || menu->textInTextBox[i] == 'l')
-                                {
-                                    menu->textCursorRect.x += 5;
-                                }
-                                else
-                                {
-                                    menu->textCursorRect.x += 12;
-                                }
-                            }
-                            else if (isdigit(menu->textInTextBox[i]))
-                            {
-                                menu->textCursorRect.x += 12;
-                            }
-                        }
-                    }
-                }
-                else if (inputEvent.key.keysym.sym == SDLK_c && SDL_GetModState() & KMOD_CTRL)
-                { //Handle copy
-                    SDL_SetClipboardText(menu->textInTextBox);
-                }
+                menu->textLength++;
+                menu->textInTextBox[menu->textLength] += tolower(*inputEvent.text.text);
+            }
+            else if (inputEvent.key.keysym.sym == SDLK_v && SDL_GetModState() && KMOD_CTRL)
+            { //Handle paste
+                strcpy(menu->textInTextBox, SDL_GetClipboardText());
+                menu->textLength = strlen(menu->textInTextBox) - 1;
+                //menu->textCursor.x +=
+            }
+            else if (inputEvent.key.keysym.sym == SDLK_c && SDL_GetModState() & KMOD_CTRL)
+            { //Handle copy
+                SDL_SetClipboardText(menu->textInTextBox);
             }
         }
     }
@@ -202,28 +151,6 @@ void HandleMenuEvents(SDL_Event *event)
     {
         menu->textInTextBox[menu->textLength] = '\0';
         menu->textLength--;
-
-        if (menu->textInTextBox[menu->textLength] == '.')
-        {
-            menu->textCursorRect.x -= 5;
-        }
-        else if (menu->textInTextBox[menu->textLength] == 'm')
-        {
-            menu->textCursorRect.x -= 20;
-        }
-        else
-        {
-            menu->textCursorRect.x -= 12;
-        }
-
-        if (menu->textCursorRect.x < 110)
-        {
-            menu->textCursorRect.x = 110;
-        }
-        if (menu->textInTextBox[0] == '\0')
-        {
-            menu->textCursorRect.x = 110;
-        }
     }
     else if (event->key.keysym.sym == SDLK_RETURN)
     {
