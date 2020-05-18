@@ -28,8 +28,9 @@ Audio* GetAudio()
         audio.cough = Mix_LoadWAV("res/cough.wav");
         audio.steps = Mix_LoadWAV("res/FootstepsGrass.wav");
         audio.menuMusic = Mix_LoadMUS("res/Resilience.mp3");
-        audio.virusWin = Mix_LoadWAV("res/crenvajrus.wav");
+        audio.virusWin = Mix_LoadWAV("res/AllaEjropaCrenVajrus.wav");
         audio.healthyWin = Mix_LoadWAV("res/gtasound.wav");
+        audio.playerInfected = Mix_LoadWAV("res/crenvajrus.wav");
         // Mix_PlayMusic(backgroundSound, -1);
         // DONT FORGET TO INITIALIZE ALL MEMBERS OF THE STRUCT
     }
@@ -50,6 +51,7 @@ void DisposeAudio()
     Mix_FreeMusic(audio->menuMusic);
     Mix_FreeChunk(audio->virusWin);
     Mix_FreeChunk(audio->healthyWin);
+    Mix_FreeChunk(audio->playerInfected);
     // DONT FORGET TO FREE ALL SOUNDS
 
     Mix_CloseAudio();
@@ -95,4 +97,12 @@ void PlayHealthyWin()
 
     Mix_VolumeChunk(audio->healthyWin, 20);
     Mix_PlayChannel(1, audio->healthyWin, 0);
+}
+
+void PlayPlayerInfected(){
+
+    Audio* audio = GetAudio();
+
+    Mix_VolumeChunk(audio->playerInfected,20);
+    Mix_PlayChannel(1,audio->playerInfected,0);
 }

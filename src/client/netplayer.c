@@ -81,7 +81,7 @@ void RenderNetPlayer(NetPlayer* np)
             iy -= arrow.h/2;
         }
         else {
-            LogInfo("WHAT??");
+            // LogInfo("WHAT??");
             return;
         }
         
