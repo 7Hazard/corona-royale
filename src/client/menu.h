@@ -15,14 +15,13 @@ typedef struct Menu
     bool textBoxClick;
     bool cursorBlink;
 
-    SDL_Rect textCursorRect;
     SDL_Rect textBoxRect;
     SDL_Rect serverTextRect;
     SDL_Color boxBackgroundcolor;
     SDL_Color boxOutlineColor;
     SDL_Color textColor;
     SDL_Color textCursorColor;
-    char textInTextBox[50];
+    char textInTextBox[256];
     int textLength,mouseX,mouseY,delay;
 } Menu;
 
