@@ -29,7 +29,7 @@ void NetPlayerDrawCircle(NetPlayer* np)
     int32_t error = (tx - diameter);
     int centreX = ((int)np->data.x) - game->player.camera.cameraRect.x + tex->playerWidth/2;
     int centreY = ((int)np->data.y) - game->player.camera.cameraRect.y + tex->playerHeight/2;
-    SDL_SetRenderDrawColor(game->renderer, 255,0,0,255);
+    SDL_SetRenderDrawColor(game->renderer, 0,0,255,255);
 
     while (x >= y) 
     {
@@ -136,11 +136,12 @@ void RenderNetPlayer(NetPlayer* np)
 
         float angle = GetAngle(cx, cy, npx, npy)-90;
         SDL_RenderCopyEx(game->renderer, tex->arrowIndicator, NULL, &arrow, angle, NULL, SDL_FLIP_NONE);
-
+        /*
         if (np->data.infected)
         {
             DrawCircle(player);
         }
+        */
     }
 }
 
