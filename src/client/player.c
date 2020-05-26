@@ -27,13 +27,12 @@ void CreatePlayer(Player* player, float xPos, float yPos)
     player->rect.h = tex->playerHeight;
 
     player->infectedMutex = SDL_CreateMutex();
-    player->infected = true;
 
     player->rect.x = 0;
     player->rect.y = 0;
 
     player->movementMutex = SDL_CreateMutex();
-    player->radius = 25;
+    player->radius = 40;
     player->x = xPos;
     player->y = yPos;
     player->camera.cameraRect.w = CR_WINDOW_W;
@@ -41,6 +40,7 @@ void CreatePlayer(Player* player, float xPos, float yPos)
 
     player->mouseClick = false;
     player->moving = false;
+    player->speed = 7;
 }
 
 void HandlePlayerEvents(SDL_Event *event)
@@ -96,8 +96,8 @@ void MoveTowardsMouse(Player *player)
 
     if (player->moving == true)
     {
-        player->x +=directionX*7;
-        player->y += directionY*7;
+        player->x +=directionX*player->speed;
+        player->y += directionY*player->speed;
         if (sqrt(pow(player->x-originX,2)+pow(player->y-originY,2)) >= distance)
         {
 
@@ -116,6 +116,12 @@ void OnPlayerUpdate(Player* player)
     
     HandleBorders(player);
     RotatePlayer(player);
+
+    if (player->infected == true)
+    {
+        player->speed = 5;
+    }
+    
 
     int posx = player->x;
     int posy = player->y;
@@ -171,9 +177,9 @@ void DrawCircle(Player* player)
     int32_t tx = 1;
     int32_t ty = 1;
     int32_t error = (tx - diameter);
-    int centreX = ((int)player->x + player->rect.w/2) - player->camera.cameraRect.x;
-    int centreY = ((int)player->y + player->rect.h/2) - player->camera.cameraRect.y;
-    SDL_SetRenderDrawColor(game->renderer, 255,0,0,255);
+    int centreX = player->x + player->rect.w/2 - player->camera.cameraRect.x;
+    int centreY = player->y + player->rect.h/2 - player->camera.cameraRect.y;
+    SDL_SetRenderDrawColor(game->renderer, 0,0,255,255);
 
     while (x >= y) 
     {
@@ -211,21 +217,7 @@ void OnPlayerRender(Player* player)
     SDL_RenderCopyEx(game->renderer, player->texture, NULL, &player->rect, player->angle, NULL, SDL_FLIP_NONE);
     if (player->infected)
     {
-        if (player->radius <= 50)
-        {
-            DrawCircle(player);
-            if (frameTime == 30)
-            {
-                player->radius = player->radius + 5;
-                frameTime = 0;
-            }
-            
-            if (player->radius == 40)
-            {
-                player->radius = 25;
-            }
-            frameTime++;   
-        }
+        DrawCircle(player);       
     }
 }
 
@@ -258,6 +250,7 @@ void SetPlayerInfected(Player* player, bool infected)
     player->infected = infected;
     if(infected) player->texture = textures->infectedPlayer;
     else player->texture = textures->healthyPlayer;
+    
     SDL_UnlockMutex(player->infectedMutex);
 }
 

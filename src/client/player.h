@@ -24,6 +24,7 @@ typedef struct Player
     SDL_Texture* texture;
     PlayerID id;
     int radius;
+    int speed;
 } Player;
 
 void CreatePlayer(Player* player, float xPos, float yPos);
