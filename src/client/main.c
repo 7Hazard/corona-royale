@@ -90,7 +90,7 @@ int main(int argc, const char *argv[])
                 //     r = ((sin(theta)+1)/2)*255;
                 //     FC_DrawColor(fonts->openSans, game->renderer, 200, 50, FC_MakeColor(r, 20, 20, 255), "CORONA\n%s", "ROYALE");
                 // }
-                RendererTimer(&game->timer);
+                // RendererTimer(&game->timer);
 
                 if(GameGetState() == CR_STATE_VIRUSWIN)
                 {
