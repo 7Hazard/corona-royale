@@ -1,4 +1,5 @@
 # Corona Royale
+![](https://github.com/Mill3nium/hi1038-project/blob/master/Corona_Royale_Preview.gif?raw=true)
 
 Requirements on Windows:
 * Visual Studio 2019 with C/C++ tools (Download here: https://visualstudio.microsoft.com/vs/)
